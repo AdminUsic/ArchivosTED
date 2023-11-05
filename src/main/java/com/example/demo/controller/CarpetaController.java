@@ -317,4 +317,115 @@ public class CarpetaController {
         return "/carpetas/formularioArchivoCList";
     }
 
+    @PostMapping("/buscarCarpeta")
+    public String BuscandoCarpeta(HttpServletRequest request, Model model,
+            @RequestParam(value = "unidadCarpeta", required = false) Long unidadCarpeta,
+            @RequestParam(value = "volumenCarpeta", required = false) Long volumenCarpeta,
+            @RequestParam(value = "seriesDocsCarpeta", required = false) Long seriesDocsCarpeta,
+            @RequestParam(value = "gestion", required = false) int gestionCarpeta) {
+        System.out.println("BUSQUEDAS DE CARPETA");
+
+        List<Carpeta> listaCarpetas = new ArrayList<>();
+
+        if (gestionCarpeta != 0 && unidadCarpeta != null && volumenCarpeta != null && seriesDocsCarpeta != null) {
+            listaCarpetas = carpetaService.buscarPorUnidadSerieVolumenGestion(seriesDocsCarpeta,
+                    unidadCarpeta, volumenCarpeta, gestionCarpeta);
+            contarPaginas(listaCarpetas);
+            model.addAttribute("ListCarpetas", listaCarpetas);
+        } else {
+            if (gestionCarpeta != 0 && unidadCarpeta != null && volumenCarpeta != null) {
+                listaCarpetas = carpetaService.buscarPorUnidadVolumenGestion(unidadCarpeta, volumenCarpeta,
+                        gestionCarpeta);
+                contarPaginas(listaCarpetas);
+                model.addAttribute("ListCarpetas", listaCarpetas);
+            } else {
+                if (seriesDocsCarpeta != null && unidadCarpeta != null && gestionCarpeta != 0) {
+                    listaCarpetas = carpetaService.buscarPorUnidadSerieGestion(seriesDocsCarpeta,
+                            unidadCarpeta, gestionCarpeta);
+                    contarPaginas(listaCarpetas);
+                    model.addAttribute("ListCarpetas", listaCarpetas);
+                } else {
+                    if (seriesDocsCarpeta != null && unidadCarpeta != null && volumenCarpeta != null) {
+                        listaCarpetas = carpetaService.buscarPorUnidadSerieVolumen(seriesDocsCarpeta, unidadCarpeta,
+                                volumenCarpeta);
+                        contarPaginas(listaCarpetas);
+                        model.addAttribute("ListCarpetas", listaCarpetas);
+                    } else {
+                        if (gestionCarpeta != 0 && unidadCarpeta != null) {
+                            listaCarpetas = carpetaService.buscarPorUnidadGestion(unidadCarpeta, gestionCarpeta);
+                            contarPaginas(listaCarpetas);
+                            model.addAttribute("ListCarpetas", listaCarpetas);
+                        }
+                        if (gestionCarpeta != 0 && seriesDocsCarpeta != null) {
+                            listaCarpetas = carpetaService.buscarPorSeriedGestion(seriesDocsCarpeta, gestionCarpeta);
+                            contarPaginas(listaCarpetas);
+                            model.addAttribute("ListCarpetas", listaCarpetas);
+                        } else {
+                            if (gestionCarpeta != 0 && volumenCarpeta != null) {
+                                listaCarpetas = carpetaService.buscarPorVolumenGestion(volumenCarpeta, gestionCarpeta);
+                                contarPaginas(listaCarpetas);
+                                model.addAttribute("ListCarpetas", listaCarpetas);
+                            } else {
+                                if (unidadCarpeta != null && volumenCarpeta != null) {
+                                    listaCarpetas = carpetaService.buscarPorUnidadVolumen(unidadCarpeta,
+                                            volumenCarpeta);
+                                    contarPaginas(listaCarpetas);
+                                    model.addAttribute("ListCarpetas", listaCarpetas);
+                                } else {
+                                    if (unidadCarpeta != null && seriesDocsCarpeta != null) {
+                                        listaCarpetas = carpetaService.buscarPorUnidadSerie(seriesDocsCarpeta,
+                                                unidadCarpeta);
+                                        contarPaginas(listaCarpetas);
+                                        model.addAttribute("ListCarpetas", listaCarpetas);
+                                    } else {
+                                        if (gestionCarpeta != 0) {
+                                            listaCarpetas = carpetaService.buscarPorGestion(gestionCarpeta);
+                                            contarPaginas(listaCarpetas);
+                                            model.addAttribute("ListCarpetas", listaCarpetas);
+                                        } else {
+                                            if (volumenCarpeta != null) {
+                                                listaCarpetas = volumenService.findOne(volumenCarpeta).getCarpetas();
+                                                contarPaginas(listaCarpetas);
+                                                model.addAttribute("ListCarpetas", listaCarpetas);
+                                            } else {
+                                                if (seriesDocsCarpeta != null) {
+                                                    listaCarpetas = documentalService.findOne(seriesDocsCarpeta)
+                                                            .getCarpetas();
+                                                    contarPaginas(listaCarpetas);
+                                                    model.addAttribute("ListCarpetas", listaCarpetas);
+                                                } else {
+                                                    if (unidadCarpeta != null) {
+                                                        listaCarpetas = unidadService.findOne(unidadCarpeta)
+                                                                .getCarpetas();
+                                                        contarPaginas(listaCarpetas);
+                                                        model.addAttribute("ListCarpetas", listaCarpetas);
+                                                    } else {
+                                                        model.addAttribute("ListCarpetas", null);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return "/busquedas/registrosCarpeta";
+    }
+
+        void contarPaginas(List<Carpeta> listaCarpetas) {
+        // List<Carpeta> listaCarpetas = new ArrayList<>();
+        for (int i = 0; i < listaCarpetas.size(); i++) {
+            Carpeta carpeta = new Carpeta();
+            carpeta = listaCarpetas.get(i);
+            carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+            // listaCarpetas.add(carpeta);
+        }
+        // model.addAttribute("ListCarpetas", listaCarpetas);
+    }
+
 }

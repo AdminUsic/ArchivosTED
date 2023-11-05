@@ -5,10 +5,12 @@
                 <div class="card-box">
                     <div class="row" th:unless="${ListCarpetas.isEmpty()}">
                         <div class="col-lg-6 col-xl-6">
-                            <h4 class="header-title m-b-30">Mis Carpetas</h4>
+                            <h4 class="header-title m-b-30">Carpetas</h4>
+                            <span class="badge rounded-pill bg-light text-dark" 
+                            th:text="${ListCarpetas.size > 1}? 'Se encontraron '+${ListCarpetas.size}+' resultados': 'Se encontró '+${ListCarpetas.size}+' resultado'"></span>
                         </div>
                     </div>
-                    <div class="row" th:unless="${ListCarpetas.isEmpty()}">
+                    <!--<div class="row" th:unless="${ListCarpetas.isEmpty()}">
                         <form action="/FiltrarCarpeta" method="post">
                             <div class="form-group">
                                 <div class="input-group input-group-lg">
@@ -24,7 +26,7 @@
                                 </div>
                             </div>
                         </form>
-                    </div>
+                    </div>-->
 
                     <div class="row" th:unless="${ListCarpetas.isEmpty()}">
                         <div class=" tab-content no-bg no-border">
@@ -48,7 +50,7 @@
                                         <span class="document-name" style="color: aliceblue;"
                                             th:text="${'Serie: '+carp.serieDocumental.nombre}"></span>
                                         <div th:each="subSerie: ${carp.serieDocumental.subSeries}">
-                                            <span class="document-description" style="color: aliceblue;"
+                                            <span class="document-name" style="color: aliceblue;"
                                                 th:text="${subSerie.nombre}"></span>
                                         </div>
                                         <span class="document-name" style="color: aliceblue;"

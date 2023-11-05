@@ -61,7 +61,7 @@
                                                                     th:attr="onclick='filterSelection(\'' +${subSeries.nombre} + '\')'"
                                                                     th:text="${subSeries.nombre}"></a>
                                                             </h6>
-                                                            <li th:each="listArchivos: ${subSeries.archivos}">
+                                                            <li th:each="listArchivos: ${subSeries.archivos}"  th:if="${listArchivos.carpeta.id_carpeta == carpeta.id_carpeta}">
                                                                 <div class="dropdown ">
                                                                     <a class="dropdown-toggle"
                                                                         data-mdb-toggle="dropdown" aria-expanded="false"
@@ -103,7 +103,7 @@
                                             <h5 th:class="'filterTitulo '+${subSeries.nombre} "
                                                 th:text="${subSeries.nombre}"></h5>
                                             <div th:class="'filterDiv col-lg-3 col-xl-3 '+${subSeries.nombre}"
-                                                th:each="ar:${subSeries.archivos}" th:if="${ar.estado!='X'}">
+                                                th:each="ar:${subSeries.archivos}" th:if="${ar.estado!='X'} and ${ar.carpeta.id_carpeta == carpeta.id_carpeta}">
                                                 <div class="file-man-box mailbox-attachment-info">
                                                     <div class="file-img-box">
                                                         <a type="button" data-mdb-dismiss="modal"
