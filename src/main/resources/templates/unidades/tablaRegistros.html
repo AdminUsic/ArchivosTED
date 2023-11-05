@@ -1,0 +1,64 @@
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-info">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold card-title">Registros de Unidades/Secciones</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover"  id="dataTable" width="100%" cellspacing="0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Nombre de la Unidad/Sección</th>
+                                    <th>Sub Unidades/Sub Secciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                <tr th:each="unid, rowStat:${unidades}" th:if="${unid.estado!='X' && unid.unidadPadre==null}">
+                                    <td th:text="${rowStat.count}"></td>
+                                    <td class="text-center" th:text="${unid.nombre}+'('+${unid.sigla}+')'"></td>
+                                    <td class="text-center">
+                                        <div class="list-group">
+                                            <div>
+                                                <div th:each="subunidad: ${unid.subUnidades}">
+                                                    <a class="list-group-item list-group-item-action" th:text="${subunidad.nombre}"></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a class="btn btn-info" type="button" title="Editar Registro" style="color: aliceblue;"
+                                                th:attr="onclick='cargarModFormulario(\'' + ${unid.id_unidad} + '\')'"><li class="fas fa-pencil-alt "></li></a>
+                                            <a class="btn btn-danger" type="button" title="Eliminar Registro" style="color: aliceblue;"
+                                                th:attr="onclick='EliminarRegistro(\'' + ${unid.id_unidad} + '\', \'' + ${unid.nombre} + '\', \'' + ${unid.subUnidades.size} + '\')'"><li class="fa-solid fa-trash "></li></a>
+                                            <a class="btn btn-secondary" type="button" data-mdb-toggle="modal" data-mdb-target="#ModalSubUnidad" title="Ver Sub Unidades?" style="color: aliceblue;"
+                                                th:attr="onclick='cargarVentanaSubUnidades(\'' + ${unid.id_unidad} + '\')'"><li class="fa-solid fa-eye"></li></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-secondary">
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Nombre de la Unidad/Sección</th>
+                                    <th>Sub Unidades/Sub Secciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+        <script>
+            $(document).ready(function () {
+                $('#dataTable').DataTable();
+            });
+        </script>
+    </section>

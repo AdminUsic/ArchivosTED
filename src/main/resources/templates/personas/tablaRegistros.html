@@ -1,0 +1,62 @@
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-info">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold card-title">Registros de Personas</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>C.I.</th>
+                                <th>Nombres y Apellidos</th>
+                                <th>Cargo</th>
+                                <th>Unidad/Seccion</th>
+                                <th>Rol</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            <tr th:each="person, rowStat:${personas}" th:if="${person.estado != 'X' and person.cargo != null and person.unidad != null and person.rol != null}">
+                                <td th:text="${rowStat.count}"></td>
+                                <td class="text-center" th:text="${person.ci}"></td>
+                                <td class="text-center" th:text="${person.nombre}+' '+${person.apellido}"></td>
+                                <td class="text-center" th:text="${person.cargo.nombre}"></td>
+                                <td class="text-center" th:text="${person.unidad.nombre}"></td>
+                                <td class="text-center" th:text="${person.rol.nombre}"></td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-info" type="button" style="color: aliceblue;"
+                                            th:attr="onclick='cargarModFormulario(\'' + ${person.id_persona} + '\')'"><li class="fas fa-pencil-alt"></li></a>
+                                        <a class="btn btn-danger" type="button" style="color: aliceblue;"
+                                            th:attr="onclick='EliminarRegistro(\'' + ${person.id_persona} + '\', \'' + ${person.nombre}+' '+${person.apellido} + '\')'"><li class="fa-solid fa-trash"></li></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>C.I.</th>
+                                <th>Nombres y Apellidos</th>
+                                <th>Cargo</th>
+                                <th>Unidad/Seccion</th>
+                                <th>Rol</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
+</section>

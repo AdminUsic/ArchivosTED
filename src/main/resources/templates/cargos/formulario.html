@@ -1,0 +1,83 @@
+
+<div class="container-fluid">
+  <!-- /.card -->
+  <!-- Horizontal Form -->
+  <div class="card card-info">
+    <div class="card-header">
+      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Cargo' : 'Registrar Cargo'"></h2>
+
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form class="form-horizontal" id="FormularioRegistrarCargo" method="POST"
+      th:action="${edit} ?@{/ModCargoG} : @{/GuardarRegistroCargo}">
+      <div class="card-body">
+        <div th:if="${edit=='true'}">
+          <input type="hidden" th:field="${cargo.id_cargo}" >
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <!-- text input -->
+            <div class="form-group form-outline">
+              <input type="text" th:field="${cargo.nombre}" class="form-control" placeholder="Nombre" required>
+              <label class="form-label">Nombre del Cargo</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer" style="background-color: white;">
+        <button type="submit" class="btn btn-success"
+          th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+          class="btn btn-default float-right">Cancelar</a>
+      </div>
+      <!-- /.card-footer -->
+    </form>
+  </div>
+  <!-- /.card -->
+  <script>
+    $(document).ready(function () {
+      $('#FormularioRegistrarCargo').submit(function (event) {
+        event.preventDefault();
+        var form = document.getElementById("FormularioRegistrarCargo");
+        var action = form.action;
+        //alert("la action es: "+action);
+        var formData = $(this).serialize();
+        $.ajax({
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: formData,
+          contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+          success: function (response) {
+            if (action == "/ModCargoG") {
+              cargarFormulario();
+              cargarTabla();
+              toastr.success('Los datos del Registro se han Modificado Correctamente');
+            } else {
+              cargarFormulario();
+              cargarTabla();
+              toastr.success('Los datos se han Registrado Correctamente');
+            }
+            var div = document.getElementById("dataTable");
+            div.scrollIntoView({ behavior: 'smooth' });
+          },
+          error: function (xhr, status, error) {
+            toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+            console.error(error);
+            // Manejo de errores
+          }
+        });
+      });
+    });
+    function limpiarFormularioR() {
+      var form = document.getElementById("FormularioRegistrarCargo");
+      form.reset();
+    }
+  </script>
+    <script>
+      document.querySelectorAll('.form-outline').forEach((formOutline) => {
+          new mdb.Input(formOutline).init();
+      });
+  </script>
+</div>

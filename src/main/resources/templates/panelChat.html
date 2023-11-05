@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ArchivosTED</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="../static/plugins/bootstrap/css/googleapis.css">
+  <!-- Font Awesome 
+  <link rel="stylesheet" href="../static/plugins/fontawesome-free/css/all.min.css"> -->
+  <script src="../static/icono_fontawesome6.4.0/js/all.min.js"></script>
+  <link rel="stylesheet" href="../static/icono_fontawesome6.4.0/css/all.css">
+  <link rel="stylesheet" href="../static/icono_fontawesome6.4.0/css/fontawesome.pro.min.css">
+
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="../static/plugins/bootstrap/css/ionicframeworf.css">
+  <!-- Tempusdominus Bootstrap 4 -->
+  <link rel="stylesheet" href="../static/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="../static/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- JQVMap -->
+  <link rel="stylesheet" href="../static/plugins/jqvmap/jqvmap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../static/plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="../static/assets/css/adminlte.min.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="../static/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+
+  <!-- summernote -->
+  <link rel="stylesheet" href="../static/plugins/summernote/summernote-bs4.min.css">
+
+  <link rel="stylesheet" href="../static/dist/css/sweetaler2.css">
+
+  <link rel="stylesheet" href="../static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="../static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="../static/plugins/datatables-buttons/css/buttons.bootstrap4.css">
+
+  <!--<link rel="stylesheet" href="../static/dist/css/jquery-ui.css">-->
+
+
+  <link rel="stylesheet" href="../static/mdbootstrap/css/mdb.min.css">
+  <link rel="stylesheet" href="../static/dist/css/bootstrap5.min.css">
+
+  <!--<link rel="stylesheet" href="../static/dist/css/bootstrap-datepicker.min.css">-->
+
+  <!-- Select2 -->
+  <link rel="stylesheet" href="../static/dist/css/select2 4.1.css">
+  <link rel="stylesheet" href="../static/dist/css/bootstrap-theme 1.3.css">
+
+  <!--DROPZONE JS-->
+  <link rel="stylesheet" href="../static/dist/css/bs-dropzone.min.css">
+  <!--<link rel="stylesheet"
+    href="../static/dist/MD.BootstrapPersianDateTimePicker-master-bs5/mds.bs.datetimepicker.style.css">
+
+    <link rel="stylesheet" href="../static/dist/DatePicker/date-picker.css">-->
+  <!-- Ekko Lightbox -->
+  <link rel="stylesheet" href="../static/dist/js/ekko-lightbox.min.js">
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+
+  <!-- Button trigger modal 
+<button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#ModalModPerfil">
+  Launch demo modal
+</button>-->
+
+  <!--MODAL SUBSERIES-->
+  <div class="modal fade" id="modal_ReporteFormularioT" tabindex="-1" aria-labelledby="ModalModPerfil"
+    aria-hidden="true" data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
+
+          <div class="btn-group dropend">
+            <a type="button" class="btn btn-default dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
+              Enviar Formulario a...
+            </a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item font-weight-bold">Usuarios de Archivos</li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <div id="usuariosArchivos"></div>
+              <!--<li th:each="userChats: ${userChats}">
+                <a class="dropdown-item" type="button"
+                  th:attr="onclick='enviarFormularioTr(event,\'' + ${userChats.id_usuario} + '\', \'' + ${userLog.id_usuario} + '\', \'' + ${userLog.id_usuario} + '\')'">Another
+                  action</a>
+              </li>-->
+            </ul>
+          </div>
+
+          <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></a>
+        </div>
+
+        <!--<div class="modal-header">
+          <div class="text-center">
+            <h2 class="m-0 font-weight-bold card-title" >Formulario de Tranferencia</h2>
+            <a type="button" class="btn-close" ></a>
+          </div>
+          <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></a>
+        </div>-->
+        <div id="Reporte"></div>
+        <div class="modal-">
+
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="ModalModPerfil" tabindex="-1" aria-labelledby="ModalModPerfil" aria-hidden="true"
+    data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="m-0 font-weight-bold card-title" th:text="'Pefil: '+${userLog.nombre_user}"></h2>
+          <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></a>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <!-- /.card -->
+            <!-- Horizontal Form -->
+            <div class="card card-info">
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form class="form-horizontal" id="FormularioPerfil" method="POST" th:action="@{/ModUsuarioPerfilG}"
+                enctype="multipart/form-data">
+                <div class="card-body">
+                  <div>
+                    <input type="hidden" th:field="${userLog.sesion}">
+                    <input type="hidden" id="userlog" th:field="${userLog.id_usuario}">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group form-outline">
+                            <input type="text" th:value="${userLog.persona.nombre}" class="form-control"
+                              placeholder="Nombre Usuario" name="nombreP">
+                            <label class="form-label">Nombre</label>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group form-outline">
+                            <input type="text" th:value="${userLog.persona.apellido}" class="form-control"
+                              placeholder="Contraseña" name="apellido">
+                            <label class="form-label">Apellido</label>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- text input -->
+                      <div class="form-group form-outline">
+                        <input type="text" th:value="${userLog.persona.ci}" class="form-control"
+                          placeholder="Nombre Usuario" name="ci">
+                        <label class="form-label">C.I.</label>
+                      </div>
+                      <div class="form-group form-outline">
+                        <input type="text" th:field="${userLog.nombre_user}" class="form-control"
+                          placeholder="Nombre Usuario" id="userlogname">
+                        <label class="form-label">Nombre Usuario</label>
+                      </div>
+                      <div class="form-group form-outline">
+                        <input type="text" th:field="${userLog.contraseña}" class="form-control"
+                          placeholder="Contraseña">
+                        <label class="form-label">Contraseña</label>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Adjuntar Foto</label>
+                        <input type="file" id="fotoPerfilModal" name="foto" accept=".jpg,.jpeg,.png,.bmp">
+                        <div id="alertasArchivoFotoPerfilModal"></div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <div class="filtr-item col-sm-6">
+                            <p class="text-muted m-0">Foto de Perfil:</p>
+                            <div class="image-container">
+                              <img id="fotoImg" class="icono-image" th:src="@{'/verFoto/' + ${userLog.id_usuario}}"
+                                alt="Imagen 1" crossorigin="anonymous">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer" style="background-color: white;">
+                  <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                  <a type="button" class="btn btn-default float-right" onclick="limpiarFormularioPefilMod()"
+                    data-mdb-dismiss="modal" aria-label="Close">Cancelar</a>
+                </div>
+                <!-- /.card-footer -->
+              </form>
+            </div>
+            <!-- /.card -->
+            <script>
+              function limpiarFormularioPefilMod() {
+                var form = document.getElementById("FormularioPerfil");
+                form.reset();
+              }
+            </script>
+            <script>
+              var fileInput;
+              var nombreArchivo;
+              // Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
+              document.getElementById("fotoPerfilModal").addEventListener("change", function () {
+                // Obtenemos el elemento seleccionado
+                fileInput = document.getElementById("fotoPerfilModal");
+                nombreArchivo = fileInput.files[0].name;
+                // Verificamos si se seleccionó un archivo
+                if (fileInput.files.length > 0) {
+                  // Obtenemos el nombre del archivo
+                  var fileName = fileInput.files[0].name;
+
+                  if (!isValidIMG(fileName)) {
+                    // Reseteamos el valor del input file para borrar la selección inválida
+                    fileInput.value = "";
+                    $('#alertasArchivoFotoPerfilModal').html('<div class="alert alert-danger alert-dismissible">' +
+                      '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                      '<h6><i class="icon fas fa-ban"></i> El archivo no es Valido!</h6>' +
+                      'Solo se Admite Archivos IMG' +
+                      '</div>');
+                  } else {
+
+                    $('#alertasArchivoFotoPerfilModal').html('<div class="alert alert-success alert-dismissible">' +
+                      '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                      '<h6><i class="icon fas fa-check"></i> El archivo ' + nombreArchivo + ' es Valido!</h6>' +
+                      '</div>');
+                  }
+                }
+              });
+
+              // Función para validar si el nombre del archivo tiene extensión PDF
+              function isValidIMG(fileName) {
+                var validExtensions = ["jpg", "jpeg", "png", "bmp"];
+                var fileExtension = fileName.split(".").pop().toLowerCase();
+                return validExtensions.indexOf(fileExtension) !== -1;
+              }
+
+              function cerrarFormModalArchivo() {
+                $('#ModalModPerfil').modal('hide');
+              }
+            </script>
+            <script>
+              document.querySelectorAll('.form-outline').forEach((formOutline) => {
+                new mdb.Input(formOutline).init();
+              });
+            </script>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrapper">
+
+    <!-- Preloader -->
+    <div class="preloader flex-column justify-content-center align-items-center">
+      <img class="animation__shake" src="../static/logo/oep-organo-electoral-logo-65388333A4-seeklogo.com.png"
+        alt="AdminLTELogo" height="60" width="75">
+    </div>
+
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light  gradient-custom">
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+      </ul>
+
+      <!-- Right navbar links -->
+      <ul class="navbar-nav ml-auto">
+        <!-- Navbar Search 
+        <li class="nav-item">
+          <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+            <i class="fas fa-search"></i>
+          </a>
+          <div class="navbar-search-block">
+            <form class="form-inline">
+              <div class="input-group input-group-sm">
+                <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                  <button class="btn btn-navbar" type="submit">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </li>
+-->
+        <!-- Messages Dropdown Menu 
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="far fa-comments"></i>
+            <span class="badge badge-danger navbar-badge">3</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <a href="#" class="dropdown-item">-->
+        <!-- Message Start 
+              <div class="media">
+                <img src="../static/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                <div class="media-body">
+                  <h3 class="dropdown-item-title">
+                    Brad Diesel
+                    <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                  </h3>
+                  <p class="text-sm">Call me whenever you can...</p>
+                  <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                </div>
+              </div>-->
+        <!-- Message End 
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">-->
+        <!-- Message Start 
+              <div class="media">
+                <img src="../static/dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                <div class="media-body">
+                  <h3 class="dropdown-item-title">
+                    John Pierce
+                    <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                  </h3>
+                  <p class="text-sm">I got your message bro</p>
+                  <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                </div>
+              </div>-->
+        <!-- Message End 
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">-->
+        <!-- Message Start 
+              <div class="media">
+                <img src="../static/dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                <div class="media-body">
+                  <h3 class="dropdown-item-title">
+                    Nora Silvester
+                    <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                  </h3>
+                  <p class="text-sm">The subject goes here</p>
+                  <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                </div>
+              </div>
+              <!-- Message End 
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+          </div>
+        </li>-->
+        <!--Notifications Dropdown Menu 
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="far fa-bell"></i>
+            <span class="badge badge-warning navbar-badge">15</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <span class="dropdown-item dropdown-header">15 Notifications</span>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-envelope mr-2"></i> 4 new messages
+              <span class="float-right text-muted text-sm">3 mins</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-users mr-2"></i> 8 friend requests
+              <span class="float-right text-muted text-sm">12 hours</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-file mr-2"></i> 3 new reports
+              <span class="float-right text-muted text-sm">2 days</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+          </div>
+        </li>-->
+        <li class="nav-item dropdown user-menu">
+          <a type="button" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+            <img th:src="@{'/verFoto/' + ${userLog.id_usuario}}" class="user-image img-circle elevation-2"
+              alt="User Image">
+            <span class="d-none d-md-inline" th:text="${userLog.persona.nombre}+' '+${userLog.persona.apellido}"></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right "
+            style="left: inherit; right: 0px; border-radius: 10px;">
+            <!-- User image -->
+            <li class="user-header  " style="background-color: rgb(251, 161, 7); color: #ffffff;">
+              <img th:src="@{'/verFoto/' + ${userLog.id_usuario}}" class="img-circle elevation-2" alt="User Image">
+              <p>
+              <p th:text="${userLog.persona.nombre}+' '+${userLog.persona.apellido}"></p><small
+                th:text="${userLog.persona.cargo.nombre}"></small>
+              </p>
+            </li>
+            <!-- Menu Footer-->
+            <li class="user-footer">
+              <a type="button" class="btn btn-default" data-mdb-toggle="modal"
+                data-mdb-target="#ModalModPerfil">Perfil</a>
+              <a type="button" class="btn btn-default float-right"
+                th:attr="onclick='CerrarSesion(\'' + ${userLog.id_usuario} + '\')'">Cerrar Sesion</a>
+            </li>
+          </ul>
+        </li>
+
+
+        <li class="nav-item">
+          <a class="nav-link" data-widget="fullscreen" type="button" role="button">
+            <i class="fas fa-expand-arrows-alt"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container class="nav nav-pills nav-sidebar flex-column nav-child-indent"  -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <a type="button" class="brand-link text-center" style="text-decoration: none;">
+        <!--<img src="../static/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+          style="opacity: .8">-->
+        <span class="brand-text font-weight-light ">Menu Principal</span>
+      </a>
+      <a type="button" class="brand-link" style="text-decoration: none;" id="opcionInicial">
+        <!--<svg src="../static/iconoBuscarCarpeta.svg" class="brand-image img-circle elevation-3"
+        style="opacity: .8"></svg>-->
+        <img src="../static/iconos/locosearhFolder.png" alt="AdminLTE Logo" class="brand-image elevation-3"
+          style="opacity: .8">
+        <span class="brand-text font-weight-light">Inicio</span>
+      </a>
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <!-- SidebarSearch Form 
+        <div class="form-inline">
+          <div class="input-group" data-widget="sidebar-search">
+            <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-sidebar">
+                <i class="fas fa-search fa-fw"></i>
+              </button>
+            </div>
+          </div>
+        </div>-->
+
+        <!-- Sidebar Menu  nav nav-pills nav-sidebar flex-column nav-flat nav-child-indent -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu"
+            data-accordion="false">
+            <li class="nav-item" id="liOpcionFT">
+              <a type="button" class="nav-link" id="opcionFT">
+                <i class="nav-icon fa-solid fa-id-card " id="liFT"></i>
+                <p id="pFT">Formulario de Transferencia</p>
+              </a>
+            </li>
+            <li class="nav-item" th:if="${userLog.persona.unidad.nombre=='SECCION DE TECNOLOGIA'}">
+              <a type="button" class="nav-link">
+                <i class="nav-icon fa-solid fa-users-viewfinder"></i>
+                <p>
+                  Gestion Usuarios
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item" id="liOpcionPersona">
+                  <a type="button" id="opcion_Persona" class="nav-link">
+                    <i class="nav-icon fa-solid fa-person" id="liPersona"></i>
+                    <p id="pPersona">Personas</p>
+                  </a>
+                </li>
+                <li class="nav-item" id="liOpcionUsuario">
+                  <a type="button" id="opcion_usuarios" class="nav-link">
+                    <i class="nav-icon fa-solid fa-users" id="liUsuario"></i>
+                    <p id="pUsuario">Usuarios</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item"
+              th:if="${userLog.persona.unidad.nombre=='ARCHIVOS Y BIBLIOTECA' && userLog.persona.rol.nombre=='ARCHIVOS'}">
+              <a type="button" class="nav-link">
+                <i class="nav-icon fas fa-copy"></i>
+                <p>
+                  Gestion Archivos
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview submenu">
+                <li class="nav-item" id="liOpcionTarchivos">
+                  <a type="button" class="nav-link" id="opcion_tipoArchivos">
+                    <i class="nav-icon fa-regular fa-note-sticky" id="liTarchivos"></i>
+                    <p id="pTarchivos">Tipos de Archivos</p>
+                  </a>
+                </li>
+                <!--<li class="nav-item" id="liOpcionArchivoR">
+                  <a type="button" id="opcion_archivos" class="nav-link">
+                    <i class="nav-icon fa-regular fa-file-lines" id="liArchivoR"></i>
+                    <p id="pArchivoR">Registro de Archivos</p>
+                  </a>
+                </li>-->
+                <li class="nav-item" id="liOpcionSerieDoc">
+                  <a type="button" id="opcion_SerieDoc" class="nav-link">
+                    <i class="nav-icon fa-regular fa-rectangle-list" id="liSerieDoc"></i>
+                    <p id="pSerieDoc">Serie Documental</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item"
+              th:if="${userLog.persona.unidad.nombre=='ARCHIVOS Y BIBLIOTECA' && userLog.persona.rol.nombre=='ARCHIVOS'}">
+
+              <a type="button" class="nav-link">
+                <i class="nav-icon fa-solid fa-folder-tree"></i>
+                <p>
+                  Carpetas/Tomos
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item" id="liOpcionCarpetaR">
+                  <a type="button" class="nav-link" id="opcion_Carpeta">
+                    <i class="nav-icon fa-solid fa-folder" id="liCarpetaR"></i>
+                    <p id="pCarpetaR">Carpetas</p>
+                  </a>
+                </li>
+                <li class="nav-item" id="liOpcionVolumen">
+                  <a type="button" id="opcion_Volumen" class="nav-link">
+                    <i class="nav-icon fa-brands fa-elementor" id="liVolumen"></i>
+                    <p id="pVolumen">Volumen/Tomo</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item" id="liOpcionSecciones"
+              th:if="${userLog.persona.unidad.nombre=='SECCION DE TECNOLOGIA' && userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
+              <a type="button" class="nav-link" id="opcion_Seccion">
+                <i class="nav-icon fa-solid fa-sitemap" id="liSecciones"></i>
+                <p id="pSecciones">Unidades/Secciones</p>
+              </a>
+            </li>
+            <li class="nav-item" id="liOpcionCargos"
+              th:if="${userLog.persona.unidad.nombre=='SECCION DE TECNOLOGIA' && userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
+              <a type="button" class="nav-link" id="opcion_Cargos">
+                <i class="nav-icon fa fa-id-card-o " id="liCargos"></i>
+                <p id="pCargos">Cargos</p>
+              </a>
+            </li>
+            <li class="nav-item" id="liOpcionRol"
+              th:if="${userLog.persona.unidad.nombre=='SECCION DE TECNOLOGIA' && userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
+              <a type="button" class="nav-link" id="opcion_Rol">
+                <i class="nav-icon fa-solid fa-id-card " id="liRol"></i>
+                <p id="pRol">Rol</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div>
+      <!-- /.sidebar -->
+    </aside>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper ">
+
+      <!-- Main content -->
+      <section class="content ventana" id="contenido">
+
+      </section>
+
+      <!-- /.content -->
+    </div>
+
+    <!-- Content Wrapper. Contains page content 
+    <div class="content-wrapper iframe-mode" data-widget="iframe" data-loading-screen="750">
+      <div class="nav navbar navbar-expand navbar-white navbar-light border-bottom p-0">
+        <div class="nav-item dropdown">
+          <a class="nav-link bg-danger dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+            aria-haspopup="true" aria-expanded="false">Cerrar</a>
+          <div class="dropdown-menu mt-0">
+            <a class="dropdown-item" href="#" data-widget="iframe-close" data-type="all">Close All</a>
+            <a class="dropdown-item" href="#" data-widget="iframe-close" data-type="all-other">Close All Other</a>
+          </div>
+        </div>
+        <a class="nav-link bg-light" href="#" data-widget="iframe-scrollleft"><i
+            class="fas fa-angle-double-left"></i></a>
+        <ul class="navbar-nav overflow-hidden" role="tablist"></ul>
+        <a class="nav-link bg-light" href="#" data-widget="iframe-scrollright"><i
+            class="fas fa-angle-double-right"></i></a>
+        <a class="nav-link bg-light" href="#" data-widget="iframe-fullscreen"><i class="fas fa-expand"></i></a>
+      </div>
+      <div class="tab-content" id="contenido">
+        <div class="tab-empty">
+          <h2 class="display-4">No tab selected!</h2>
+        </div>
+        <div class="tab-loading">
+          <div>
+            <h2 class="display-4">Tab is loading <i class="fa fa-sync fa-spin"></i></h2>
+          </div>
+        </div>
+      </div>
+    </div>-->
+    <!-- /.content-wrapper -->
+
+    <!-- /.content-wrapper 
+    <footer class="main-footer">
+      <strong>Copyright &copy; 2023 <a type="button">Autor: Jhowill Neytan Asturizaga Lanza</a>.</strong>
+      Todos los derechos reservados.
+      <div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 1.0
+      </div>
+    </footer>-->
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+      <div class="d-flex justify-content-between align-items-center mt-2">
+        <div class="text-center" style="padding-left: 10%;">
+          <span>Usuarios</span>
+        </div>
+        <a id="close-control-sidebar" class="mr-2" type="button" role="button" data-widget="control-sidebar"
+          data-controlsidebar-slide="true">
+          <i class="fas fa-times"></i>
+        </a>
+      </div>
+      <hr class="mb-2">
+
+      <!--<div class="dropleft">
+        <a class="btn btn-block btn-outline-secondary btn-lg" type="button" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false" data-reference="parent">
+          Botón
+        </a>
+        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="#">Opción 1</a></li>
+          <li><a class="dropdown-item" href="#">Opción 2</a></li>
+          <li><a class="dropdown-item" href="#">Opción 3</a></li>
+        </ul>
+      </div>-->
+      <!-- Button triggers collapse -->
+      <a class="btn btn-primary" data-mdb-toggle="collapse" href="#collapseWithScrollbar" role="button"
+        aria-expanded="false" aria-controls="collapseExample">
+        Longer content
+      </a>
+      <!-- Collapsed content -->
+      <div class="collapse mt-3 scroll-section" id="collapseWithScrollbar" style="max-width: 700px; max-height: 800px;">
+        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad
+        squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente
+        ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer
+        farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them
+        accusamus labore sustainable VHS. 3 wolf moon officia aute, non cupidatat skateboard dolor
+        brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua
+        put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
+      </div>
+      <div class="dropleft" th:each="userChats: ${userChats}">
+        <a class="btn btn-block btn-outline-secondary btn-lg dropdown-toggle" type="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false" data-reference="parent"
+          th:attr="onclick='conectar(\'' + ${userChats.id_usuario} + '\', \'' + ${userLog.id_usuario} + '\')'">
+          <div class="user-block text-sm">
+            <img class="img-circle img-bordered-sm" th:src="@{'/verFoto/' + ${userChats.id_usuario}}" alt="User Image">
+            <span class="text-center" style="padding-left: 10px;"
+              th:text="${userChats.persona.nombre}+'  '+${userChats.persona.apellido}"></span>
+            <span class="description" th:text="${userChats.persona.cargo.nombre}">
+              <p></p>
+            </span>
+          </div>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="padding: 0px;">
+          <div class="card card-success card-outline direct-chat direct-chat-success shadow-sm ">
+            <div class="card-header">
+              <h3 class="card-title" style="color: black;"
+                th:text="${userChats.persona.nombre}+'  '+${userChats.persona.apellido}"></h3>
+              <div class="card-tools">
+                <span title="3 New Messages" class="badge bg-success">3</span>
+                <button type="button" class="btn btn-tool" data-bs-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" title="Contacts" data-bs-widget="chat-pane-toggle">
+                  <i class="fas fa-comments"></i>
+                </button>
+                <a type="button" class="btn btn-tool" data-bs-card-widget="remove" id="cerrar-dropdown">
+                  <i class="fas fa-times"></i>
+                </a>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body" style="display: block;">
+              <!-- Conversations are loaded here -->
+              <!--<div class="direct-chat-messages" th:id="'messages'+${userChats.id_usuario}">-->
+              <div class="direct-chat-messages" th:id="'panelChat-'+${userChats.id_usuario}">
+
+              </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer" style="display: block;">
+              <form
+                th:attr="onsubmit='enviarMensaje(event,\'' + ${userChats.id_usuario} + '\', \'' + ${userLog.id_usuario} + '\')'"
+                method="post">
+
+                <div class="input-group">
+                  <input type="text" placeholder="Type Message ..." th:id="'message-'+${userChats.id_usuario}"
+                    class="form-control">
+
+                  <span class="input-group-append">
+                    <button type="submit" class="btn btn-success">Enviar</button>
+                  </span>
+                </div>
+              </form>
+            </div>
+
+          </div>
+
+        </ul>
+      </div>
+    </aside>
+    <!-- /.control-sidebar -->
+
+  </div>
+  <!-- ./wrapper
+  <a type="button" class="btn btn-success back-to-top" role="button">
+    <i class="fas fa-chevron-up"></i>
+  </a>-->
+
+  <!--<a class="btn btn-outline-success  position-fixed bottom-0 end-0 m-3" type="button">
+    <i class="fas fa-envelope me-2"></i>
+    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle p-1">3</span>
+  </a>-->
+  <li>
+    <a class="nav-link position-fixed bottom-0 end-0 m-3" data-widget="control-sidebar" data-controlsidebar-slide="true"
+      href="#" role="button">
+      <i class="fas fa-th-large"></i>
+    </a>
+  </li>
+  <li class="nav-item dropdown ">
+
+    <!--<a type="button" class=" btn btn-success position-fixed bottom-0 end-0 m-3" data-toggle="dropdown"
+      aria-expanded="true">
+      <i class="fas fa-envelope me-2"></i>
+      <span class="badge bg-danger position-absolute top-0 start-100 translate-middle p-1">3</span>
+    </a>-->
+    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="padding: 0px;">
+      <div class="card card-success card-outline direct-chat direct-chat-success shadow-sm ">
+        <div class="card-header">
+          <h3 class="card-title">Shadow - Small</h3>
+
+          <div class="card-tools">
+            <span title="3 New Messages" class="badge bg-success">3</span>
+            <button type="button" class="btn btn-tool" data-bs-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" title="Contacts" data-bs-widget="chat-pane-toggle">
+              <i class="fas fa-comments"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-bs-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body" style="display: block;">
+          <!-- Conversations are loaded here
+          <div class="direct-chat-messages" id="messages">
+             Message. Default to the left 
+            <div class="direct-chat-msg" id="chatDiv">
+              <div class="direct-chat-infos clearfix">
+                <span class="direct-chat-name float-start">Alexander Pierce</span>
+                <span class="direct-chat-timestamp float-end">23 Jan 2:00 pm</span>
+              </div>
+              <!-- /.direct-chat-infos 
+              <img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">
+              <!-- /.direct-chat-img 
+              <div class="direct-chat-text" id="chatMessages">
+                Is this template really for free? That's unbelievable!
+              </div>
+              <!-- /.direct-chat-text 
+            </div>
+            <!-- /.direct-chat-msg -->
+
+          <!-- Message to the right -
+            <div class="direct-chat-msg right">
+              <div class="direct-chat-infos clearfix">
+                <span class="direct-chat-name float-end">Sarah Bullock</span>
+                <span class="direct-chat-timestamp float-start">23 Jan 2:05 pm</span>
+              </div>
+
+              <img class="direct-chat-img" src="../dist/img/user3-128x128.jpg" alt="Message User Image">
+
+              <div class="direct-chat-text" id="messageInput">
+                You better believe it!
+              </div>
+
+            </div>-->
+
+        </div>
+        <!--/.direct-chat-messages-->
+
+        <!-- Contacts are loaded here 
+          <div class="direct-chat-contacts">
+            <ul class="contacts-list" >
+              <!--<li >
+                <a href="#">
+                  <img class="contacts-list-img" src="../dist/img/user1-128x128.jpg" alt="User Avatar">
+                  <div >
+                    <div class="contacts-list-info" >
+                      <span class="contacts-list-name">
+                        Count Dracula
+                        <small class="contacts-list-date float-end">2/28/2015</small>
+                      </span>
+                      <span class="contacts-list-msg">How have you been? I was...</span>
+                    </div>
+                  </div>
+                  <!-- /.contacts-list-info 
+                </a>
+              </li>-->
+        <!-- End Contact Item 
+            </ul>
+            <!-- /.contatcts-list 
+          </div>
+          <!-- /.direct-chat-pane -->
+      </div>
+      <!-- /.card-body 
+        <div class="card-footer" style="display: block;">
+          <form onsubmit="enviarMensaje(event)" method="post" id="chatForm">
+            <div class="input-group">
+              <input type="text" name="message" placeholder="Type Message ..." id="message-input" class="form-control">
+              <span class="input-group-append">
+                <button type="submit" class="btn btn-success">Enviar</button>
+              </span>
+            </div>
+          </form>
+        </div>
+        <!-- /.card-footer-->
+      </div>
+      <!--/.direct-chat -->
+    </ul>
+  </li>
+  <script>
+
+  </script>
+
+  <style>
+    .fixed-bottom-right {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+
+    /*body {
+      min-height: 100vh;
+      margin: 0; 
+      padding: 0; 
+    }*/
+  </style>
+  <!-- jQuery 
+  <script src="../static/plugins/jquery/jquery.min.js"></script>-->
+  <script src="../static/dist/js/jquery-3.7.0.min.js"></script>
+  <script src="../static/dist/js/dayjs.min.js"></script>
+
+  <!--<script src="../static/dist/js/jquery-ui.js"></script>-->
+  <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+  <script>
+    $.widget.bridge('uibutton', $.ui.button)
+  </script>
+  <!-- Bootstrap 4 -->
+  <script src="../static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- ChartJS -->
+  <script src="../static/plugins/chart.js/Chart.min.js"></script>
+  <!-- Sparkline -->
+  <script src="../static/plugins/sparklines/sparkline.js"></script>
+
+  <!-- Tempusdominus Bootstrap 4 -->
+  <script src="../static/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+
+  <!-- AdminLTE App -->
+  <script src="../static/dist/js/adminlte.js"></script>
+
+  <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+  <script src="../static/dist/js/pages/dashboard.js"></script>
+
+  <!-- sweetaler2 -->
+  <script src="../static/dist/js/sweetaler2.js"></script>
+
+  <!--DATATABLE-->
+  <script src="../static/dist/js/datatables.bootstrap.min.js"></script>
+  <script src="../static/dist/js/datatables1.10.25.js"></script>
+  <script src="../static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="../static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+  <script src="../static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+  <script src="../static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+  <script src="../static/dist/js/pages/dashboard.js"></script>
+  <script src="../static/plugins/toastr/toastr.min.js"></script>
+
+  <script src="../static/dist/js/stompjs@7.0.0-beta5.js"></script>
+
+  <!-- bs-custom-file-input -->
+  <script src="../static/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+
+  <!--<script src="../static/dist/js/dropzone.js"></script>-->
+  <script src="../static/dist/js/bs-dropzone.min.js"></script>
+
+  <!-- Ekko Lightbox 
+<script src="../static/plugins/ekko-lightbox/ekko-lightbox.min.js"></script>-->
+  <script src="../static/dist/js/ekko-lightbox.min.js"></script>
+
+  <!-- Filterizr-->
+  <script src="../static/plugins/filterizr/jquery.filterizr.min.js"></script>
+
+  <!--MDBootstrap
+  <script src="../static/dist/DatePicker/date-picker.js"></script>-->
+  <script src="../static/mdbootstrap/js/mdb.min.js"></script>
+
+  <script src="../static/dist/js/datepicker-bs4.js"></script>
+
+
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>-->
+
+  <script src="../static/dist/js/sockjs.js"></script>
+  <script src="../static/dist/js/stomp.min.js"></script>
+
+  <script th:inline="javascript">
+    var stompClient = null;
+    var userLog = null;
+    var userLog2 = null;
+
+
+    function conectar(userIdReceptor, userIdEmisor) {
+      if (stompClient) {
+        stompClient.disconnect(); // Desconecta la conexión WebSocket existente si la hay
+        stompClient = null;
+      }
+      userLog2 = $("#userlog").val();
+      // Establece la conexión WebSocket
+      var socket = new SockJS("/salonA");
+      stompClient = Stomp.over(socket);
+      // Conecta al canal privado del usuario emisor
+      stompClient.connect({}, function (frame) {
+        console.log("Conectado: " + frame);
+
+        stompClient.subscribe("/user/" + userIdReceptor + "/private", function (response) {
+          console.log("Respuesta recibida: " + response);
+          var parsedResponse = JSON.parse(response.body);
+          //alert(parsedResponse.receptor);
+          if (parsedResponse.receptor == userLog2) {
+            mostrarMensaje(JSON.parse(response.body), userIdReceptor, userIdEmisor);
+          }
+          //if (parsedResponse.usuario == userLog2) {
+          //  mostrarMensaje(JSON.parse(response.body), userIdReceptor, userIdEmisor);
+         // }
+        });
+      });
+    }
+
+    function enviarMensaje(event, userIdReceptor, userIdEmisor) {
+      event.preventDefault();
+      var mensaje = $("#message-" + userIdReceptor).val();
+
+      let usuario = $("#userlog").val();
+      let nombre_user = $("#userlogname").val();
+      let receptor = userIdReceptor;
+
+
+      // Obtener la fecha y hora actual
+      const fechaHoraActual = new Date();
+
+      // Obtener la fecha en formato dd-mm-yy
+      const dia = fechaHoraActual.getDate().toString().padStart(2, '0');
+      const mes = (fechaHoraActual.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0
+      const anio = fechaHoraActual.getFullYear().toString().slice(-2); // Obtener los últimos 2 dígitos del año
+
+      const fecha = `${dia}-${mes}-${anio}`;
+
+      // Obtener la hora en formato hh:mm:ss
+      const hora = fechaHoraActual.getHours().toString().padStart(2, '0');
+      const minutos = fechaHoraActual.getMinutes().toString().padStart(2, '0');
+      const segundos = fechaHoraActual.getSeconds().toString().padStart(2, '0');
+
+      const horaFormateada = `${hora}:${minutos}:${segundos}`;
+
+
+      let jsonOb = {
+        remitente: usuario,
+        nameRemitente: nombre_user,
+        contenidoTexto: mensaje,
+        receptor: receptor,
+        fechaRegistro: fecha,
+        horaRegistro: horaFormateada,
+        tipoMensaje: "texto"
+      };
+
+      var mensajeJSON = JSON.stringify(jsonOb);
+
+      mostrarMensajelocal(jsonOb, userIdReceptor, userIdEmisor);
+
+
+      stompClient.send("/app/chat/" + userIdEmisor + "/" + userIdReceptor, {}, mensajeJSON);
+
+      $("#message-" + userIdReceptor).val("");
+      // También puedes mostrar el mensaje localmente antes de que se envíe al servidor
+      //mostrarMensaje(jsonOb);
+
+    }
+
+
+    function mostrarMensaje(mensaje, userIdReceptor, userIdEmisor) {
+
+      userLog = $("#userlog").val();
+      if (mensaje.tipoMensaje == "texto") {
+        if (mensaje.remitente == userLog) {
+          $("#panelChat-" + userIdReceptor).prepend('<div class="direct-chat-msg right">' +
+            '  <div class="direct-chat-infos clearfix">' +
+            '    <span class="direct-chat-name float-end">' + mensaje.nameRemitente + '</span>' +
+            '    <span class="direct-chat-timestamp float-start">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</span>' +
+            '  </div>' +
+            '  <img class="direct-chat-img" src="/verFoto/' + mensaje.remitente + '" alt="Message User Image">' +
+            '  <div class="direct-chat-text" id="messageInput">' +
+            '    ' + mensaje.contenidoTexto +
+            '  </div>' +
+            '</div>');
+        }
+        if (mensaje.remitente != userLog) {
+          $("#panelChat-" + userIdReceptor).prepend('<div class="direct-chat-msg">' +
+            '<div class="direct-chat-infos clearfix">' +
+            '<span class="direct-chat-name float-left">' + mensaje.nameRemitente + '</span>' +
+            '<span class="direct-chat-timestamp float-right">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</span>' +
+            '</div>' +
+            '<img class="direct-chat-img" src="/verFoto/' + mensaje.remitente + '" alt="Message User Image">' +
+            '<div class="direct-chat-text">' +
+            '    ' + mensaje.contenidoTexto +
+            '</div>' +
+            '</div>');
+        }
+      }
+      if (mensaje.tipoMensaje == "formularioTransferencia") {
+        if (mensaje.remitente == userLog) {
+          $("#panelChat-" + userIdReceptor).prepend('<div class="direct-chat-msg right">' +
+            '  <div class="direct-chat-infos clearfix">' +
+            '    <span class="direct-chat-name float-end">' + mensaje.nameRemitente + '</span>' +
+            '    <span class="direct-chat-timestamp float-start">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</span>' +
+            '  </div>' +
+            '  <img class="direct-chat-img" src="/verFoto/' + mensaje.remitente + '" alt="Message User Image">' +
+            '  <div class="direct-chat-text" id="messageInput">' +
+            '    Formulario de Transferencia <a class="btn btn-default" type="button" data-mdb-toggle="modal" data-mdb-target="#modal_ReporteFormularioT" onclick="verReporteFormTr(' + mensaje.contenido + ')"></a>' +
+            '  </div>' +
+            '</div>');
+        }
+        if (mensaje.remitente != userLog) {
+          $("#panelChat-" + userIdReceptor).prepend('<div class="direct-chat-msg">' +
+            '<div class="direct-chat-infos clearfix">' +
+            '<span class="direct-chat-name float-left">' + mensaje.nameRemitente + '</span>' +
+            '<span class="direct-chat-timestamp float-right">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</span>' +
+            '</div>' +
+            '<img class="direct-chat-img" src="/verFoto/' + mensaje.remitente + '" alt="Message User Image">' +
+            '<div class="direct-chat-text">' +
+            '<a class="btn btn-default" style="color: black;" type="button" data-mdb-toggle="modal" data-mdb-target="#modal_ReporteFormularioT" onclick="verReporteFormTr(' + mensaje.contenido + ')">'+
+            '<li class="fa-regular fa-file-pdf"></li> Formulario de Transferencia </a>' +
+            '</div>' +
+            '</div>');
+        }
+      }
+
+      console.log("MENSAJE RECIBIDO");
+
+      stompClient.unsubscribe("/app/chat/" + userIdEmisor + "/" + userIdReceptor);
+
+    }
+
+
+    function mostrarMensajelocal(mensaje, userIdReceptor, userIdEmisor) {
+      $("#panelChat-" + userIdReceptor).prepend('<div class="direct-chat-msg right">' +
+        '  <div class="direct-chat-infos clearfix">' +
+        '    <span class="direct-chat-name float-end">' + mensaje.nameRemitente + '</span>' +
+        '    <span class="direct-chat-timestamp float-start">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</span>' +
+        '  </div>' +
+        '  <img class="direct-chat-img" src="/verFoto/' + mensaje.remitente + '" alt="Message User Image">' +
+        '  <div class="direct-chat-text" id="messageInput">' +
+        '    ' + mensaje.contenidoTexto +
+        '  </div>' +
+        '</div>');
+      /*if (mensaje.tipoMensaje == "texto") {
+          $("#panelChat-" + userIdReceptor).prepend('<div class="direct-chat-msg right">' +
+            '  <div class="direct-chat-infos clearfix">' +
+            '    <span class="direct-chat-name float-end">' + mensaje.nameRemitente + '</span>' +
+            '    <span class="direct-chat-timestamp float-start">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</span>' +
+            '  </div>' +
+            '  <img class="direct-chat-img" src="/verFoto/' + mensaje.remitente + '" alt="Message User Image">' +
+            '  <div class="direct-chat-text" id="messageInput">' +
+            '    ' + mensaje.contenidoTexto +
+            '  </div>' +
+            '</div>');
+        
+      }
+        if (mensaje.tipoMensaje == "formularioTransferencia") {
+          $("#panelChat-" + userIdReceptor).prepend('<div class="direct-chat-msg right">' +
+            '  <div class="direct-chat-infos clearfix">' +
+            '    <span class="direct-chat-name float-end">' + mensaje.nameRemitente + '</span>' +
+            '    <span class="direct-chat-timestamp float-start">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</span>' +
+            '  </div>' +
+            '  <img class="direct-chat-img" src="/verFoto/' + mensaje.remitente + '" alt="Message User Image">' +
+            '  <div class="direct-chat-text" id="messageInput">' +
+            '    Formulario de Transferencia <a class="btn btn-default" type="button" data-mdb-toggle="modal" data-mdb-target="#modal_ReporteFormularioT" onclick="verReporteFormTr(' + mensaje.contenido + ')"></a>' +
+            '  </div>' +
+            '</div>');
+        }*/
+    }
+
+    function verReporteFormTr(id) {
+      $('#Reporte').html('<embed src="/GenerarReporte/' + id + '" type="application/pdf" width="100%" height="600px" />');
+      var userLog3 = $("#userlog").val();;
+      $.ajax({
+        type: 'POST',
+        url: "/UsuariosReceptores",
+        dataType: 'json',
+        success: function (data) {
+          data.forEach(function (usuario) {
+            //var nombreUsuario = usuario[0];
+            //alert(userLog3+ " " +usuario[1]+ " "+ id);
+
+            /*$('#usuariosArchivos').html('<li>' +
+              '<a class="dropdown-item" type="button" ' +
+              'onclick="enviarFormularioTr(' + usuario[1] + ', ' + userLog3 + ', ' + id + ')">' + usuario[0] + '</a>' +
+              '</li>');*/
+            $('#usuariosArchivos').html('<form method="post"' +
+              'onsubmit="enviarMensaje2(event, ' + usuario[1] + ', ' + userLog3 + ', ' + id + ')">' +
+              '<input type="hidden" id="formTr-' + usuario[1] + '" value="' + id + '" />' +
+              '<input type="submit" class="dropdown-item" type="button" value="' + usuario[0] + '"/>' +
+              '</form>');
+          });
+        }
+      });
+    }
+
+    function enviarMensaje2(event, userIdReceptor, userIdEmisor, id_formTransferencia) {
+      event.preventDefault();
+
+      if (stompClient) {
+        stompClient.disconnect(); // Desconecta la conexión WebSocket existente si la hay
+        stompClient = null;
+      }
+
+      // Función auxiliar para conectar y enviar
+        return new Promise(function (resolve, reject) {
+          // Configurar la conexión WebSocket y el cliente STOMP
+          var socket = new SockJS("/salonA");
+          stompClient = Stomp.over(socket);
+
+          stompClient.connect({}, function (frame) {
+            console.log("Conectado: " + frame);
+
+            // Suscribirse al canal privado
+            stompClient.subscribe("/user/" + userIdReceptor + "/private", function (response) {
+              console.log("Respuesta recibida: " + response);
+              var parsedResponse = JSON.parse(response.body);
+              //alert(parsedResponse.receptor);
+              if (parsedResponse.receptor == userIdEmisor) {
+                mostrarMensaje(JSON.parse(response.body), userIdReceptor, userIdEmisor);
+              }
+            });
+
+            // Resto del código para enviar el mensaje
+            let usuario = $("#userlog").val();
+            let nombre_user = $("#userlogname").val();
+            let contenido = $("#formTr-" + id_formTransferencia).val();
+            let receptor = userIdReceptor;
+
+            // Obtener la fecha y hora actual
+            const fechaHoraActual = new Date();
+
+            // Obtener la fecha en formato dd-mm-yy
+            const dia = fechaHoraActual.getDate().toString().padStart(2, '0');
+            const mes = (fechaHoraActual.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0
+            const anio = fechaHoraActual.getFullYear().toString().slice(-2); // Obtener los últimos 2 dígitos del año
+
+            const fecha = `${dia}-${mes}-${anio}`;
+
+            // Obtener la hora en formato hh:mm:ss
+            const hora = fechaHoraActual.getHours().toString().padStart(2, '0');
+            const minutos = fechaHoraActual.getMinutes().toString().padStart(2, '0');
+            const segundos = fechaHoraActual.getSeconds().toString().padStart(2, '0');
+
+            const horaFormateada = `${hora}:${minutos}:${segundos}`;
+
+            let jsonOb = {
+              remitente: usuario,
+              nameRemitente: nombre_user,
+              contenido: contenido,
+              receptor: receptor,
+              fechaRegistro: fecha,
+              horaRegistro: horaFormateada,
+              tipoMensaje: "formularioTransferencia"
+            };
+
+            var mensajeJSON = JSON.stringify(jsonOb);
+
+            //mostrarMensajelocal(jsonOb, userIdReceptor, userIdEmisor);
+            //alert("----------ENVIAR MENSAJE 2----------Datos: " + jsonOb.remitente + " " + jsonOb.nameRemitente + " " + jsonOb.contenido + " " + jsonOb.receptor + " " + jsonOb.tipoMensaje);
+
+            stompClient.send("/app/chat/" + userIdEmisor + "/" + userIdReceptor, {}, mensajeJSON);
+            toastr.success('Formulario Enviado');
+            // Finalizar la promesa cuando se haya enviado el mensaje
+            resolve();
+          });
+        });
+      
+        
+      // Iniciar el proceso
+      comprobarConexion().then(function () {
+        console.log("Mensaje enviado con éxito.");
+        
+      }).catch(function (error) {
+        console.error("Error al enviar el mensaje: " + error);
+      });
+    }
+
+          // Función para comprobar la conexión y ejecutar la operación cuando esté lista
+          function comprobarConexion() {
+        if (stompClient && stompClient.connected) {
+          // La conexión ya está establecida, podemos conectar y enviar el mensaje.
+          return enviarMensaje2();
+          
+        } else {
+          // La conexión no está lista, esperar y volver a comprobar
+          return new Promise(function (resolve, reject) {
+            setTimeout(function () {
+              resolve(comprobarConexion());
+            }, 1000); // Esperar 1 segundo antes de volver a comprobar
+          });
+        }
+      }
+
+
+  </script>
+
+  <script>
+    var botonPulsado;
+    var botonPulsadoli;
+    var botonPulsadop;
+    $(document).ready(function () {
+      cargarContenido("/BusquedaArchivo");
+      $("#opcion_usuarios").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/USUARIO");
+
+        const liOpcionUsuario = document.getElementById("liOpcionUsuario");
+        liOpcionUsuario.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liUsuario = document.getElementById("liUsuario");
+        liUsuario.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pUsuario = document.getElementById("pUsuario");
+        pUsuario.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");
+
+        const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");*/
+
+        const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+        const liPersona = document.getElementById("liPersona").removeAttribute("style");
+        const pPersona = document.getElementById("pPersona").removeAttribute("style");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+        const liCargos = document.getElementById("liCargos").removeAttribute("style");
+        const pCargos = document.getElementById("pCargos").removeAttribute("style");
+
+        const liOpcionRol = document.getElementById("liOpcionRol").removeAttribute("style");
+        const liRol = document.getElementById("liRol").removeAttribute("style");
+        const pRol = document.getElementById("pRol").removeAttribute("style");
+
+        /*const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");*/
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionUsuario;
+        botonPulsadoli = liUsuario;
+        botonPulsadop = pUsuario;
+
+      });
+
+      $("#opcion_archivos").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/DOCUMENTOS");
+
+        const liOpcionArchivoR = document.getElementById("liOpcionArchivoR");
+        liOpcionArchivoR.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liArchivoR = document.getElementById("liArchivoR");
+        liArchivoR.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pArchivoR = document.getElementById("pArchivoR");
+        pArchivoR.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        /*const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");
+
+        const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+        const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+        const pUsuario = document.getElementById("pUsuario").removeAttribute("style");*/
+
+        const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");
+
+        /* const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+         const liPersona = document.getElementById("liPersona").removeAttribute("style");
+         const pPersona = document.getElementById("pPersona").removeAttribute("style");
+ 
+         const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+         const liCargos = document.getElementById("liCargos").removeAttribute("style");
+         const pCargos = document.getElementById("pCargos").removeAttribute("style");*/
+
+        const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = document.getElementById("liOpcionArchivoR");
+        botonPulsadoli = document.getElementById("liArchivoR");
+        botonPulsadop = document.getElementById("pArchivoR");
+
+      });
+
+      $("#opcion_tipoArchivos").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/TIPOARCHIVO");
+
+        const liOpcionTarchivos = document.getElementById("liOpcionTarchivos");
+        liOpcionTarchivos.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liTarchivos = document.getElementById("liTarchivos");
+        liTarchivos.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pTarchivos = document.getElementById("pTarchivos");
+        pTarchivos.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");*/
+
+        /*const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+        const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+        const pUsuario = document.getElementById("pUsuario").removeAttribute("style");
+
+        const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");*/
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");
+
+        /*const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+        const liPersona = document.getElementById("liPersona").removeAttribute("style");
+        const pPersona = document.getElementById("pPersona").removeAttribute("style");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+        const liCargos = document.getElementById("liCargos").removeAttribute("style");
+        const pCargos = document.getElementById("pCargos").removeAttribute("style");*/
+
+        const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionTarchivos;
+        botonPulsadoli = liTarchivos;
+        botonPulsadop = pTarchivos;
+
+      });
+
+      $("#opcion_Carpeta").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/CARPETAS");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR");
+        liOpcionCarpetaR.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liCarpetaR = document.getElementById("liCarpetaR");
+        liCarpetaR.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pCarpetaR = document.getElementById("pCarpetaR");
+        pCarpetaR.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        /* const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+         const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+         const pUsuario = document.getElementById("pUsuario").removeAttribute("style");*/
+
+        /*const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");*/
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");*/
+
+        const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        /*const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+        const liPersona = document.getElementById("liPersona").removeAttribute("style");
+        const pPersona = document.getElementById("pPersona").removeAttribute("style");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+        const liCargos = document.getElementById("liCargos").removeAttribute("style");
+        const pCargos = document.getElementById("pCargos").removeAttribute("style");*/
+
+        const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+
+        botonPulsado = liOpcionCarpetaR;
+        botonPulsadoli = liCarpetaR;
+        botonPulsadop = pCarpetaR;
+      });
+
+      $("#opcion_Seccion").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/UNIDAD");
+
+        const liOpcionSecciones = document.getElementById("liOpcionSecciones");
+        liOpcionSecciones.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liSecciones = document.getElementById("liSecciones");
+        liSecciones.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pSecciones = document.getElementById("pSecciones");
+        pSecciones.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");*/
+
+        const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+        const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+        const pUsuario = document.getElementById("pUsuario").removeAttribute("style");
+
+        /*const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");*/
+
+        const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+        const liPersona = document.getElementById("liPersona").removeAttribute("style");
+        const pPersona = document.getElementById("pPersona").removeAttribute("style");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+        const liCargos = document.getElementById("liCargos").removeAttribute("style");
+        const pCargos = document.getElementById("pCargos").removeAttribute("style");
+
+        const liOpcionRol = document.getElementById("liOpcionRol").removeAttribute("style");
+        const liRol = document.getElementById("liRol").removeAttribute("style");
+        const pRol = document.getElementById("pRol").removeAttribute("style");
+
+        /*const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");*/
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionSecciones;
+        botonPulsadoli = liSecciones;
+        botonPulsadop = pSecciones;
+
+      });
+
+      $("#opcion_Persona").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/PERSONA");
+
+        const liOpcionPersona = document.getElementById("liOpcionPersona");
+        liOpcionPersona.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px; transition: all 0.3s ease-out;");
+        const liPersona = document.getElementById("liPersona");
+        liPersona.setAttribute("style", "color: rgb(52, 52, 52); transition: all 0.3s ease-out;");
+        const pPersona = document.getElementById("pPersona");
+        pPersona.setAttribute("style", "color: rgb(52, 52, 52); transition: all 0.3s ease-out;");
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");*/
+
+        const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+        const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+        const pUsuario = document.getElementById("pUsuario").removeAttribute("style");
+
+        /*const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");*/
+
+        const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+        const liCargos = document.getElementById("liCargos").removeAttribute("style");
+        const pCargos = document.getElementById("pCargos").removeAttribute("style");
+
+        const liOpcionRol = document.getElementById("liOpcionRol").removeAttribute("style");
+        const liRol = document.getElementById("liRol").removeAttribute("style");
+        const pRol = document.getElementById("pRol").removeAttribute("style");
+
+        /*const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");*/
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionPersona;
+        botonPulsadoli = liPersona;
+        botonPulsadop = pPersona;
+      });
+
+      $("#opcion_Cargos").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/GARGOS");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos");
+        liOpcionCargos.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liCargos = document.getElementById("liCargos");
+        liCargos.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pCargos = document.getElementById("pCargos");
+        pCargos.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");*/
+
+        const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+        const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+        const pUsuario = document.getElementById("pUsuario").removeAttribute("style");
+
+        /*const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");*/
+
+        const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");
+
+        const liOpcionRol = document.getElementById("liOpcionRol").removeAttribute("style");
+        const liRol = document.getElementById("liRol").removeAttribute("style");
+        const pRol = document.getElementById("pRol").removeAttribute("style");
+
+        const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+        const liPersona = document.getElementById("liPersona").removeAttribute("style");
+        const pPersona = document.getElementById("pPersona").removeAttribute("style");
+
+        /*const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");*/
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionCargos;
+        botonPulsadoli = liCargos;
+        botonPulsadop = pCargos;
+
+      });
+
+      $("#opcion_Volumen").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/VOLUMEN");
+
+        const liOpcionVolumen = document.getElementById("liOpcionVolumen");
+        liOpcionVolumen.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liVolumen = document.getElementById("liVolumen");
+        liVolumen.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pVolumen = document.getElementById("pVolumen");
+        pVolumen.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");*/
+
+        /*const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+        const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+        const pUsuario = document.getElementById("pUsuario").removeAttribute("style");*/
+
+        const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");
+
+        /*const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+        const liPersona = document.getElementById("liPersona").removeAttribute("style");
+        const pPersona = document.getElementById("pPersona").removeAttribute("style");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+        const liCargos = document.getElementById("liCargos").removeAttribute("style");
+        const pCargos = document.getElementById("pCargos").removeAttribute("style");
+
+        const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");*/
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionVolumen;
+        botonPulsadoli = liVolumen;
+        botonPulsadop = pVolumen;
+      });
+
+      $("#opcion_SerieDoc").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/SERIEDOC");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc");
+        liOpcionSerieDoc.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liSerieDoc = document.getElementById("liSerieDoc");
+        liSerieDoc.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pSerieDoc = document.getElementById("pSerieDoc");
+        pSerieDoc.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");*/
+
+        /*const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+        const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+        const pUsuario = document.getElementById("pUsuario").removeAttribute("style");*/
+
+        const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");
+
+        /*const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+        const liPersona = document.getElementById("liPersona").removeAttribute("style");
+        const pPersona = document.getElementById("pPersona").removeAttribute("style");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+        const liCargos = document.getElementById("liCargos").removeAttribute("style");
+        const pCargos = document.getElementById("pCargos").removeAttribute("style");
+
+        const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");*/
+
+        const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionSerieDoc;
+        botonPulsadoli = liSerieDoc;
+        botonPulsadop = pSerieDoc;
+
+      });
+
+      $("#opcion_Rol").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/ROL");
+
+        const liOpcionRol = document.getElementById("liOpcionRol");
+        liOpcionRol.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liRol = document.getElementById("liRol");
+        liRol.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pRol = document.getElementById("pRol");
+        pRol.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        /*const liOpcionArchivoR = document.getElementById("liOpcionArchivoR").removeAttribute("style");
+        const liArchivoR = document.getElementById("liArchivoR").removeAttribute("style");
+        const pArchivoR = document.getElementById("pArchivoR").removeAttribute("style");*/
+
+        const liOpcionUsuario = document.getElementById("liOpcionUsuario").removeAttribute("style");
+        const liUsuario = document.getElementById("liUsuario").removeAttribute("style");
+        const pUsuario = document.getElementById("pUsuario").removeAttribute("style");
+
+        /*const liOpcionTarchivos = document.getElementById("liOpcionTarchivos").removeAttribute("style");
+        const liTarchivos = document.getElementById("liTarchivos").removeAttribute("style");
+        const pTarchivos = document.getElementById("pTarchivos").removeAttribute("style");
+
+        const liOpcionCarpetaR = document.getElementById("liOpcionCarpetaR").removeAttribute("style");
+        const liCarpetaR = document.getElementById("liCarpetaR").removeAttribute("style");
+        const pCarpetaR = document.getElementById("pCarpetaR").removeAttribute("style");*/
+
+        const liOpcionSecciones = document.getElementById("liOpcionSecciones").removeAttribute("style");
+        const liSecciones = document.getElementById("liSecciones").removeAttribute("style");
+        const pSecciones = document.getElementById("pSecciones").removeAttribute("style");
+
+        const liOpcionCargos = document.getElementById("liOpcionCargos").removeAttribute("style");
+        const liCargos = document.getElementById("liCargos").removeAttribute("style");
+        const pCargos = document.getElementById("pCargos").removeAttribute("style");
+
+        const liOpcionPersona = document.getElementById("liOpcionPersona").removeAttribute("style");
+        const liPersona = document.getElementById("liPersona").removeAttribute("style");
+        const pPersona = document.getElementById("pPersona").removeAttribute("style");
+
+        /*const liOpcionVolumen = document.getElementById("liOpcionVolumen").removeAttribute("style");
+        const liVolumen = document.getElementById("liVolumen").removeAttribute("style");
+        const pVolumen = document.getElementById("pVolumen").removeAttribute("style");
+
+        const liOpcionSerieDoc = document.getElementById("liOpcionSerieDoc").removeAttribute("style");
+        const liSerieDoc = document.getElementById("liSerieDoc").removeAttribute("style");
+        const pSerieDoc = document.getElementById("pSerieDoc").removeAttribute("style");*/
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionRol;
+        botonPulsadoli = liRol;
+        botonPulsadop = pRol;
+
+      });
+
+      $("#opcionInicial").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/BusquedaArchivo");
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+      });
+
+      $("#opcionFT").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/FormTRANSFERENCIA");
+        const liOpcionFT = document.getElementById("liOpcionFT");
+        liOpcionFT.setAttribute("style", "background-color: rgb(237, 237, 237); border-radius: 4px;");
+        const liFT = document.getElementById("liFT");
+        liFT.setAttribute("style", "color: rgb(52, 52, 52);");
+        const pFT = document.getElementById("pFT");
+        pFT.setAttribute("style", "color: rgb(52, 52, 52);");
+
+        botonPulsado.removeAttribute("style");
+        botonPulsadoli.removeAttribute("style");
+        botonPulsadop.removeAttribute("style");
+
+        botonPulsado = liOpcionFT;
+        botonPulsadoli = liFT;
+        botonPulsadop = pFT;
+
+      });
+
+      // Función para cargar el contenido de la opción seleccionada
+      function cargarContenido(url) {
+        const miDiv = document.getElementById('contenido');
+        miDiv.removeAttribute("style");
+
+        $.ajax({
+          url: url,
+          method: "GET",
+          success: function (data) {
+            $("#contenido").html(data); // Actualizar el contenido de la ventana
+            //mostrarElemento();
+            miDiv.setAttribute("style", "opacity: 1; width: 100%; transition: all 0.5s ease-out;");
+
+          }
+        });
+      }
+      $('#fotoPerfilModal').bs_dropzone({
+        maxFiles: 1,
+        acceptedFiles: '.jpeg,.jpg,.png,.bmp',
+        boxClass: 'alert p-5 text-center font-weight-bold',
+        noneColorClass: 'alert alert-success alert-dismissible',
+        dragColorClass: 'alert alert-warning alert-dismissible',
+        doneColorClass: 'alert alert-success alert-dismissible',
+        failColorClass: 'alert alert-danger alert-dismissible',
+        language: {
+          emptyText: 'Introdusca o arrastre un archivo IMG',
+          dragText: '[Soltar aquí]',
+          dropText: 'El archivo se subió correctamente'
+        }
+      });
+    });
+
+    function botonSeleccionado(id) {
+      var elemento = document.getElementById(id);
+      botonPulsado = elemento.id;
+    }
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('#FormularioPerfil').submit(function (event) {
+        event.preventDefault();
+        var form = document.getElementById("FormularioPerfil");
+        var action = form.action;
+        var formData = new FormData(form);
+        //alert("la action es: "+action);
+        //var formData = $(this).serialize();
+        $.ajax({
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: formData,
+          contentType: false,  // No establecer el tipo de contenido aquí
+          processData: false,  // No procesar los datos
+          //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+          success: function (response) {
+            location.reload();
+          },
+          error: function (xhr, status, error) {
+            toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+            console.error(error);
+            // Manejo de errores
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+    function CerrarSesion(id) {
+      $.ajax({
+        url: "/CerrarSesion/" + id,
+        type: "POST",
+        success: function (data) {
+          location.reload();
+        }
+      });
+
+    }
+  </script>
+
+  <script>
+    // Agregar el event listener para el evento 'popstate'
+    window.addEventListener('popstate', function (event) {
+      // Restaurar el estado original del historial para evitar la redirección
+      history.pushState(null, null, window.location.href);
+      // Aquí puedes poner el código que deseas ejecutar cuando se retrocede en el historial del navegador
+      console.log('Se retrocedió en el historial del navegador');
+    });
+  </script>
+
+  <style>
+    .image-container {
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      width: 250px;
+      height: 250px;
+    }
+
+    .image-container img {
+      transition: transform 0.3s;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-container:hover img {
+      transform: scale(1.2);
+    }
+
+    .ventana {
+      width: 90%;
+      opacity: 0;
+    }
+  </style>
+
+  <style>
+    .gradient-custom {
+      background: #f3f2f1;
+      background: linear-gradient(to right, rgb(255, 255, 255), rgb(251, 161, 7), rgb(251, 161, 7), rgb(255, 255, 255), rgb(252, 252, 252));
+    }
+  </style>
+  <script>
+    toastr.options = {
+      "closeButton": true
+    }
+  </script>
+  <!-- Select2 -->
+  <script src="../static/dist/js/select2 4.1.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>unidades</title>
+
+</head>
+
+<body>
+  <!-- Content Header (Page header) -->
+  <div id="contenidoVolumen">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">MODULO VOLUMEN/TOMO</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Dashboard v1</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- Preloader -->
+
+    <div id="FormularioVol"></div>
+    <div id="TablaVol"></div>
+
+
+
+
+    <!-- jQuery 
+    <script src="../../../../plugins/jquery/jquery.min.js"></script>-->
+
+
+    <script th:inline="javascript">
+      // Carga inicial del div
+      cargarTabla();
+      cargarFormulario();
+
+      function cargarTabla() {
+        $.ajax({
+          type: 'POST',
+          url: "/RegistrosVolumenes",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#TablaVol").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+      }
+
+      function cargarFormulario() {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevoRegistroVolumen",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#FormularioVol").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+      }
+
+      function cancelarMod() {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevoRegistroVolumen",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#FormularioVol").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            toastr.info('Modificacion Cancelada');
+          }
+        });
+      }
+
+      function Cancelar() {
+        $.ajax({
+          url: "/VOLUMEN",
+          type: "GET",
+          success: function (data) {
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            toastr.info('Accion Cancelada');
+            $("#contenidoVolumen").html(data); // Actualizar el contenido de la ventana
+
+          }
+        });
+
+      }
+
+    </script>
+    <script>
+
+      function EliminarRegistro(id, nombre) { 
+
+        Swal.fire({
+          title: '!Atención¡',
+          text: '¿Estas Seguro que desea eliminar el registro " '+nombre+' "?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, eliminar!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            $.ajax({
+              type: 'POST',
+              url: "/EliminarRegistroVolumen/" + id,
+              success: function (response) {
+                cargarTabla();
+                Swal.fire(
+                  'Eliminado!',
+                  'Este registro se ha eliminado con éxito.',
+                  'success'
+                );
+              }, error: function (xhr, status, error) {
+                console.log(error);
+              }
+            });
+
+          }
+        });
+      }
+
+
+      function cargarModFormulario(id) {
+        //alert("AAAAAAAAAAAAAAAAAAA");
+        $.ajax({
+          url: '/ModVolumen/' + id, // Reemplaza '/ruta_del_servidor' por la URL de tu servidor
+          method: 'GET', // Utiliza el método HTTP que corresponda (GET, POST, etc.)
+          // Envía el parámetro "id" al servidor
+          success: function (response) {
+
+            $("#FormularioVol").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            var div = document.getElementById("FormularioVol");
+            div.scrollIntoView({ behavior: 'smooth' });
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            toastr.info('¿Modificar Registro?');
+          },
+          error: function (xhr, status, error) {
+            // Maneja los errores de la solicitud AJAX
+            console.log(error);
+          }
+        });
+      }
+      $(document).ready(function () {
+        $('#dataTable').DataTable();
+      });
+    </script>
+
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,162 @@
+<div>
+  <!-- /.card -->
+  <!-- Horizontal Form -->
+  <div class="card card-info card-outline">
+    <div class="card-header">
+      <h2 class="m-0 font-weight-bold card-title"
+        th:text="${edit}? 'Modificar Formulario de Transferencia' : 'Registrar Formulario de Transferencia'"></h2>
+
+      <div class="card-tools">
+        <a type="button" class="btn btn-tool" data-card-widget="collapse">
+          <i class="fas fa-minus"></i>
+        </a>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="line-chart">
+        <form class="form-horizontal" id="FormularioRegistrarFT" method="POST"
+          th:action="${edit} ?@{/ModFormTRANSFERENCIAG} : @{/GuardarRegistroFormTRANSFERENCIA}">
+          <div class="card-body">
+            <div th:if="${edit=='true'}">
+              <input type="hidden" th:field="${FormularioTransferencia.id_formularioTransferencia}">
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group form-outline">
+                  <input type="number" th:field="${FormularioTransferencia.cantCajas}" class="form-control"
+                    placeholder="Introdusca la cantidad" min="0" required>
+                  <label class="form-label">Cantidad Cajas</label>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group form-outline">
+                  <input type="number" th:field="${FormularioTransferencia.cantDocumentos}" class="form-control"
+                    placeholder="Introdusca la cantidad" min="0" required>
+                  <label class="form-label">Cantidad de Documentos</label>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label class="form-label">Fecha de Extrema:</label>
+                  <input type="text" class="form-control datepickerformFT" name="fechaExtrema" id="fechaExtrema"
+                    placeholder="Seleccione una fecha" th:field="${FormularioTransferencia.fechaExtrema}" required />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="row">
+                    <div class="form-group">
+                      <label class="form-label">Unidad/Seccion</label>
+                      <select class="select-field" style="width: 100%;" th:field="${FormularioTransferencia.unidad}"
+                        id="selectSeccion">
+                        <optgroup th:label="${edit} ? ${FormularioTransferencia.unidad.unidadPadre.nombre} : ''">
+                          <option th:value="${edit} ? ${FormularioTransferencia.unidad.id_unidad} : ''"
+                            th:text="${edit} ? ${FormularioTransferencia.unidad.nombre} : 'Seleccionar'" selected>
+                          </option>
+                        </optgroup>
+
+                        <optgroup th:each="unidP: ${unidades}" th:label="${unidP.nombre}"
+                          th:if="${unidP.unidadPadre == null}">
+                          <option th:each="unid: ${unidP.subUnidades}" th:text="${unid.nombre}"
+                            th:value="${unid.id_unidad}">
+                        </optgroup>
+                        </option>
+                      </select>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer" style="background-color: white;">
+              <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+              <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+                class="btn btn-default float-right">Cancelar</a>
+            </div>
+            <!-- /.card-footer -->
+        </form>
+      </div>
+    </div>
+    <!-- /.card-body-->
+  </div>
+
+  <!-- /.card -->
+  <script>
+    $(document).ready(function () {
+      $('#FormularioRegistrarFT').submit(function (event) {
+        event.preventDefault();
+        var form = document.getElementById("FormularioRegistrarFT");
+        var action = form.action;
+        //alert("la action es: " + action);
+        var formData = $(this).serialize();
+        var selectSeccion = document.getElementById("selectSeccion").value;
+
+        if (selectSeccion != "") {
+          $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            contentType: 'application/x-www-form-urlencoded',
+            success: function (response) {
+              var mensaje = response;
+              if (mensaje == 'Se realizó el registro correctamente') {
+                cargarFormulario();
+                cargarTabla();
+                Swal.fire(
+                  'Registrado!',
+                  mensaje+'.',
+                  'success'
+                );
+                var div = document.getElementById("dataTable");
+                div.scrollIntoView({ behavior: 'smooth' });
+                //toastr.success(mensaje);
+              } else {
+                toastr.info(mensaje);
+              }
+
+              if (mensaje == "Se Modificó el registro correctamente") {
+                cargarFormulario();
+                cargarTabla();
+                var div = document.getElementById("dataTable");
+                div.scrollIntoView({ behavior: 'smooth' });
+                toastr.success(mensaje);
+              }
+
+            },
+            error: function (xhr, status, error) {
+              toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error);
+              console.error(error);
+              // Manejo de errores
+            }
+          });
+        } else if (selectSeccion == "") {
+          toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
+        }
+
+      });
+    });
+    function limpiarFormularioR() {
+      var form = document.getElementById("FormularioRegistrarFT");
+      form.reset();
+    }
+  </script>
+  <script>
+    document.querySelectorAll('.form-outline').forEach((formOutline) => {
+      new mdb.Input(formOutline).init();
+    });
+  </script>
+  <script>
+    $('.select-field').select2({
+      theme: 'bootstrap-5'
+    });
+  </script>
+  <script>
+    $(function () {
+      $('input.datepickerformFT').datepicker({
+        format: "DD/MM/YYYY",
+        minDate: "1900-01-01"
+      });
+    });
+  </script>
+</div>

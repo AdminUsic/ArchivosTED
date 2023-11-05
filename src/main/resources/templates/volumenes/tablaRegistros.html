@@ -1,0 +1,53 @@
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-info">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold card-title">Registros de Volumen/Tomos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Volumen/Tomo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                <tr th:each="vol, rowStat:${volumenes}" th:if="${vol.estado!='X'}">
+                                    <td th:text="${rowStat.count}"></td>
+                                    <td class="text-center" th:text="${vol.nombre}"></td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a class="btn btn-info" type="button" style="color: aliceblue;"
+                                                th:attr="onclick='cargarModFormulario(\'' + ${vol.id_volumen} + '\')'"
+                                                title="Modificar Registro"><li class="fas fa-pencil-alt "></li></a>
+                                            <a class=" btn btn-danger" type="button" style="color: aliceblue;"
+                                                th:attr="onclick='EliminarRegistro(\'' + ${vol.id_volumen} + '\', \'' + ${vol.nombre} + '\')'" 
+                                                title="Eliminar Registro"><li class="fa-solid fa-trash"></li></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-secondary">
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Volumen/Tomo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+        <script>
+            $(document).ready(function () {
+                $('#dataTable').DataTable();
+            });
+        </script>
+    </section>

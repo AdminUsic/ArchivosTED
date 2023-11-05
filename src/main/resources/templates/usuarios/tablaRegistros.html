@@ -1,0 +1,66 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-info">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold card-title">Registros de Usuarios</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Foto</th>
+                                <th>Nombres y Apellidos</th>
+                                <th>Nombre de Usuario</th>
+                                <th>Contraseña</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            <tr th:each="user, rowStat:${usuarios}" th:if="${user.estado!='X'}">
+                                <td th:text="${rowStat.count}"></td>
+                                <td class="text-center">
+                                    
+                                        <div class="image">
+                                            <img th:src="@{'/verFoto/' + ${user.id_usuario}}" 
+                                                class="img-circle elevation-1" alt="User Image" width="50px" height="50px">
+                                        </div>
+                                    
+                                </td>
+                                <td class="text-center" th:text="${user.persona.nombre}+' '+${user.persona.apellido}"></td>
+                                <td class="text-center" th:text="${user.nombre_user}"></td>
+                                <td class="text-center" th:text="${user['contraseña']}"></td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-info" type="button" style="color: aliceblue;"
+                                            th:attr="onclick='cargarModFormulario(\'' + ${user.id_usuario} + '\')'"><li class="fas fa-pencil-alt "></li></a>
+                                        <a class="btn btn-danger" type="button" style="color: aliceblue;"
+                                            th:attr="onclick='EliminarRegistro(\'' + ${user.id_usuario} + '\', \'' + ${user.nombre_user} + '\', \'' + ${user.persona.nombre}+' '+${user.persona.apellido} + '\')'"><li class="fa-solid fa-trash "></li></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Foto</th>
+                                <th>Nombres y Apellidos</th>
+                                <th>Nombre de Usuario</th>
+                                <th>Contraseña</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
+</section>

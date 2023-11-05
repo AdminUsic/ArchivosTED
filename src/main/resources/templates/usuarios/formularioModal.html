@@ -1,0 +1,171 @@
+<div class="container-fluid">
+    <!-- /.card -->
+    <!-- Horizontal Form -->
+    <div class="card card-info">
+        <div class="card-header">
+            <h2 class="m-0 font-weight-bold card-title" th:text="'Pefil: '+${perfil.nombre_user}">
+            </h2>
+            <!--<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>-->
+        </div>
+        
+        <!-- /.card-header -->
+        <!-- form start -->
+        <form class="form-horizontal" id="FormularioPerfil" method="POST" th:action="@{/ModUsuarioPerfilG}"
+            enctype="multipart/form-data">
+            <div class="card-body">
+                <div>
+                    <input type="hidden" th:field="${perfil.sesion}">
+                    <input type="hidden" th:field="${perfil.id_usuario}">
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group form-outline">
+                                    <input type="text" th:value="${perfil.persona.nombre}" class="form-control"
+                                        placeholder="Nombre Usuario" name="nombreP">
+                                    <label class="form-label">Nombre</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group form-outline">
+                                    <input type="text" th:value="${perfil.persona.apellido}" class="form-control"
+                                        placeholder="Contraseña" name="apellido">
+                                    <label class="form-label">Apellido</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- text input -->
+                        <div class="form-group form-outline">
+                            <input type="text" th:value="${perfil.persona.ci}" class="form-control"
+                                placeholder="Nombre Usuario" name="ci">
+                            <label class="form-label">C.I.</label>
+                        </div>
+                        <div class="form-group form-outline">
+                            <input type="text" th:field="${perfil.nombre_user}" class="form-control"
+                                placeholder="Nombre Usuario">
+                            <label class="form-label">Nombre Usuario</label>
+                        </div>
+                        <div class="form-group form-outline">
+                            <input type="text" th:field="${perfil.contraseña}" class="form-control"
+                                placeholder="Contraseña">
+                            <label class="form-label">Contraseña</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Adjuntar Foto</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="fotoPerfil" name="foto"
+                                        accept=".jpg,.jpeg,.png,.bmp">
+                                        <div id="alertasArchivoFotoPerfil"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="filtr-item col-sm-6">
+                                    <p class="text-muted m-0">Foto de Perfil:</p>
+                                    <div class="image-container">
+                                        <img id="fotoImg" class="icono-image"
+                                            th:src="@{'/verFoto/' + ${perfil.id_usuario}}" alt="Imagen 1"
+                                            crossorigin="anonymous">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer" style="background-color: white;">
+                <button type="submit" class="btn btn-success"
+                    th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+                <a type="button" onclick="cerrarFormModalArchivo()" class="btn btn-default float-right"
+                    data-mdb-dismiss="modal" aria-label="Close">Cancelar</a>
+            </div>
+            <!-- /.card-footer -->
+        </form>
+    </div>
+    <!-- /.card -->
+    <script>
+        function limpiarFormularioR() {
+            var form = document.getElementById("FormularioPerfil");
+            form.reset();
+        }
+    </script>
+    <script>
+        $(function () {
+            bsCustomFileInput.init();
+        });
+    </script>
+    <script>
+        var fileInput;
+        var nombreArchivo;
+        // Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
+        document.getElementById("fotoPerfil").addEventListener("change", function () {
+            // Obtenemos el elemento seleccionado
+            fileInput = document.getElementById("fotoPerfil");
+            nombreArchivo = fileInput.files[0].name;
+            // Verificamos si se seleccionó un archivo
+            if (fileInput.files.length > 0) {
+                // Obtenemos el nombre del archivo
+                var fileName = fileInput.files[0].name;
+
+                if (!isValidIMG(fileName)) {
+                    // Reseteamos el valor del input file para borrar la selección inválida
+                    fileInput.value = "";
+                    $('#alertasArchivoFotoPerfil').html('<div class="alert alert-danger alert-dismissible">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        '<h5><i class="icon fas fa-ban"></i> El archivo no es Valido!</h5>' +
+                        'Solo se Admite Archivos IMG' +
+                        '</div>');
+                } else {
+
+                    $('#alertasArchivoFotoPerfil').html('<div class="alert alert-success alert-dismissible">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        '<h5><i class="icon fas fa-check"></i> El archivo '+nombreArchivo+' es Valido!</h5>' +
+                        '</div>');
+                }
+            }
+        });
+
+        // Función para validar si el nombre del archivo tiene extensión PDF
+        function isValidIMG(fileName) {
+            var validExtensions = ["jpg", "jpeg", "png", "bmp"];
+            var fileExtension = fileName.split(".").pop().toLowerCase();
+            return validExtensions.indexOf(fileExtension) !== -1;
+        }
+
+        $(function () {
+
+            $('#fotoPerfil').bs_dropzone({
+                maxFiles: 1,
+                acceptedFiles: '.jpeg,.jpg,.png,.bmp',
+                boxClass: 'alert p-5 text-center font-weight-bold',
+                noneColorClass: 'alert alert-success alert-dismissible',
+                dragColorClass: 'alert alert-warning alert-dismissible',
+                doneColorClass: 'alert alert-success alert-dismissible',
+                failColorClass: 'alert alert-danger alert-dismissible',
+                language: {
+                    emptyText: 'Introdusca o arrastre un archivo IMG',
+                    dragText: '[Soltar aquí]',
+                    dropText: 'El archivo se subió correctamente'
+                }
+            });
+
+        });
+
+        function cerrarFormModalArchivo() {
+            $('#ModalModPerfil').modal('hide');
+        }
+
+    </script>
+    <script>
+        document.querySelectorAll('.form-outline').forEach((formOutline) => {
+            new mdb.Input(formOutline).init();
+        });
+    </script>
+
+</div>

@@ -1,0 +1,187 @@
+<div class="modal-header">
+    <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? ' Modificar Carpeta ' : ' Crear una nueva Carpeta '">
+    </h2>
+    <a type="button" class="btn-close" aria-label="Cerrar" data-mdb-toggle="modal"></a>
+</div>
+<div class="modal-body">
+
+    <!-- /.card -->
+    <!-- Horizontal Form -->
+    <div class="card card-info">
+        <!-- /.card-header -->
+        <!-- form start -->
+        <form class="form-horizontal" id="FormularioRegistrarCarpetaIco" method="POST"
+            th:action="${edit} ?@{/ModCarpetaG} : @{/RegistrarCarpeta}">
+            <div class="card-body">
+
+                <div th:if="${edit=='true'}">
+                    <input type="hidden" th:field="${carpeta.id_carpeta}">
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label for="tipoArchivo">Unidad/Seccion</label>
+                            <select class="select-fieldModalCarp" style="width: 100%;" th:field="${carpeta.unidad}"
+                                id="selectUnidadCModal">
+                                <option th:value="${edit} ? ${carpeta.unidad.id_unidad} : ''"
+                                    th:text="${carpeta.unidad != null} ? ${carpeta.unidad.nombre} : 'Seleccionar'"
+                                    selected></option>
+                                <option th:each="unid: ${unidades}" th:text="${unid.nombre}"
+                                    th:value="${unid.id_unidad}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoArchivo">Tomo/Volumen</label>
+                            <select class="select-fieldModalCarp" style="width: 100%;" th:field="${carpeta.volumen}"
+                                id="selectVolumenModal">
+                                <option th:value="${edit} ? ${carpeta.volumen.id_volumen} : ''"
+                                    th:text="${carpeta.volumen != null} ? ${carpeta.volumen.nombre} : 'Seleccionar'"
+                                    selected></option>
+                                <option th:each="vol: ${volumenes}" th:text="${vol.nombre}"
+                                    th:value="${vol.id_volumen}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <!-- text input 
+                        <div class="form-group">
+                            <label for="tipoArchivo">Serie Documental</label>
+                            <select class="select-fieldModalCarp" style="width: 100%;" id="selectSerieDModal"
+                                th:field="${carpeta.serieDocumental}">
+                                <optgroup
+                                    th:label="${carpeta.serieDocumental!=null}? ${carpeta.serieDocumental.nombre} : ''">
+                                    <option th:value="${edit} ? ${carpeta.serieDocumental.id_serie} : ''"
+                                        th:text="${carpeta.serieDocumental!= null} ? ${carpeta.serieDocumental.nombre} : 'Seleccionar'"
+                                        selected></option>
+                                </optgroup>
+                                <optgroup th:each="serieP: ${seriesDocs}" th:label="${serieP.nombre}"
+                                    th:if="${serieP.seriePadre==null}">
+                                    <option th:each="serie: ${serieP.subSeries}" th:text="${serie.nombre}"
+                                        th:value="${serie.id_serie}">
+                                    </option>
+                                </optgroup>
+                            </select>
+                        </div>-->
+                        <div class="form-group">
+                            <label for="tipoArchivo">Serie Documental</label>
+                            <select class="select-fieldModalCarp" style="width: 100%;" id="selectSerieDModal"
+                                th:field="${carpeta.serieDocumental}">
+                                <option th:value="${edit} ? ${carpeta.serieDocumental.id_serie} : ''"
+                                    th:text="${carpeta.serieDocumental!= null} ? ${carpeta.serieDocumental.nombre} : 'Seleccionar'"
+                                    selected></option>
+                                <option th:each="serie: ${seriesDocs}" th:text="${serie.nombre}"
+                                    th:value="${serie.id_serie}" th:if="${serie.seriePadre==null}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Gestion</label>
+                            <select class="select-fieldModalCarp" style="width: 100%;" id="años2" name="gestion">
+                                <option th:text="${edit}? ${carpeta.gestion} : 'Seleccionar'"
+                                    th:value="${edit}? ${carpeta.gestion} : ''"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer" style="background-color: white;">
+                <button type="submit" class="btn btn-success" data-mdb-dismiss="modal" aria-label="Cerrar"
+                    th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+                <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" data-mdb-dismiss="modal"
+                    aria-label="Cerrar" class="btn btn-default float-right">Cancelar</a>
+            </div>
+            <!-- /.card-footer -->
+        </form>
+    </div>
+    <!-- /.card -->
+    <script>
+        $(document).ready(function () {
+            $('#FormularioRegistrarCarpetaIco').submit(function (event) {
+                event.preventDefault();
+                var form = document.getElementById("FormularioRegistrarCarpetaIco");
+                var action = form.action;
+                //alert("la action es: "+action);
+                var formData = $(this).serialize();
+
+                var selectUnidadCModal = document.getElementById("selectUnidadCModal").value;
+                var selectVolumenModal = document.getElementById("selectVolumenModal").value;
+                var selectSerieDModal = document.getElementById("selectSerieDModal").value;
+                var selectGestionModal = document.getElementById("años2").value;
+
+                if (selectUnidadCModal != "" && selectVolumenModal != "" && selectSerieDModal != "" && selectGestionModal != "") {
+                    $.ajax({
+                        type: 'POST',
+                        url: $(this).attr('action'),
+                        data: formData,
+                        contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+                        success: function (response) {
+                            var mensajeConf = response;
+                            if (mensajeConf == "Se ha Modificado el registro Correctamente") {
+                                cargarRegistroIco();
+                                cargarFormularioModal();
+                                Swal.fire(
+                                    'Registrado!',
+                                    'Los datos del Registro se han Modificado Correctamente.',
+                                    'success'
+                                );
+                                //toastr.success('Los datos del Registro se han Modificado Correctamente');
+                            } else if (mensajeConf == "Se guardó el nuevo registro Correctamente") {
+                                cargarRegistroIco();
+                                cargarFormularioModal();
+                                Swal.fire(
+                                    'Registrado!',
+                                    'Los datos se han Registrado Correctamente.',
+                                    'success'
+                                );
+                                //toastr.success('Los datos se han Registrado Correctamente');
+                            }
+                            var div = document.getElementById("dataTable");
+                            div.scrollIntoView({ behavior: 'smooth' });
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+                            console.error(error);
+                            // Manejo de errores
+                        }
+                    });
+                } else if (selectUnidadCModal == "") {
+                    toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
+                } else if (selectVolumenModal == "") {
+                    toastr.info('Tiene que seleccionar un Volumen para este Registro');
+                } else if (selectSerieDModal == "") {
+                    toastr.info('Tiene que seleccionar una Serie Documental para este Registro');
+                } else if (selectGestionModal == "") {
+                    toastr.info('Tiene que seleccionar un Gestion para este Registro');
+                }
+
+            });
+        });
+        function limpiarFormularioR() {
+            var form = document.getElementById("FormularioRegistrarCarpetaModal");
+            form.reset();
+        }
+    </script>
+    <script>
+        var startYear = 1900;
+        var endYear = new Date().getFullYear();
+        //var endYear = 2100;
+        // Obtén una referencia al elemento select
+        var select = document.getElementById("años2");
+        // Agrega el nuevo elemento option al select
+        for (var year = endYear; year >= startYear; year--) {
+            // Crea un nuevo elemento option
+            var option = document.createElement("option");
+            option.text = year;
+            option.value = year;
+            select.add(option);
+        }
+    </script>
+    <script>
+        $('.select-fieldModalCarp').select2({
+            theme: 'bootstrap-5'
+        });
+    </script>
+
+</div>

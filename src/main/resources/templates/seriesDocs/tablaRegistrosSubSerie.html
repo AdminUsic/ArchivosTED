@@ -1,0 +1,51 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-info">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold card-title">Sub Series</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTableSUB" width="100%" cellspacing="0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Sub Serie Documental</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodySUB">
+                            <tr th:each="subserieD, rowStat:${Subseries}">
+                                <td th:text="${rowStat.count}"></td>
+                                <td class="text-center" th:text="${subserieD.nombre}"></td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-info" type="button"
+                                            th:attr="onclick='cargarModFormulariosSubSerie(\'' + ${subserieD.id_serie} + '\')'"><li class="fas fa-pencil-alt"></li></a>
+                                        <a class="btn btn-danger" type="button"
+                                            th:attr="onclick='EliminarRegistroSubSerie(\'' + ${subserieD.id_serie} + '\', \'' + ${subserieD.nombre} + '\')'"><li class="fa-solid fa-trash"></li></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Sub Serie Documental</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+    <script>
+        $(document).ready(function () {
+            $('#dataTableSUB').DataTable();
+        });
+    </script>
+</section>

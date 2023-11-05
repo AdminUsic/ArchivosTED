@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carpetas</title>
+
+</head>
+
+<body>
+
+  <!-- Content Header (Page header) -->
+  <div class="container">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">MODULO CARPETAS/TOMOS</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <div class="btn-group">
+                <a class="btn btn-default" type="button" id="PorIcono">
+                  <li class="fas fa-th-large" id="liIco"></li>
+                </a>
+                <a class="btn btn-default" type="button" id="PorLista">
+                  <li class="fa-solid fa-list" id="liList"></li>
+                </a>
+              </div>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+
+    <!-------------- MODIFICAR CARPETA MODAL ---------------->
+    <div class="modal fade" id="FormModCarpModal" aria-labelledby="FormModCarpModal" tabindex="-1" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="formularioModCarpeta" style="overflow-y: auto;">
+        </div>
+      </div>
+    </div>
+    <!-- /.modal -->
+    <!-------------- MODAL CARPETA-------------->
+    <div class="modal fade" id="carpetaModal" tabindex="-1" aria-labelledby="carpetaModal" aria-hidden="true"
+      data-mdb-backdrop="static" style="overflow-y: auto;">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="ContenidoCarpeta">
+
+        </div>
+        <!-- /.modal-content -->
+      </div>
+    </div>
+    <!-- /.modal -->
+
+    <!-------------- MODAL ARCHIVO ------------>
+    <div class="modal fade" id="archivoModal" tabindex="-1" aria-labelledby="archivoModal" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="ContenidoArchivo" style="max-height: 600px; ">
+          <div class="modal-header">
+            <h1>asdsad</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-------------- CARPETA MODAL LISTA---------------->
+    <div class="modal fade" id="AbreCarpetaArchivoList" aria-labelledby="AbreCarpetaArchivoList" tabindex="-1"
+      aria-hidden="true" data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="ContenidoCarpetaList" style="overflow-y: auto;">
+        </div>
+      </div>
+    </div>
+    <!-- /.modal -->
+
+    <div id="VentanaVist"></div>
+
+    <script>
+      $('#myModal').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+      })
+    </script>
+
+    <script th:inline="javascript">
+
+      function cargarFormularioModal() {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevaCarpetaModal",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#formularioModCarpeta").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+      }
+
+      function cancelarMod() {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevaCarpeta",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#FormularioUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            cerrarModalFormCarpeta();
+            toastr.info('Modificacion Cancelada');
+          }
+        });
+      }
+
+      function Cancelar() {
+        $.ajax({
+          url: "/USUARIO",
+          type: "GET",
+          success: function (data) {
+            toastr.info('Accion Cancelada');
+            $("#contenidoUsuario").html(data); // Actualizar el contenido de la ventana
+
+          }
+        });
+
+      }
+
+    </script>
+
+    <script>
+
+      $(document).ready(function () {
+        $('#dataTable').DataTable();
+        TipoVista("/VistaIcoCar");
+      });
+
+      function AbrirCarpeta(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/ContenidoCarpeta/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#ContenidoCarpeta").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }, error: function (xhr, status, error) {
+
+            console.log(error);
+          }
+        });
+      }
+      function AbrirCarpetaList(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/ContenidoCarpetaList/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#ContenidoCarpetaList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            cargarFormularioArchivoList(id);
+            cargarTablaArchivoList(id);
+          }, error: function (xhr, status, error) {
+
+            console.log(error);
+          }
+        });
+      }
+
+      /*  function ContenidoArchivo(id) {
+          $.ajax({
+            type: 'GET',
+            url: '/ContenidoArchivo/' + id,  // Ruta del metodo del controlador en Spring Boot
+            success: function (response) {
+              $("#ContenidoArchivo").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+              //$('#pdfContainer').html('<embed src="/verPdf/' + id + '" type="application/pdf" width="100%" height="800px" />');
+            }
+          });
+        }*/
+
+      function AñadirArchivo(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/AgregarArchivo/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#body-Carpeta").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }, error: function (xhr, status, error) {
+
+            console.log(error);
+          }
+        });
+      }
+
+      function ModificarArchivo(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/ModificarArchivoC/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#body-Carpeta").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }, error: function (xhr, status, error) {
+
+            console.log(error);
+          }
+        });
+
+      }
+    </script>
+
+    <script>
+      $(function () {
+        var yearRangeStart = 1900;
+        var yearRangeEnd = new Date().getFullYear();
+        $("#fechaEmision").datepicker({
+          dateformat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true,
+          yearRange: yearRangeStart + ":" + yearRangeEnd,
+          autoclose: true,
+          todayHighlight: true
+        });
+        console.log("SE CARGO TODO");
+      });
+    </script>
+    <script>
+      //--------MODAL ARCHIVO CARPETA------------------
+      // Función para cerrar Modal 1 y abrir Modal 2
+      function cerrarCarpetaModalAbrirArchivoModal() {
+        const carpetaModal = new bootstrap.Modal(document.getElementById('carpetaModal'));
+        carpetaModal.hide();
+
+        // Escuchar el evento 'hidden.bs.modal' de Modal 1
+        carpetaModal._element.addEventListener('hidden.bs.modal', function () {
+          const archivoModal = new bootstrap.Modal(document.getElementById('archivoModal'));
+          archivoModal.show();
+        }, { once: true }); // Agregamos { once: true } para asegurarnos de que el evento se ejecute solo una vez
+      }
+
+      // Función para cerrar Modal 2 y abrir nuevamente Modal 1
+      function cerrarArchivoModalAbrirCarpetaModal() {
+        const archivoModal = new bootstrap.Modal(document.getElementById('archivoModal'));
+        archivoModal.hide();
+
+        // Escuchar el evento 'hidden.bs.modal' de Modal 2
+        archivoModal._element.addEventListener('hidden.bs.modal', function () {
+          const carpetaModal = new bootstrap.Modal(document.getElementById('carpetaModal'));
+          carpetaModal.show();
+        }, { once: true }); // Agregamos { once: true } para asegurarnos de que el evento se ejecute solo una vez
+      }
+    </script>
+
+    <script>
+      function ContenidoArchivo(id) {
+        $.ajax({
+          type: 'GET',
+          url: '/ContenidoArchivo/' + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#ContenidoArchivo").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            //$('#pdfContainer').html('<embed src="/verPdf/' + id + '" type="application/pdf" width="100%" height="800px" />');
+            $('#botonCerrarArchivoC').html('<a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar" data-mdb-toggle="modal" data-mdb-target="#carpetaModal"></a>');
+
+          }
+        });
+      }
+
+      function ContenidoArchivoList(id) {
+        $.ajax({
+          type: 'GET',
+          url: '/ContenidoArchivo/' + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#ContenidoArchivo").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            //$('#pdfContainer').html('<embed src="/verPdf/' + id + '" type="application/pdf" width="100%" height="800px" />');
+            $('#botonCerrarArchivoC').html('<a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar" data-mdb-toggle="modal" data-mdb-target="#AbreCarpetaArchivoList"></a>');
+
+          }
+        });
+      }
+
+      $("#PorIcono").click(function (e) {
+        e.preventDefault();
+        TipoVista("/VistaIcoCar");
+
+        const aPorIco = document.getElementById("PorIcono");
+        aPorIco.setAttribute("style", "background-color: rgb(52, 52, 52);");
+        const liPorIco = document.getElementById("liIco");
+        liPorIco.setAttribute("style", "color: rgb(252, 252, 252);");
+
+        const liPorList = document.getElementById("PorLista").removeAttribute("style");
+        const aPorList = document.getElementById("liList").removeAttribute("style");
+
+      });
+
+      $("#PorLista").click(function (e) {
+        e.preventDefault();
+        TipoVista("/VistaListCar");
+
+        const aPorList = document.getElementById("PorLista");
+        aPorList.setAttribute("style", "background-color: rgb(52, 52, 52);");
+        const liPorList = document.getElementById("liList");
+        liPorList.setAttribute("style", "color: rgb(252, 252, 252);");
+
+        const aPorIco = document.getElementById("PorIcono").removeAttribute("style");
+        const liPorIco = document.getElementById("liIco").removeAttribute("style");
+
+      });
+
+      function TipoVista(url) {
+        $.ajax({
+          url: url,
+          method: "POST",
+          success: function (data) {
+            $("#VentanaVist").html(data);
+          }
+        });
+      }
+    </script>
+  </div>
+</body>
+
+</html>

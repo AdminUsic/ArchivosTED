@@ -1,0 +1,63 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-info">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold card-title">Registros de Tipos de Archivos</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Serie Documental</th>
+                                <th>Sub Serie Documental</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            <tr th:each="serieD, rowStat:${seriesDocs}" th:if="${serieD.estado!='X' && serieD.seriePadre==null}">
+                                <td th:text="${rowStat.count}"></td>
+                                <td class="text-center" th:text="${serieD.nombre}"></td>
+                                <td class="text-center">
+                                    <div class="list-group">
+                                        <div th:if="${serieD.subSeries != null}">
+                                            <div th:each="subserie: ${serieD.subSeries}">
+                                                <a class="list-group-item list-group-item-action" th:text="${subserie.nombre}"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-success" type="button" data-toggle="modal" data-target="#modal_SubSerie" style="color: aliceblue;"
+                                            th:attr="onclick='cargarVentanaSubSeries(\'' + ${serieD.id_serie} + '\')'"><li class="fa-solid fa-plus"></li></a>
+                                        <a class="btn btn-info" type="button" style="color: aliceblue;"
+                                            th:attr="onclick='cargarModFormulario(\'' + ${serieD.id_serie} + '\')'"><li class="fas fa-pencil-alt"></li></a>
+                                        <a class="btn btn-danger" type="button" style="color: aliceblue;"
+                                            th:attr="onclick='EliminarRegistro(\'' + ${serieD.id_serie} + '\', \'' + ${serieD.nombre} + '\', \'' + ${serieD.subSeries.size} + '\')'"><li class="fa-solid fa-trash"></li></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Serie Documental</th>
+                                <th>Sub Serie Documental</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
+</section>

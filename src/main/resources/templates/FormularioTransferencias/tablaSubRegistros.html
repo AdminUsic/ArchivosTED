@@ -1,0 +1,70 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-info">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTableSUB" width="100%" cellspacing="0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Nro</th>
+                                <th>Nro. Caja</th>
+                                <th>Titulo del Documento</th>
+                                <th>Año</th>
+                                <th>Tomo/Volumen</th>
+                                <th>Cubierta</th>
+                                <th>Notas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodySUB">
+                            <tr th:each="caja, rowStat:${cajas}">
+                                <td th:text="${rowStat.count}"></td>
+                                <td class="text-center" th:text="${caja.Nro}"></td>
+                                <td class="text-center" th:text="${caja.NroCaja}"></td>
+                                <td class="text-center" th:text="${caja.tituloDoc}"></td>
+                                <td class="text-center" th:text="${caja.gestion}"></td>
+                                <td class="text-center" th:text="${caja.volumen.nombre}"></td>
+                                <td class="text-center" th:text="${caja.cubierta.nombre}"></td>
+                                <td class="text-center" th:text="${caja.notas}"></td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-info" type="button"
+                                            th:attr="onclick='cargarModSubFormulario(\'' + ${caja.id_caja} + '\')'">
+                                            <li class="fas fa-pencil-alt"></li>
+                                        </a>
+                                        <a class="btn btn-danger" type="button"
+                                            th:attr="onclick='EliminarSubRegistro(\'' + ${caja.id_caja} + '\')'">
+                                            <li class="fa-solid fa-trash"></li>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Nro</th>
+                                <th>Nro. Caja</th>
+                                <th>Titulo del Documento</th>
+                                <th>Año</th>
+                                <th>Tomo/Volumen</th>
+                                <th>Cubierta</th>
+                                <th>Notas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+    <script>
+        $(document).ready(function () {
+            $('#dataTableSUB').DataTable();
+        });
+    </script>
+</section>

@@ -1,0 +1,197 @@
+<div class="container-fluid">
+    <!-- /.card -->
+    <!-- Horizontal Form -->
+    <div class="card card-info">
+        <!-- /.card-header -->
+        <!-- form start -->
+        <form class="form-horizontal" id="SubFormularioT" method="POST"
+            th:action="${edit} ? @{/ModSubRegistroG} : @{/GuardarSubRegistro}" enctype="multipart/form-data">
+            <div class="card-body">
+                <div th:if="${edit == 'true'}">
+                    <input type="hidden" th:field="${caja.id_caja}" />
+                    <input type="hidden" th:field="${caja.formularioTransferencia}" id="id_formTransferencia">
+                </div>
+                <div id="FormTransferencia"></div>
+                <div class="row">
+                    <div class="row col-sm-6">
+                        <div class="col-sm-6">
+                            <div class="form-group form-outline">
+                                <input type="number" th:field="${caja.Nro}" class="form-control"
+                                    placeholder="Introdusca un numero" required />
+                                <label class="form-label">Nro.</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group form-outline">
+                                <input type="number" th:field="${caja.NroCaja}" class="form-control"
+                                    placeholder="Introdusca un numero" required />
+                                <label class="form-label">Nro. de Caja</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group form-outline">
+                            <input type="text" th:field="${caja.tituloDoc}" class="form-control"
+                                placeholder="Introdusca un nombre" required />
+                            <label class="form-label">Titulo del Documento</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="tipoArchivo">Tomo/Volumen</label>
+                            <select class="select-fieldSubForm" style="width: 100%;" th:field="${caja.volumen}"
+                                id="selectVolumen">
+                                <option th:value="${edit} ? ${caja.volumen.id_volumen} : ''"
+                                    th:text="${caja.volumen != null} ? ${caja.volumen.nombre} : 'Seleccionar'" selected>
+                                </option>
+                                <option th:each="vol: ${volumenes}" th:text="${vol.nombre}"
+                                    th:value="${vol.id_volumen}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group form-outline">
+                            <input type="text" th:field="${caja.notas}" class="form-control"
+                                placeholder="Introdusca un numero" required />
+                            <label class="form-label">Notas</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="tipoArchivo">Cubierta</label>
+                            <select class="select-fieldSubForm2" style="width: 100%;" th:field="${caja.cubierta}"
+                                id="selectCubierta">
+                                <option th:value="${edit} ? ${caja.cubierta.id_cubierta} : ''"
+                                    th:text="${edit} ? ${caja.cubierta.nombre} : 'Seleccionar'" selected>
+                                </option>
+                                <option th:each="cu: ${cubiertas}" th:text="${cu.nombre}" th:value="${cu.id_cubierta}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Año</label>
+                            <select class="select-fieldSubForm2" style="width: 100%;" id="años" name="gestion">
+                                <option th:text="${edit} ? ${caja.gestion} : 'Seleccionar'"
+                                    th:value="${edit} ? ${caja.gestion} : ''" th:selected="${edit}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer" style="background-color: white;">
+                    <button type="submit" class="btn btn-success"
+                        th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button>
+                    <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button"
+                        th:attr="onclick='cargarSubFormularios(\'' + ${caja.formularioTransferencia.id_formularioTransferencia} + '\')'"
+                        class="btn btn-default float-right">Cancelar</a>
+                </div>
+        </form>
+    </div>
+    <!-- /.card -->
+    <script>
+        $(document).ready(function () {
+            $('#SubFormularioT').submit(function (event) {
+                event.preventDefault();
+                //alert("la action es:");
+                var form = document.getElementById("SubFormularioT");
+                var fromT = document.getElementById("id_formTransferencia").value;
+                var action = form.action;
+                var accion = action.split('/');
+
+                //alert("la action es: " + accion[accion.length - 1]);
+
+                //var formData = new FormData(form);
+                // alert("la action es: "+action);
+                var formData = $(this).serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+                    //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+                    success: function (response) {
+                        //alert("el id del form trans es: "+fromT);
+
+                        cargarTabla();
+                        cargarSubFormularios(fromT);
+                        cargarSubTabla(fromT);
+                        //toastr.success('Los datos del Registro se han Modificado Correctamente');
+                        var div = document.getElementById("dataTable");
+                        div.scrollIntoView({ behavior: 'smooth' });
+
+                        if (accion[accion.length - 1] == 'GuardarSubRegistro') {
+                            Swal.fire(
+                                'Registrado!',
+                                'Se ha añadido un nuevo registro Correctamente.',
+                                'success'
+                            );
+                        } else {
+                            Swal.fire(
+                                'Modificado!',
+                                'Los datos del Registro se han Modificado Correctamente.',
+                                'success'
+                            );
+                        }
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+                        console.error(error);
+                        // Manejo de errores
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script>
+        Dropzone.options.myForm = {
+            maxFiles: 1,
+            autoProcessQueue: false,
+
+            init: function () {
+                var myForm = document.getElementById("FormularioRegistrarArchi");
+                var dropzone = this;
+
+                myForm.addEventListener("submit", function (event) {
+                    event.preventDefault();
+
+                    if (dropzone.getQueuedFiles().length > 0) {
+                        dropzone.processQueue();
+                    } else {
+                        myForm.submit();
+                    }
+                });
+            }
+        };
+    </script>
+    <script>
+        document.querySelectorAll('.form-outline').forEach((formOutline) => {
+            new mdb.Input(formOutline).init();
+        });
+    </script>
+    <script>
+        $('.select-fieldSubForm').select2({
+            theme: 'bootstrap-5'
+        });
+
+        $('.select-fieldSubForm2').select2({
+            theme: 'bootstrap-5'
+        });
+    </script>
+    <script>
+        var startYear = 1900;
+        var endYear = new Date().getFullYear();
+        //var endYear = 2100;
+        // Obtén una referencia al elemento select
+        var select = document.getElementById("años");
+        // Agrega el nuevo elemento option al select
+        for (var year = endYear; year >= startYear; year--) {
+            // Crea un nuevo elemento option
+            var option = document.createElement("option");
+            option.text = year;
+            option.value = year;
+            select.add(option);
+        }
+    </script>
+</div>

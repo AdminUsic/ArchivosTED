@@ -1,0 +1,90 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel" th:text="${NombUnidadPadre}"></h5>
+    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="container-fluid">
+    <!-- /.card -->
+    <!-- Horizontal Form -->
+    <div class="card card-info">
+        <div class="card-header">
+            <h2 class="m-0 font-weight-bold card-title"
+                th:text="${edit}? 'Modificar Sub Unidad/Sub Seccion' : 'Registrar Sub Unidad/Sub Seccion'"></h2>
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+        <form class="form-horizontal" id="FormularioRegistrarSubUnid" method="POST"
+            th:action="${edit} ?@{/ModUnidadG} : @{/GuardarRegistroUnidad}">
+            <div class="card-body">
+                <div th:if="${edit=='true'}">
+                    <input type="hidden" th:field="${SubUnidad.id_unidad}">
+                </div>
+                <input type="hidden" th:value="${id_UnidadPadre}" id="id_unidadPadre" name="id_unidadPadre">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group form-outline">
+                            <input type="text" th:field="${SubUnidad.nombre}" class="form-control"
+                                placeholder="Introdusca un nombre">
+                            <label class="form-label">Nombre de la Sub Seccion</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer" style="background-color: white;">
+                <button type="submit" class="btn btn-success"
+                    th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+                <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+                    class="btn btn-default float-right">Cancelar</a>
+            </div>
+            <!-- /.card-footer -->
+        </form>
+    </div>
+    <!-- /.card -->
+    <script>
+        $(document).ready(function () {
+            $('#FormularioRegistrarSubUnid').submit(function (event) {
+                event.preventDefault();
+                var form = document.getElementById("FormularioRegistrarSubUnid");
+                var action = form.action;
+                var idPadre = document.getElementById("id_unidadPadre").value;
+                //alert("la action es: "+action);
+                var formData = $(this).serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+                    success: function (response) {
+
+                        var mensaje = response;
+                        if (mensaje != "Ya existe un registro con este nombre") {
+                            cargarTabla();
+                            cargarFormularioSubUnidad(idPadre);
+                            cargarTablaSubUnidad(idPadre);
+                            var div = document.getElementById("dataTable");
+                            div.scrollIntoView({ behavior: 'smooth' });
+                            toastr.success(mensaje);
+                        } else {
+                            toastr.error(mensaje);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+                        console.error(error);
+                        // Manejo de errores
+                    }
+                });
+            });
+        });
+        function limpiarFormularioR() {
+            var form = document.getElementById("FormularioRegistrarUnid");
+            form.reset();
+        }
+    </script>
+    <script>
+        document.querySelectorAll('.form-outline').forEach((formOutline) => {
+            new mdb.Input(formOutline).init();
+        });
+    </script>
+
+</div>

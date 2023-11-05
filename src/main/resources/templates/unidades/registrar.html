@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>unidades</title>
+
+</head>
+
+<body>
+  <!-- Content Header (Page header) -->
+  <div id="contenidoUnidad">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">MODULO UNIDAD/AREA</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Dashboard v1</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- Preloader -->
+
+    <div class="modal fade" id="ModalSubUnidad" tabindex="-1" aria-labelledby="ModalSubUnidad" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div id="FormularioSubUnid"></div>
+          <div id="TablaSubUnid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="FormularioUnid"></div>
+    <div id="TablaUnid"></div>
+
+
+
+
+    <!-- jQuery 
+    <script src="../../../../plugins/jquery/jquery.min.js"></script>-->
+
+
+    <script th:inline="javascript">
+      // Carga inicial del div
+      cargarTabla();
+      cargarFormulario();
+
+      function cargarTabla() {
+        $.ajax({
+          type: 'POST',
+          url: "/RegistrosUnidades",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#TablaUnid").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+      }
+
+      function cargarFormulario() {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevaUnidad",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#FormularioUnid").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+      }
+
+      function cancelarMod() {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevaUnidad",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#FormularioUnid").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            toastr.info('Modificacion Cancelada');
+          }
+        });
+      }
+
+      function Cancelar() {
+        $.ajax({
+          url: "/UNIDAD",
+          type: "GET",
+          success: function (data) {
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            toastr.info('Accion Cancelada');
+            $("#contenidoUnidad").html(data); // Actualizar el contenido de la ventana
+
+          }
+        });
+
+      }
+
+    </script>
+    <script>
+
+      function EliminarRegistro(id, nombre, cantSubRegistro) {
+        var mensaje = '';
+        //alert(cantSubRegistro);
+        if (cantSubRegistro==0) {
+          mensaje = '¿Estas Seguro que desea eliminar el registro de la Unidad/Sección " '+nombre+' "?';
+        }
+        if(cantSubRegistro == 1) {
+          mensaje = '¿Estas Seguro que desea eliminar el registro de la Unidad/Sección " '+nombre+' ", la unidad/sección contiene " Una Sub Unidad/Sección "?';
+        }
+        if(cantSubRegistro > 1) {
+          mensaje = '¿Estas Seguro que desea eliminar el registro de la Unidad/Sección " '+nombre+' ", la unidad/sección contiene " '+cantSubRegistro+' Sub Unidades/Secciones "?';
+        }
+
+        Swal.fire({
+              title: '!Atención¡',
+              text: mensaje,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, eliminar!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+
+                $.ajax({
+                  type: 'POST',
+                  url: "/EliminarRegistroUnidad/" + id,
+                  success: function (response) {
+                    cargarTabla();
+
+                    Swal.fire(
+                      'Eliminado!',
+                      'Este registro se ha eliminado con éxito.',
+                      'success'
+                    );
+                  }, error: function (xhr, status, error) {
+                    console.log(error);
+                  }
+                });
+
+              }
+            })
+
+      }
+
+      /*function EliminarRegistro(id) {
+
+        Swal.fire({
+          title: '¿Eliminar Registro?',
+          type: 'error',
+          showCancelButton: true,
+          showConfirmButton: false,
+          cancelButtonText: "Cancelar",
+
+          html:
+            "<a type='button' class='btn btn-block btn-danger btn-lg' style='width: 150px; height: 50px; display: inline-block; align-items: center; justify-content: center;' onclick='eliminarRegistroSeleccionado(\"" + id + "\")'>" +
+            "Eliminar" +
+            "</a>",
+        }).then().done();
+      }
+
+      function eliminarRegistroSeleccionado(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/EliminarRegistroUnidad/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            cargarTabla();
+
+            Swal.close();
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            toastr.error('Se ha Eliminado un Registro');
+          }, error: function (xhr, status, error) {
+            // Maneja los errores de la solicitud AJAX
+            console.log(error);
+          }
+        });
+      }*/
+
+
+      function cargarModFormulario(id) {
+        //alert("AAAAAAAAAAAAAAAAAAA");
+        $.ajax({
+          url: '/ModUnidad/' + id, // Reemplaza '/ruta_del_servidor' por la URL de tu servidor
+          method: 'GET', // Utiliza el método HTTP que corresponda (GET, POST, etc.)
+          // Envía el parámetro "id" al servidor
+          success: function (response) {
+
+            $("#FormularioUnid").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            var div = document.getElementById("FormularioUnid");
+            div.scrollIntoView({ behavior: 'smooth' });
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            toastr.info('¿Modificar Registro?');
+          },
+          error: function (xhr, status, error) {
+            // Maneja los errores de la solicitud AJAX
+            console.log(error);
+          }
+        });
+      }
+      $(document).ready(function () {
+        $('#dataTable').DataTable();
+      });
+      //-----------------Sub Unidad-------------------------
+      function cargarVentanaSubUnidades(id) {
+        cargarFormularioSubUnidad(id);
+        cargarTablaSubUnidad(id);
+      }
+      function cargarTablaSubUnidad(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/RegistrosSubUnidades/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#TablaSubUnid").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            // Obtener la referencia al tbody de la tabla
+          }
+        });
+      }
+
+      function cargarFormularioSubUnidad(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevaSubUnidad/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#FormularioSubUnid").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+      }
+
+      function cargarFormularioModSubUnidad(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/ModSubUnidad/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#FormularioSubUnid").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+      }
+
+      function EliminarRegistroSubUnidad(id, nombre) {
+
+            Swal.fire({
+              title: '!Atención¡',
+              text: '¿Estas Seguro que desea eliminar el registro de la Sub Unidad/Sección " '+nombre+' "?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, eliminar!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+
+                $.ajax({
+                  type: 'POST',
+                  url: "/EliminarRegistroUnidad/" + id,
+                  success: function (response) {
+                    var idPadre = document.getElementById("id_unidadPadre").value;
+                    cargarTablaSubUnidad(idPadre);
+                    cargarTabla();
+                    Swal.fire(
+                      'Eliminado!',
+                      'Este registro se ha eliminado con éxito.',
+                      'success'
+                    );
+                  }, error: function (xhr, status, error) {
+                    console.log(error);
+                  }
+                });
+
+              }
+            });
+
+        /*$.ajax({
+          type: 'POST',
+          url: "/ConfirmacionEliminacionRegistroU/" + id,
+          success: function (mensaje) {
+
+            Swal.fire({
+              title: '!Atención¡',
+              text: mensaje,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, eliminar!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+
+                $.ajax({
+                  type: 'POST',
+                  url: "/EliminarRegistroUnidad/" + id,
+                  success: function (response) {
+                    var idPadre = document.getElementById("id_unidadPadre").value;
+                    cargarTablaSubUnidad(idPadre);
+                    cargarTabla();
+                    Swal.fire(
+                      'Eliminado!',
+                      'Este registro se ha eliminado con éxito.',
+                      'success'
+                    );
+                  }, error: function (xhr, status, error) {
+                    console.log(error);
+                  }
+                });
+
+              }
+            })
+
+          }, error: function (xhr, status, error) {
+            console.log(error);
+          }
+        });*/
+      }
+
+    </script>
+
+  </div>
+
+</body>
+
+</html>

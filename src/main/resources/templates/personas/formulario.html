@@ -1,0 +1,155 @@
+<div class="container-fluid">
+  <!-- /.card -->
+  <!-- Horizontal Form -->
+  <div class="card card-info">
+    <div class="card-header">
+      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Usuario' : 'Registrar Usuario'"></h2>
+
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form class="form-horizontal" id="FormularioRegistrarPerson" method="POST"
+      th:action="${edit} ?@{/ModPersonaG} : @{/RegistrarPersona}">
+      <div class="card-body">
+        <div th:if="${edit=='true'}">
+          <input type="hidden" th:field="${persona.id_persona}">
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group form-outline">
+              <input type="text" th:field="${persona.nombre}" class="form-control" placeholder="Introdusca Nombres"
+                required />
+              <label class="form-label" for="nombre">Nombre</label>
+            </div>
+            <div class="form-group form-outline">
+              <input type="text" th:field="${persona.apellido}" class="form-control" placeholder="Introdusca Apellidos"
+                required>
+              <label class="form-label">Apellidos</label>
+            </div>
+            <div class="form-group form-outline">
+              <input type="number" th:field="${persona.ci}" class="form-control" placeholder="Introdusca C.I." required>
+              <label class="form-label">C.I.</label>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label class="form-group form-label">Cargo</label>
+                  <select class="select-field" style="width: 100%;" th:field="${persona.cargo}" id="selectCargo">
+                    <option th:value="${persona.cargo != null} ? ${persona.cargo.id_cargo} : ''"
+                      th:text="${persona.cargo != null} ? ${persona.cargo.nombre} : 'Seleccionar'" selected></option>
+                    <option th:each="cargo: ${cargos}" th:text="${cargo.nombre}" th:value="${cargo.id_cargo}"></option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label class="form-label">Rol</label>
+                  <select class="select-field" style="width: 100%;" th:field="${persona.rol}" id="selectRol">
+                    <option th:value="${edit} ? ${persona.rol.id_rol} : ''"
+                      th:text="${edit} ? ${persona.rol.nombre} : 'Seleccionar'" selected></option>
+                    <option th:each="rol: ${roles}" th:text="${rol.nombre}" th:value="${rol.id_rol}">
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group">
+                <label class="form-label">Unidad/Seccion</label>
+                <select class="select-field" style="width: 100%;" th:field="${persona.unidad}" id="selectSeccion">
+                  <option th:value="${persona.unidad != null} ? ${persona.unidad.id_unidad} : ''"
+                    th:text="${persona.unidad != null} ? ${persona.unidad.nombre} : 'Seleccionar'" selected></option>
+                  <option th:each="unid: ${unidades}" th:text="${unid.nombre}" th:value="${unid.id_unidad}">
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer" style="background-color: white;">
+        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+          class="btn btn-default float-right">Cancelar</a>
+      </div>
+      <!-- /.card-footer -->
+    </form>
+
+  </div>
+  <!-- /.card -->
+  <script>
+    $(document).ready(function () {
+      $('#FormularioRegistrarPerson').submit(function (event) {
+        event.preventDefault();
+        var form = document.getElementById("FormularioRegistrarPerson");
+        var action = form.action;
+        //alert("la action es: " + action);
+        var formData = $(this).serialize();
+        var selectCargo = document.getElementById("selectCargo").value;
+        var selectRol = document.getElementById("selectRol").value;
+        var selectSeccion = document.getElementById("selectSeccion").value;
+
+        if (selectCargo != "" && selectRol != "" && selectSeccion != "") {
+          $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            contentType: 'application/x-www-form-urlencoded',
+            success: function (response) {
+              var mensaje = response;
+              if (mensaje != 'Ya existe un registro con este C.I.') {
+                cargarFormulario();
+                cargarTabla();
+                var div = document.getElementById("dataTable");
+                div.scrollIntoView({ behavior: 'smooth' });
+                //toastr.success(mensaje);
+                Swal.fire(
+                  'Registrado!',
+                  mensaje + '.',
+                  'success'
+                );
+              } else {
+                Swal.fire(
+                  'Imposible Registrar!',
+                  mensaje + '.',
+                  'error'
+                );
+                //toastr.info(mensaje);
+              }
+
+            },
+            error: function (xhr, status, error) {
+              toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error);
+              console.error(error);
+              // Manejo de errores
+            }
+          });
+        } else if (selectCargo == "") {
+          toastr.info('Tiene que seleccionar un cargo para este Registro');
+        } else if (selectRol == "") {
+          toastr.info('Tiene que seleccionar un Rol para este Registro');
+        } else if (selectSeccion == "") {
+          toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
+        }
+
+      });
+    });
+    function limpiarFormularioR() {
+      var form = document.getElementById("FormularioRegistrarPerson");
+      form.reset();
+    }
+  </script>
+  <script>
+    document.querySelectorAll('.form-outline').forEach((formOutline) => {
+      new mdb.Input(formOutline).init();
+    });
+  </script>
+  <script>
+    $('.select-field').select2({
+      theme: 'bootstrap-5'
+    });
+  </script>
+</div>

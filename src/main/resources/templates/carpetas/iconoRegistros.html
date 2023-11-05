@@ -1,0 +1,51 @@
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class=" tab-content no-bg no-border">
+                <div class="tab-pane active documents documents-panel col-md-8">
+                    <div class="document " style="background-color: rgb(227, 172, 62);" th:each="carp:${ListCarpetas}"
+                        th:if="${carp.estado!='X'}">
+                        <div class="dropdown" >
+                            <a class="btn file-close dropdown-toggle position-absolute top-0 end-0 m-2" type="button"
+                                data-toggle="dropdown">
+                                <i class='fas fa-ellipsis-v'></i>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" type="button" data-mdb-toggle="modal"
+                                    data-mdb-target="#FormModCarpModal"
+                                    th:attr="onclick='cargarModFormularioModal(\'' + ${carp.id_carpeta} + '\')'">Editar</a>
+                                <a class="dropdown-item" type="button"
+                                    th:attr="onclick='EliminarRegistroIco(\'' + ${carp.id_carpeta} + '\')'">Eliminar</a>
+                            </div>
+                        </div>
+                        <div class="document-body">
+                            <i>
+                                <a type="button" data-mdb-toggle="modal" data-mdb-target="#carpetaModal"
+                                    class="bg-white" th:attr="onclick='AbrirCarpeta(\'' + ${carp.id_carpeta} + '\')'">
+                                    <img src="../../static/logo/logoCabezera.png" class="img-fluid mb-2"
+                                        alt="Ver Archivo?" />
+                                </a>
+                            </i>
+                        </div>
+                        <div class="document-footer" style="height: 100%;">
+                            <span class="document-name" style="color: aliceblue;"
+                                th:text="${carp.volumen.nombre}"></span>
+                            <span class="document-name" style="color: aliceblue;"
+                                th:text="${'Seccion: '+carp.unidad.nombre}"></span>
+                            <span class="document-name" style="color: aliceblue;"
+                                th:text="${'Serie: '+carp.serieDocumental.nombre}"></span>
+                            <div th:each="subSerie: ${carp.serieDocumental.subSeries}">
+                                <span class="document-description" style="color: aliceblue;"
+                                    th:text="${subSerie.nombre}"></span>
+                            </div>
+                            <span class="document-name" style="color: aliceblue;"
+                                th:text="${'Cant. de Hojas: '+carp.TotalArchivo}"></span>
+                            <span class="document-name" style="color: aliceblue;"
+                                th:text="${'Gestion: '+carp.gestion}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

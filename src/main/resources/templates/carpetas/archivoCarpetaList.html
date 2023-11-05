@@ -1,0 +1,48 @@
+<div class="modal-header">
+    <div class="btn-group">
+        <a class="btn btn-default" type="button" th:attr="onclick='AñadirArchivo(\'' + ${carpeta.id_carpeta} + '\')'"
+            style="color: rgb(110, 188, 14);">
+            <li class="fa-solid fa-file-circle-plus"></li>
+        </a>
+    </div>
+    <div class="text-center">
+        <ol class="breadcrumb float-sm-right text-center">
+            <li class="breadcrumb-item active text-center" th:text="${carpeta.volumen.nombre}"></li>
+            <li class="breadcrumb-item active text-center"
+                th:text="'Unidad: ' + ${carpeta.unidad.nombre}"></li>
+            <li class="breadcrumb-item active text-center"
+                th:text="'Sub Serie Documental: ' + ${carpeta.serieDocumental.nombre}"></li>
+            <li class="breadcrumb-item active text-center" th:text="'Gestion: ' + ${carpeta.Gestion}"></li>
+            <input type="hidden" id="carpeta" th:value="${carpeta.id_carpeta}">
+        </ol>
+    </div>
+    <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar" onclick="cancelarMod()"></a>
+</div>
+<div class="modal-body">
+    <div class="container-fluid" id="body-Carpeta">
+        <div class="card card-info">
+            <div class="container">
+                <h4 th:if="${carpeta.TotalArchivo == 0}">Esta carpeta contiene no contiene ninguna hoja</h4>
+                <h4 th:if="${carpeta.TotalArchivo > 0}"
+                    th:text="(${carpeta.TotalArchivo} > 1) ? 'Esta carpeta contiene ' + ${carpeta.TotalArchivo} + ' hojas en total' : 'Contiene ' + ${carpeta.TotalArchivo} + ' archivo en total'">
+                </h4>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-box">
+                                <div class="row">
+                                    <div class="col-lg-6 col-xl-6">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div id="formularioArchivoCList"></div>
+                                    <div id="tablaArchivoCList"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,250 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-info">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold card-title">Registros de Archivos</h6>
+                <button type="button" class="btn btn-success" onclick="verReporte()" data-mdb-toggle="modal"
+                    data-mdb-target="#modalReporte">Generar PDF</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-hover">
+                    <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Nro. Doc.</th>
+                                <th>Nombre del Archivo</th>
+                                <th>Descripcion</th>
+                                <th>Tipo de Archivo</th>
+                                <th>Cantidad Hojas</th>
+                                <th>Responsable</th>
+                                <th>Carpeta</th>
+                                <th>Fecha de Emision</th>
+                                <th>Ruta Fisica</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            <tr th:each="ar, rowStat:${listaArchivos}" th:if="${ar.estado!='X'}">
+                                <td th:text="${rowStat.count}"></td>
+                                <td class="text-center" th:text="${ar.NroDocumental}"></td>
+                                <td class="text-center" th:text="${ar.Nombre}"></td>
+                                <td class="text-center" th:text="${ar.descripcion}"></td>
+                                <td class="text-center" th:text="${ar.tipoArchivo.nombre_tipo}"></td>
+                                <td class="text-center" th:text="${ar.cantidadHojas}"></td>
+                                <td class="text-center" th:text="${ar.persona.nombre}+' '+${ar.persona.apellido}"></td>
+                                <td class="text-center"
+                                    th:text="${ar.carpeta.volumen.nombre}+' | Seccion: '+${ar.carpeta.unidad.nombre}+' | Serie: '+${ar.carpeta.serieDocumental.nombre}+' | Gestion: '+${ar.carpeta.gestion}">
+                                </td>
+                                <td class="text-center" th:text="${ar.fechaEmision}"></td>
+                                <td class="text-center" th:text="${ar.rutaFisica}"></td>
+                                <td class="text-center">
+                                    <div class="container-fluid">
+                                        <a class="btn btn-info" type="button"
+                                            th:attr="onclick='cargarModFormulario(\'' + ${ar.id_archivo} + '\')'">
+                                            <li class="fas fa-pencil-alt"></li>
+                                        </a>
+                                        <a class="btn btn-danger" type="button"
+                                            th:attr="onclick='EliminarRegistro(\'' + ${ar.id_archivo} + '\')'">
+                                            <li class="fa-solid fa-trash"></li>
+                                        </a>
+                                        <a class="btn btn-default" type="button" data-mdb-toggle="modal"
+                                            data-mdb-target="#modal-xl"
+                                            th:attr="onclick='ContenidoArchivo(\'' + ${ar.id_archivo} + '\')'">
+                                            <li class="fa-regular fa-file-pdf"></li>
+                                        </a>
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Nro. Doc.</th>
+                                <th>Nombre del Archivo</th>
+                                <th>Descripcion</th>
+                                <th>Tipo de Archivo</th>
+                                <th>Cantidad Hojas</th>
+                                <th>Responsable</th>
+                                <th>Carpeta</th>
+                                <th>Fecha de Emision</th>
+                                <th>Ruta Fisica</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <div class="content">
+        <!--<div class="container-fluid">
+            <div class="card card-info">
+                <div class="container">
+                    <h1>Archivos</h1>
+                    <div class="filter-container p-0 row">                   
+                        <div class="filtr-item col-sm-2 border rounded mailbox-attachment-info "
+                            th:each="ar:${listaArchivos}" th:if="${ar.estado!='X'}" style="padding: 5px;">
+                            <a type="button" data-mdb-toggle="modal" data-mdb-target="#modal-xl" class="btn bg-white"
+                                th:attr="onclick='ContenidoArchivo(\'' + ${ar.id_archivo} + '\')'">
+                                <img th:src="@{'/verIcoPdf/' + ${ar.id_archivo}}" class="img-fluid mb-2" alt="" />
+                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <i class='fas fa-ellipsis-v'></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" type="button" data-mdb-toggle="modal"
+                                        data-mdb-target="#formularioArchivo"
+                                        th:attr="onclick='cargarModFormularioModal(\'' + ${ar.id_archivo} + '\')'">Editar</a>
+                                    <a class="dropdown-item" type="button"
+                                        th:attr="onclick='EliminarRegistro(\'' + ${ar.id_archivo} + '\')'">Eliminar</a>
+                                </div>
+                            </div>
+                            <a type="button" data-mdb-toggle="modal" data-mdb-target="#modal-xl"
+                                style="text-decoration: none;"
+                                th:attr="onclick='ContenidoArchivo(\'' + ${ar.id_archivo} + '\')'">
+                                <h5 class="font-weight-bold mb-0 text-align" th:text="${ar.Nombre}"></h5>
+                                <p th:text="${ar.tipoArchivo.nombre_tipo}" class="m-0"></p>
+                                <p th:text="${ar.fechaEmision}" class="text-muted m-0"></p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card-box">
+                            <div class="row">
+                                <div class="col-lg-6 col-xl-6">
+                                    <h4 class="header-title m-b-30">Mis Archivos</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-xl-2" th:each="ar:${listaArchivos}" th:if="${ar.estado!='X'}">
+                                    <div class="file-man-box mailbox-attachment-info">
+                                        <div class="dropdown">
+                                            <a class="btn file-close dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                                <i class='fas fa-ellipsis-v'></i>
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" type="button" data-mdb-toggle="modal"
+                                                    data-mdb-target="#formularioArchivo"
+                                                    th:attr="onclick='cargarModFormularioModal(\'' + ${ar.id_archivo} + '\')'">Editar</a>
+                                                <a class="dropdown-item" type="button"
+                                                    th:attr="onclick='EliminarRegistro(\'' + ${ar.id_archivo} + '\')'">Eliminar</a>
+                                            </div>
+                                        </div>
+                                        <div class="file-img-box">
+                                            <a type="button" data-mdb-toggle="modal" data-mdb-target="#modal-xl"
+                                                class="btn bg-white"
+                                                th:attr="onclick='ContenidoArchivo(\'' + ${ar.id_archivo} + '\')'">
+                                                <img th:src="@{'/verIcoPdf/' + ${ar.id_archivo}}" class="img-fluid mb-2"
+                                                    alt="Ver Archivo?" />
+                                            </a>
+                                        </div>
+                                        <div class="file-man-title">
+                                            <h5 class="mb-0 text-overflow" th:text="${ar.Nombre}"></h5>
+                                            <p class="mb-0"><small th:text="${ar.tipoArchivo.nombre_tipo}"></small></p>
+                                            <p class="mb-0">
+                                                <small
+                                                    th:text="'Autor: '+${ar.persona.nombre}+' '+${ar.persona.apellido}"></small>
+                                            </p>
+                                            <p class="text-muted m-0"><small th:text="${ar.fechaEmision}"></small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#dataTable').DataTable();
+            });
+        </script>
+        <style>
+            .card-box {
+                padding: 20px;
+                border-radius: 3px;
+                margin-bottom: 30px;
+                background-color: #fff;
+            }
+
+            .file-man-box {
+                padding: 4px;
+                border: 1px solid #e3eaef;
+                border-radius: 5px;
+                position: relative;
+                margin-bottom: 20px
+            }
+
+            .file-man-box .file-close {
+                color: #808384;
+                position: absolute;
+                line-height: 24px;
+                font-size: 24px;
+                right: 10px;
+                top: 10px;
+                visibility: hidden
+            }
+
+            .file-man-box .file-img-box {
+                line-height: 100%;
+                text-align: center
+            }
+
+            .file-man-box .file-img-box img {
+                height: 100%
+            }
+
+            .file-man-box .file-download {
+                font-size: 32px;
+                color: #98a6ad;
+                position: absolute;
+                right: 10px
+            }
+
+            .file-man-box .file-download:hover {
+                color: #313a46
+            }
+
+            .file-man-box .file-man-title {
+                padding-right: 25px
+            }
+
+            .file-man-box:hover {
+                -webkit-box-shadow: 0 0 24px 0 rgba(0, 0, 0, .06), 0 1px 0 0 rgba(0, 0, 0, .02);
+                box-shadow: 0 0 24px 0 rgba(0, 0, 0, .06), 0 1px 0 0 rgba(0, 0, 0, .02)
+            }
+
+            .file-man-box:hover .file-close {
+                visibility: visible
+            }
+
+            .text-overflow {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: block;
+                width: 100%;
+                overflow: hidden;
+            }
+
+            h5 {
+                font-size: 15px;
+            }
+        </style>
+</section>

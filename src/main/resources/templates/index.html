@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ArchivosTED</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="../static/plugins/bootstrap/css/googleapis.css">
+  <!-- Font Awesome 
+  <link rel="stylesheet" href="../static/plugins/fontawesome-free/css/all.min.css"> -->
+  <script src="../static/icono_fontawesome6.4.0/js/all.min.js"></script>
+  <link rel="stylesheet" href="../static/icono_fontawesome6.4.0/css/all.css">
+  <link rel="stylesheet" href="../static/icono_fontawesome6.4.0/css/fontawesome.pro.min.css">
+
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="../static/plugins/bootstrap/css/ionicframeworf.css">
+  <!-- Tempusdominus Bootstrap 4 -->
+  <link rel="stylesheet" href="../static/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="../static/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- JQVMap -->
+  <link rel="stylesheet" href="../static/plugins/jqvmap/jqvmap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../static/plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="../static/assets/css/adminlte.min.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="../static/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+
+  <!-- summernote -->
+  <link rel="stylesheet" href="../static/plugins/summernote/summernote-bs4.min.css">
+
+  <link rel="stylesheet" href="../static/dist/css/sweetaler2.css">
+
+  <link rel="stylesheet" href="../static/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="../static/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="../static/plugins/datatables-buttons/css/buttons.bootstrap4.css">
+
+  <!--<link rel="stylesheet" href="../static/dist/css/jquery-ui.css">-->
+
+
+  <link rel="stylesheet" href="../static/mdbootstrap/css/mdb.min.css">
+  <link rel="stylesheet" href="../static/dist/css/bootstrap5.min.css">
+
+  <!--<link rel="stylesheet" href="../static/dist/css/bootstrap-datepicker.min.css">-->
+
+  <!-- Select2 -->
+  <link rel="stylesheet" href="../static/dist/css/select2 4.1.css">
+  <link rel="stylesheet" href="../static/dist/css/bootstrap-theme 1.3.css">
+
+  <!--DROPZONE JS-->
+  <link rel="stylesheet" href="../static/dist/css/bs-dropzone.min.css">
+
+  <!-- Ekko Lightbox -->
+  <link rel="stylesheet" href="../static/dist/js/ekko-lightbox.min.js">
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+
+  <!--MODAL SUBSERIES-->
+  <div class="modal fade" id="modal_ReporteFormularioT" tabindex="-1" aria-labelledby="ModalModPerfil"
+    aria-hidden="true" data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
+
+          <div th:if="${userLog.persona.rol.nombre != 'ARCHIVOS'}" class="btn-group dropend">
+            <a type="button" class="btn btn-default dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
+              Enviar Formulario a...
+            </a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item font-weight-bold">Usuarios de Archivos</li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <div id="usuariosArchivos"></div>
+            </ul>
+          </div>
+
+          <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></a>
+        </div>
+
+        <div id="Reporte"></div>
+        <div class="modal-">
+
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="ModalModPerfil" tabindex="-1" aria-labelledby="ModalModPerfil" aria-hidden="true"
+    data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="m-0 font-weight-bold card-title" th:text="'Pefil: '+${userLog.nombre_user}"></h2>
+          <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></a>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <!-- /.card -->
+            <!-- Horizontal Form -->
+            <div class="card card-info">
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form class="form-horizontal" id="FormularioPerfil" method="POST" th:action="@{/ModUsuarioPerfilG}"
+                enctype="multipart/form-data">
+                <div class="card-body">
+                  <div>
+                    <input type="hidden" th:field="${userLog.sesion}">
+                    <input type="hidden" id="userlog" th:field="${userLog.id_usuario}">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group form-outline">
+                            <input type="text" th:value="${userLog.persona.nombre}" class="form-control"
+                              placeholder="Nombre Usuario" name="nombreP">
+                            <label class="form-label">Nombre</label>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group form-outline">
+                            <input type="text" th:value="${userLog.persona.apellido}" class="form-control"
+                              placeholder="Contraseña" name="apellido">
+                            <label class="form-label">Apellido</label>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- text input -->
+                      <div class="form-group form-outline">
+                        <input type="text" th:value="${userLog.persona.ci}" class="form-control"
+                          placeholder="Nombre Usuario" name="ci">
+                        <label class="form-label">C.I.</label>
+                      </div>
+                      <div class="form-group form-outline">
+                        <input type="text" th:field="${userLog.nombre_user}" class="form-control"
+                          placeholder="Nombre Usuario" id="userlogname">
+                        <label class="form-label">Nombre Usuario</label>
+                      </div>
+                      <div class="form-group form-outline">
+                        <input type="text" th:field="${userLog.contraseña}" class="form-control"
+                          placeholder="Contraseña">
+                        <label class="form-label">Contraseña</label>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Adjuntar Foto</label>
+                        <input type="file" id="fotoPerfilModal" name="foto" accept=".jpg,.jpeg,.png,.bmp">
+                        <div id="alertasArchivoFotoPerfilModal"></div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <div class="filtr-item col-sm-6">
+                            <p class="text-muted m-0">Foto de Perfil:</p>
+                            <div class="image-container">
+                              <img id="fotoImg" class="icono-image" th:src="@{'/verFoto/' + ${userLog.id_usuario}}"
+                                alt="Imagen 1" crossorigin="anonymous">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer" style="background-color: white;">
+                  <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                  <a type="button" class="btn btn-default float-right" onclick="limpiarFormularioPefilMod()"
+                    data-mdb-dismiss="modal" aria-label="Close">Cancelar</a>
+                </div>
+                <!-- /.card-footer -->
+              </form>
+            </div>
+            <!-- /.card -->
+            <script>
+              function limpiarFormularioPefilMod() {
+                var form = document.getElementById("FormularioPerfil");
+                form.reset();
+              }
+            </script>
+            <script>
+              var fileInput;
+              var nombreArchivo;
+              // Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
+              document.getElementById("fotoPerfilModal").addEventListener("change", function () {
+                // Obtenemos el elemento seleccionado
+                fileInput = document.getElementById("fotoPerfilModal");
+                nombreArchivo = fileInput.files[0].name;
+                // Verificamos si se seleccionó un archivo
+                if (fileInput.files.length > 0) {
+                  // Obtenemos el nombre del archivo
+                  var fileName = fileInput.files[0].name;
+
+                  if (!isValidIMG(fileName)) {
+                    // Reseteamos el valor del input file para borrar la selección inválida
+                    fileInput.value = "";
+                    $('#alertasArchivoFotoPerfilModal').html('<div class="alert alert-danger alert-dismissible">' +
+                      '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                      '<h6><i class="icon fas fa-ban"></i> El archivo no es Valido!</h6>' +
+                      'Solo se Admite Archivos IMG' +
+                      '</div>');
+                  } else {
+
+                    $('#alertasArchivoFotoPerfilModal').html('<div class="alert alert-success alert-dismissible">' +
+                      '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                      '<h6><i class="icon fas fa-check"></i> El archivo ' + nombreArchivo + ' es Valido!</h6>' +
+                      '</div>');
+                  }
+                }
+              });
+
+              // Función para validar si el nombre del archivo tiene extensión PDF
+              function isValidIMG(fileName) {
+                var validExtensions = ["jpg", "jpeg", "png", "bmp"];
+                var fileExtension = fileName.split(".").pop().toLowerCase();
+                return validExtensions.indexOf(fileExtension) !== -1;
+              }
+
+              function cerrarFormModalArchivo() {
+                $('#ModalModPerfil').modal('hide');
+              }
+            </script>
+            <script>
+              document.querySelectorAll('.form-outline').forEach((formOutline) => {
+                new mdb.Input(formOutline).init();
+              });
+            </script>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrapper">
+
+    <!-- Preloader -->
+    <div class="preloader flex-column justify-content-center align-items-center">
+      <img class="animation__shake" src="../static/logo/oep-organo-electoral-logo-65388333A4-seeklogo.com.png"
+        alt="AdminLTELogo" height="60" width="75">
+    </div>
+
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light  gradient-custom">
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+      </ul>
+
+      <!-- Right navbar links -->
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown user-menu">
+          <a type="button" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+            <img th:src="@{'/verFoto/' + ${userLog.id_usuario}}" class="user-image img-circle elevation-2"
+              alt="User Image">
+            <span class="d-none d-md-inline" th:text="${userLog.persona.nombre}+' '+${userLog.persona.apellido}"></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right "
+            style="left: inherit; right: 0px; border-radius: 10px; padding-bottom: auto;">
+            <!-- User image -->
+            <li class="user-header  " style="background-color: rgb(244, 184, 81); color: #ffffff;">
+              <img th:src="@{'/verFoto/' + ${userLog.id_usuario}}" class="img-circle elevation-2" style="border-color: #f3f2f1;" alt="User Image">
+              <p>
+              <p th:text="${userLog.persona.nombre}+' '+${userLog.persona.apellido}" style="font-size:  15px; font-weight: bold;" ></p><small
+                th:text="${userLog.persona.cargo.nombre}"></small>
+              </p><br>
+            </li>
+            <!-- Menu Footer-->
+            <li class="user-footer">
+              <a type="button" class="btn btn-default" data-mdb-toggle="modal"
+                data-mdb-target="#ModalModPerfil">Perfil</a>
+              <a type="button" class="btn btn-default float-right"
+                th:attr="onclick='CerrarSesion(\'' + ${userLog.id_usuario} + '\')'">Cerrar Sesion</a>
+            </li>
+          </ul>
+        </li>
+
+
+        <li class="nav-item">
+          <a class="nav-link" data-widget="fullscreen" type="button" role="button">
+            <i class="fas fa-expand-arrows-alt"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container class="nav nav-pills nav-sidebar flex-column nav-child-indent"  -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <a type="button" class="brand-link text-center" style="text-decoration: none;">
+
+        <span class="brand-text font-weight-light ">Menu Principal</span>
+      </a>
+      <!--<a type="button" class="brand-link" style="text-decoration: none;" >
+
+        <img src="../static/iconos/locosearhFolder.png" alt="AdminLTE Logo" class="brand-image elevation-3"
+          style="opacity: .8">
+        <span class="brand-text font-weight-light">Inicio</span>
+      </a>-->
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Sidebar Menu  nav nav-pills nav-sidebar flex-column nav-flat nav-child-indent -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu"
+            data-accordion="false">
+            <li class="nav-item" id="liOpcionFT">
+              <a type="button" class="nav-link active" id="opcionInicial">
+                <i class="nav-icon fa-solid fa-magnifying-glass "></i>
+                <p id="pFT">Consultas</p>
+              </a>
+            </li>
+            <li class="nav-item" id="liOpcionFT">
+              <a type="button" class="nav-link" id="opcionFT">
+                <i class="nav-icon fa-solid fa-file-lines" id="liFT"></i>
+                <p id="pFT">Formulario de Transferencia</p>
+              </a>
+            </li>
+            <li class="nav-item" th:if="${userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
+              <a type="button" class="nav-link">
+                <i class="nav-icon fa-solid fa-users-viewfinder"></i>
+                <p>
+                  Gestion Usuarios
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item" id="liOpcionPersona">
+                  <a type="button" id="opcion_Persona" class="nav-link">
+                    <i class="nav-icon fa-solid fa-person" id="liPersona"></i>
+                    <p id="pPersona">Personas</p>
+                  </a>
+                </li>
+                <li class="nav-item" id="liOpcionUsuario">
+                  <a type="button" id="opcion_usuarios" class="nav-link">
+                    <i class="nav-icon fa-solid fa-users" id="liUsuario"></i>
+                    <p id="pUsuario">Usuarios</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item"
+              th:if="${userLog.persona.rol.nombre=='ARCHIVOS'}">
+              <a type="button" class="nav-link">
+                <i class="nav-icon fas fa-copy"></i>
+                <p>
+                  Gestion Archivos
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview submenu">
+                <li class="nav-item" id="liOpcionTarchivos">
+                  <a type="button" class="nav-link" id="opcion_tipoArchivos">
+                    <i class="nav-icon fa-regular fa-note-sticky" id="liTarchivos"></i>
+                    <p id="pTarchivos">Tipos de Archivos</p>
+                  </a>
+                </li>
+                <!--<li class="nav-item" id="liOpcionArchivoR">
+                  <a type="button" id="opcion_archivos" class="nav-link">
+                    <i class="nav-icon fa-regular fa-file-lines" id="liArchivoR"></i>
+                    <p id="pArchivoR">Registro de Archivos</p>
+                  </a>
+                </li>-->
+                <li class="nav-item" id="liOpcionSerieDoc">
+                  <a type="button" id="opcion_SerieDoc" class="nav-link">
+                    <i class="nav-icon fa-regular fa-rectangle-list" id="liSerieDoc"></i>
+                    <p id="pSerieDoc">Serie Documental</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item"
+              th:if="${userLog.persona.rol.nombre=='ARCHIVOS'}">
+
+              <a type="button" class="nav-link">
+                <i class="nav-icon fa-solid fa-folder-tree"></i>
+                <p>
+                  Carpetas/Tomos
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item" id="liOpcionCarpetaR">
+                  <a type="button" class="nav-link" id="opcion_Carpeta">
+                    <i class="nav-icon fa-solid fa-folder" id="liCarpetaR"></i>
+                    <p id="pCarpetaR">Carpetas</p>
+                  </a>
+                </li>
+                <li class="nav-item" id="liOpcionVolumen">
+                  <a type="button" id="opcion_Volumen" class="nav-link">
+                    <i class="nav-icon fa-brands fa-elementor" id="liVolumen"></i>
+                    <p id="pVolumen">Volumen/Tomo</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item" id="liOpcionSecciones"
+              th:if="${userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
+              <a type="button" class="nav-link" id="opcion_Seccion">
+                <i class="nav-icon fa-solid fa-sitemap" id="liSecciones"></i>
+                <p id="pSecciones">Unidades/Secciones</p>
+              </a>
+            </li>
+            <li class="nav-item" id="liOpcionCargos"
+              th:if="${userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
+              <a type="button" class="nav-link" id="opcion_Cargos">
+                <i class="nav-icon fa-solid fa-id-card " id="liCargos"></i>
+                <p id="pCargos">Cargos</p>
+              </a>
+            </li>
+            <li class="nav-item" id="liOpcionRol"
+              th:if="${userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
+              <a type="button" class="nav-link" id="opcion_Rol">
+                <i class="nav-icon fa-regular fa-address-book" id="liRol"></i>
+                <p id="pRol">Rol</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div>
+      <!-- /.sidebar -->
+    </aside>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper ">
+
+      <!-- Main content -->
+      <section class="content ventana " id="contenido">
+
+      </section>
+
+      <!-- /.content -->
+      <div class="position-fixed bottom-0 end-0 m-3" id="botonPanelChat">
+        <a class="nav-link botonPanelChat" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
+          role="button">
+          <i class="fas fa-comments"></i>
+          <div id="numeroTotalNotificaciones">
+
+          </div>
+          <!--<span class="nro-notificaciones">3</span>-->
+        </a>
+      </div>
+    </div>
+    <style>
+      .botonPanelChat {
+        font-size: 25px;
+        transition: all 0.3s ease;
+      }
+
+      /* Efecto de hover */
+      .botonPanelChat:hover {
+        transform: scale(1.1);
+        color: #ffb300;
+      }
+
+      /* Efecto de clic */
+      .botonPanelChat:active {
+        transform: scale(0.9);
+        color: rgb(0, 0, 0);
+      }
+
+      .nro-notificaciones {
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 10px;
+        position: absolute;
+        top: -8px;
+        right: -8px;
+      }
+
+      .nro-notificaciones2 {
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 10px;
+        position: absolute;
+        /*top: 30%;*/
+        right: 6px;
+      }
+    </style>
+    <script>
+      function disminuirContNotificacionAll() {
+        $('#numeroTotalNotificaciones').html('');
+        //alert();
+
+        if (nroNotificaciones > 0) {
+          nroNotificaciones--;
+
+          if (nroNotificaciones == 0) {
+            $('#numeroTotalNotificaciones').html('');
+          } else {
+            $('#numeroTotalNotificaciones').html('<span class="nro-notificaciones">' + nroNotificaciones + '</span>');
+          }
+        }
+      }
+      function contarNotificaciones(usuario) {
+        var numeroNotificacion = document.getElementById('numeorNotificacionesUser' + usuario);
+        var valor = parseInt(numeroNotificacion.value);
+        valor++;
+        numeroNotificacion.value = valor;
+        if (valor > 0) {
+          $('#nroNotificacionUser' + usuario).html('');
+          $('#nroNotificacionUser' + usuario).html('<span class="nro-notificaciones2">' + valor + '</span>');
+        }
+        if (valor == 1) {
+          nroNotificaciones++;
+          $('#numeroTotalNotificaciones').html('<span class="nro-notificaciones">' + nroNotificaciones + '</span>');
+        }
+      }
+
+      function borrarNotificaciones(usuario) {
+        var numeroNotificacion = document.getElementById('numeorNotificacionesUser' + usuario);
+        var valor = 0
+        numeroNotificacion.value = valor;
+        $('#nroNotificacionUser' + usuario).html('');
+
+        disminuirContNotificacionAll();
+      }
+    </script>
+
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+      <strong>Copyright &copy; 2023 <a type="button">Desarrollado por: Jhowill Neytan Asturizaga Lanza</a>.</strong>
+      Todos los derechos reservados.
+      <!--<div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 1.0
+      </div>-->
+    </footer>
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark" style="overflow-y: auto;">
+      <div class="d-flex justify-content-between align-items-center mt-2">
+        <div class="text-center" style="padding-left: 10%;">
+          <span>Usuarios</span>
+        </div>
+        <a id="close-control-sidebar" class="mr-2" type="button" role="button" data-widget="control-sidebar"
+          data-controlsidebar-slide="true">
+          <i class="fas fa-times"></i>
+        </a>
+      </div>
+      <hr class="mb-2">
+      <!--offcanvas-start-->
+      <div th:each="userChats: ${userChats}" >
+        <!--<a class="btn btn-block btn-outline-secondary btn-lg dropdown-toggle" type="button" data-mdb-toggle="offcanvas"
+          th:attr="data-mdb-target='#offcanvasScrolling' + ${userChats.id_usuario}" aria-controls="offcanvasScrolling"
+          th:attr="onclick='borrarNotificaciones(\'' + ${userChats.id_usuario} + '\')'">-->
+        <a class="btn btn-block btn-outline-secondary btn-lg dropdown-toggle" type="button" data-mdb-toggle="offcanvas"
+          th:attr="data-mdb-target='#offcanvasScrolling' + ${userChats.id_usuario}, onclick='borrarNotificaciones(\'' + ${userChats.id_usuario} + '\')'"
+          aria-controls="offcanvasScrolling" style=" word-wrap: break-word; width: 100%; white-space: normal;">
+          <div class="user-block text-sm">
+            <img class="img-circle img-bordered-sm" th:src="@{'/verFoto/' + ${userChats.id_usuario}}" alt="User Image">
+            <span class="text-center" style="padding-left: 10px; color: #ffffff;"
+              th:text="${userChats.persona.nombre}+'  '+${userChats.persona.apellido}"></span>
+            <span class="description" th:text="${userChats.persona.cargo.nombre}" style="color: #c7c6c6;">
+              <p></p>
+            </span>
+          </div>
+          <input type="hidden" th:id="'numeorNotificacionesUser'+${userChats.id_usuario}" value="0">
+          <div th:id="'nroNotificacionUser'+${userChats.id_usuario}">
+            <!--<span class="nro-notificaciones2">5</span>-->
+          </div>
+        </a>
+        <div class="offcanvas offcanvas-end " data-mdb-scroll="true" data-mdb-backdrop="false" tabindex="-1"
+          style="height: 90%; margin-top: 4.4%; border-top: 4px solid #ffa900; border-bottom: 4px solid #ffa900;"
+          th:id="'offcanvasScrolling' + ${userChats.id_usuario}" aria-labelledby="offcanvasScrollingLabel">
+          <div class="offcanvas-header" style="border-bottom: 2px solid #777674;">
+            <span style="color: #1b1b1b;"
+              th:text="${userChats.persona.nombre}+'  '+${userChats.persona.apellido}"></span>
+            <a type="button" class="btn-close text-reset" data-mdb-dismiss="offcanvas" aria-label="Close"></a>
+          </div>
+          <div class="offcanvas-body container py-5 text-wrap text-break" th:id="'bodyChat'+${userChats.id_usuario}"
+            style="display: flex; flex-direction: column-reverse; ">
+            <div class="row d-flex justify-content-center">
+              <div style="width: 100%; height: 100%;">
+                <div class="card-body" data-mdb-perfect-scrollbar="true" th:id="'panelChat-'+${userChats.id_usuario}">
+                </div>
+                <div class="offcanvas-footer text-center"
+                  style="bottom: 2%; position: fixed; width: 100%; max-width: 360px;">
+                  <form
+                    th:attr="onsubmit='enviarMensaje(event,\'' + ${userChats.id_usuario} + '\', \'' + ${userLog.id_usuario} + '\')'"
+                    method="post">
+                    <div class="input-group mb-0">
+                      <textarea class="form-control" placeholder="texto" th:id="'message-'+${userChats.id_usuario}"
+                        aria-label="Recipient's username" aria-describedby="button-addon2"></textarea>
+
+                      <!--<input type="text" class="form-control" placeholder="texto" th:id="'message-'+${userChats.id_usuario}"
+                        aria-label="Recipient's username" aria-describedby="button-addon2" />-->
+                      <button class="btn btn-warning" type="submit" id="button-addon2" style="padding-top: .55rem;">
+                        Enviar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <!-- /.control-sidebar -->
+
+  </div>
+
+
+  <style>
+    .fixed-bottom-right {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+
+
+    /* Estilos para el scrollbar */
+    /* Establece el ancho y el color del scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    /* Establece el color de fondo del scrollbar */
+    ::-webkit-scrollbar-track {
+      background-color: #f3e0ba;
+      /* Color naranja */
+      border-radius: 10px;
+      /* Bordes redondeados */
+    }
+
+    /* Establece el color del thumb (el control deslizante del scrollbar) */
+    ::-webkit-scrollbar-thumb {
+      background-color: #f90;
+      /* Color naranja más oscuro */
+      border-radius: 10px;
+      /* Bordes redondeados */
+    }
+  </style>
+  <!-- jQuery -->
+  <script src="../static/dist/js/jquery-3.7.0.min.js"></script>
+  <script src="../static/dist/js/dayjs.min.js"></script>
+
+  <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+  <script>
+    $.widget.bridge('uibutton', $.ui.button)
+  </script>
+  <!-- Bootstrap 4 -->
+  <script src="../static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- ChartJS -->
+  <script src="../static/plugins/chart.js/Chart.min.js"></script>
+  <!-- Sparkline -->
+  <script src="../static/plugins/sparklines/sparkline.js"></script>
+
+  <!-- Tempusdominus Bootstrap 4 -->
+  <script src="../static/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+
+  <!-- AdminLTE App -->
+  <script src="../static/dist/js/adminlte.js"></script>
+
+  <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+  <script src="../static/dist/js/pages/dashboard.js"></script>
+
+  <!-- sweetaler2 -->
+  <script src="../static/dist/js/sweetaler2.js"></script>
+
+  <!--DATATABLE-->
+  <script src="../static/dist/js/datatables.bootstrap.min.js"></script>
+  <script src="../static/dist/js/datatables1.10.25.js"></script>
+  <script src="../static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="../static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+  <script src="../static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+  <script src="../static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+  <script src="../static/dist/js/pages/dashboard.js"></script>
+  <script src="../static/plugins/toastr/toastr.min.js"></script>
+
+  <script src="../static/dist/js/stompjs@7.0.0-beta5.js"></script>
+
+  <!-- bs-custom-file-input -->
+  <script src="../static/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+
+  <!--<script src="../static/dist/js/dropzone.js"></script>-->
+  <script src="../static/dist/js/bs-dropzone.min.js"></script>
+
+  <!-- Ekko Lightbox 
+<script src="../static/plugins/ekko-lightbox/ekko-lightbox.min.js"></script>-->
+  <script src="../static/dist/js/ekko-lightbox.min.js"></script>
+
+  <!-- Filterizr-->
+  <script src="../static/plugins/filterizr/jquery.filterizr.min.js"></script>
+
+  <!--MDBootstrap
+  <script src="../static/dist/DatePicker/date-picker.js"></script>-->
+  <script src="../static/mdbootstrap/js/mdb.min.js"></script>
+
+  <script src="../static/dist/js/datepicker-bs4.js"></script>
+
+  <script src="../static/dist/js/sockjs.js"></script>
+  <script src="../static/dist/js/stomp.min.js"></script>
+
+  <script th:inline="javascript">
+    var stompClient = null;
+    var userLog = null;
+    var userLog2 = null;
+    var nroNotificaciones = 0;
+    var nroNotificaciones2 = 0;
+    
+    conectar();
+
+    function conectar() {
+      if (stompClient) {
+        stompClient.disconnect(); // Desconecta la conexión WebSocket existente si la hay
+        stompClient = null;
+      }
+      userLog2 = $("#userlog").val();
+      // Establece la conexión WebSocket
+      var socket = new SockJS("/salonA");
+      stompClient = Stomp.over(socket);
+      // Conecta al canal privado del usuario emisor
+      stompClient.connect({}, function (frame) {
+        console.log("Conectado: " + frame);
+        subscribirseAll(userLog2);
+      });
+    }
+
+    function subscribirseAll(userLog2) {
+      //var userLog2 = $("#userlog").val();
+      
+      $.ajax({
+        url: '/UsuariosReceptores',
+        type: 'POST', // Cambiar a 'POST' si es necesario
+        dataType: 'json',
+        success: function (data) {
+          // La variable 'data' contiene la respuesta JSON
+          // Itera sobre la lista e imprime los nombres de los usuarios
+          $.each(data, function (index, userData) {
+            console.log(userData[0]);
+            stompClient.subscribe("/user/" + userData[1] + "/private", function (response) {
+              console.log("Respuesta recibida: " + response);
+              var parsedResponse = JSON.parse(response.body);
+              //alert(parsedResponse.receptor);
+              if (parsedResponse.receptor == userLog2) {
+                mostrarMensaje(JSON.parse(response.body), userData[1], userLog2);
+
+                // nroNotificaciones++;
+                //contarNotificacionesAll(nroNotificaciones);
+                contarNotificaciones(parsedResponse.remitente);
+
+              }
+            });
+
+            mensajesAntiguos(userLog2, userData[1])
+
+          });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error('Error al obtener la lista de usuarios: ' + errorThrown);
+        }
+      });
+
+    }
+
+
+    function enviarMensaje(event, userIdReceptor, userIdEmisor) {
+      event.preventDefault();
+      var mensaje = $("#message-" + userIdReceptor).val();
+
+      let usuario = $("#userlog").val();
+      let nombre_user = $("#userlogname").val();
+      let receptor = userIdReceptor;
+
+      // Obtener la fecha y hora actual
+      const fechaHoraActual = new Date();
+
+      // Obtener la fecha en formato dd-mm-yy
+      const dia = fechaHoraActual.getDate().toString().padStart(2, '0');
+      const mes = (fechaHoraActual.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0
+      const anio = fechaHoraActual.getFullYear().toString().slice(-2); // Obtener los últimos 2 dígitos del año
+
+      const fecha = `${dia}-${mes}-${anio}`;
+
+      // Obtener la hora en formato hh:mm:ss
+      const hora = fechaHoraActual.getHours().toString().padStart(2, '0');
+      const minutos = fechaHoraActual.getMinutes().toString().padStart(2, '0');
+      const segundos = fechaHoraActual.getSeconds().toString().padStart(2, '0');
+
+      const horaFormateada = `${hora}:${minutos}:${segundos}`;
+
+
+      let jsonOb = {
+        remitente: usuario,
+        nameRemitente: nombre_user,
+        contenidoTexto: mensaje,
+        receptor: receptor,
+        fechaRegistro: fecha,
+        horaRegistro: horaFormateada,
+        tipoMensaje: "texto"
+      };
+
+      var mensajeJSON = JSON.stringify(jsonOb);
+
+      mostrarMensajelocal(jsonOb, userIdReceptor, userIdEmisor);
+
+
+      stompClient.send("/app/chat/" + userIdEmisor + "/" + userIdReceptor, {}, mensajeJSON);
+
+      $("#message-" + userIdReceptor).val("");
+      // También puedes mostrar el mensaje localmente antes de que se envíe al servidor
+      //mostrarMensaje(jsonOb);
+
+    }
+
+
+    function mostrarMensaje(mensaje, userIdReceptor, userIdEmisor) {
+
+      if (mensaje.tipoMensaje == "texto") {
+        $("#panelChat-" + userIdReceptor).append('<div class="d-flex justify-content-between">' +
+          '<p class="small mb-1">' + mensaje.nameRemitente + '</p>' +
+          '<p class="small mb-1 text-muted">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</p>' +
+          '</div>' +
+          '<div class="d-flex flex-row justify-content-start">' +
+          '     <img class="img-circle" src="/verFoto/' + mensaje.remitente + '"' +
+          '     alt="avatar 1" style="width: 45px; height: 100%;">' +
+          '<div>' +
+          '   <p class="small p-2 ms-3 mb-3 rounded-3" style="background-color: #f5f6f7; color: black;">' + mensaje.contenidoTexto + '</p>' +
+          ' </div>' +
+          '</div>');
+
+        toastr.success('Recibió un Mensaje de ' + mensaje.nameRemitente);
+      }
+      if (mensaje.tipoMensaje == "formularioTransferencia") {
+
+        $("#panelChat-" + userIdReceptor).append('<div class="d-flex justify-content-between">' +
+          '<p class="small mb-1">' + mensaje.nameRemitente + '</p>' +
+          '<p class="small mb-1 text-muted">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</p>' +
+          '</div>' +
+          '<div class="d-flex flex-row justify-content-start">' +
+          '   <img class="img-circle" src="/verFoto/' + mensaje.remitente + '"' +
+          '   alt="avatar 1" style="width: 45px; height: 100%;">' +
+          '<div>' +
+          '<div class="small p-2 ms-3 mb-3 rounded-3" style="background-color: #f5f6f7; color: black; height: 205px"> Formulario de Transferencia' +
+          '<a type="button" data-mdb-toggle="modal" data-mdb-target="#modal_ReporteFormularioT"' +
+          'class="btn bg-white" onclick="verReporteFormTr(' + mensaje.contenido + ')">' +
+          '<img src="/verIcoPdfFormulario/' + mensaje.contenido + '" class="img-fluid mb-2" alt="Ver Archivo?" style="height: 150px" />' +
+          '</a>' +
+          '</div>' +
+          '</div>' +
+          '</div>');
+
+        toastr.success('Recibió un Formulario de Transferencia de ' + mensaje.nameRemitente);
+      }
+
+      console.log("MENSAJE RECIBIDO");
+
+    }
+
+    function mostrarMensajelocal(mensaje, userIdReceptor, userIdEmisor) {
+
+      if (mensaje.tipoMensaje == "texto") {
+
+        $("#panelChat-" + userIdReceptor).append('<div class="d-flex justify-content-between">' +
+          '<p class="small mb-1 text-muted">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</p>' +
+          '<p class="small mb-1">' + mensaje.nameRemitente + '</p>' +
+          '</div>' +
+          '<div class="d-flex flex-row justify-content-end mb-4 pt-1">' +
+          '   <p class="small p-2 me-3 mb-3 text-white rounded-3 bg-warning" style="background-color: #f5f6f7; color: black;">' + mensaje.contenidoTexto + '</p>' +
+          '<div>' +
+          '    <img class="img-circle" src="/verFoto/' + mensaje.remitente + '"' +
+          '     alt="avatar 1" style="width: 45px; height: 45px;">' +
+          ' </div>' +
+          '</div>');
+
+      }
+      if (mensaje.tipoMensaje == "formularioTransferencia") {
+
+        $("#panelChat-" + userIdReceptor).append('<div class="d-flex justify-content-between">' +
+          '<p class="small mb-1 text-muted">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</p>' +
+          '<p class="small mb-1">' + mensaje.nameRemitente + '</p>' +
+          '</div>' +
+          '<div class="d-flex flex-row justify-content-end mb-4 pt-1" >' +
+          '  <div class="small p-2 me-3 mb-3 text-white rounded-3 bg-warning" style="background-color: #f5f6f7; color: black; height: 205px" > Formulario de Transferencia' +
+          '   <a type="button" data-mdb-toggle="modal" data-mdb-target="#modal_ReporteFormularioT"' +
+          '   class="btn bg-white" onclick="verReporteFormTr(' + mensaje.contenido + ')">' +
+          '   <img src="/verIcoPdfFormulario/' + mensaje.contenido + '" class="img-fluid mb-2" alt="Ver Archivo?" style="height: 150px" />' +
+          '   </a>' +
+          ' </div>' +
+          '<div>' +
+          '    <img class="img-circle" src="/verFoto/' + mensaje.remitente + '"' +
+          '     alt="avatar 1" style="width: 45px; height: 45px">' +
+          ' </div>' +
+          '</div>');
+
+      }
+
+      console.log("MENSAJE RECIBIDO");
+
+    }
+
+    function verReporteFormTr(id) {
+      $('#Reporte').html('<embed src="/GenerarReporte/' + id + '" type="application/pdf" width="100%" height="600px" />');
+      var userLog3 = $("#userlog").val();;
+      $.ajax({
+        type: 'POST',
+        url: "/UsuariosReceptores",
+        dataType: 'json',
+        success: function (data) {
+          data.forEach(function (usuario) {
+
+            $('#usuariosArchivos').html('<form method="post"' +
+              'onsubmit="enviarMensaje2(event, ' + usuario[1] + ', ' + userLog3 + ', ' + id + ')">' +
+              '<input type="hidden" id="formTr-' + usuario[1] + '" value="' + id + '" />' +
+              '<input type="submit" class="dropdown-item" type="button" value="' + usuario[0] + '"/>' +
+              '</form>');
+
+          });
+        }
+      });
+    }
+
+    function enviarMensaje2(event, userIdReceptor, userIdEmisor, id_formTransferencia) {
+      event.preventDefault();
+
+      let usuario = $("#userlog").val();
+      let nombre_user = $("#userlogname").val();
+      let contenido = $("#formTr-" + userIdReceptor).val();
+      let receptor = userIdReceptor;
+
+      // Obtener la fecha y hora actual
+      const fechaHoraActual = new Date();
+
+      // Obtener la fecha en formato dd-mm-yy
+      const dia = fechaHoraActual.getDate().toString().padStart(2, '0');
+      const mes = (fechaHoraActual.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0
+      const anio = fechaHoraActual.getFullYear().toString().slice(-2); // Obtener los últimos 2 dígitos del año
+
+      const fecha = `${dia}-${mes}-${anio}`;
+
+      // Obtener la hora en formato hh:mm:ss
+      const hora = fechaHoraActual.getHours().toString().padStart(2, '0');
+      const minutos = fechaHoraActual.getMinutes().toString().padStart(2, '0');
+      const segundos = fechaHoraActual.getSeconds().toString().padStart(2, '0');
+
+      const horaFormateada = `${hora}:${minutos}:${segundos}`;
+
+      let jsonOb = {
+        remitente: usuario,
+        nameRemitente: nombre_user,
+        contenido: contenido,
+        receptor: receptor,
+        fechaRegistro: fecha,
+        horaRegistro: horaFormateada,
+        tipoMensaje: "formularioTransferencia"
+      };
+
+      var mensajeJSON = JSON.stringify(jsonOb);
+
+      mostrarMensajelocal(jsonOb, userIdReceptor, userIdEmisor);
+      //alert("----------ENVIAR MENSAJE 2----------Datos: " + jsonOb.remitente + " " + jsonOb.nameRemitente + " " + jsonOb.contenido + " " + jsonOb.receptor + " " + jsonOb.tipoMensaje);
+
+      stompClient.send("/app/chat/" + userIdEmisor + "/" + userIdReceptor, {}, mensajeJSON);
+      toastr.success('Formulario Enviado');
+
+    }
+
+    // Función para comprobar la conexión y ejecutar la operación cuando esté lista
+    function comprobarConexion() {
+      if (stompClient && stompClient.connected) {
+        // La conexión ya está establecida, podemos conectar y enviar el mensaje.
+        return enviarMensaje2();
+
+      } else {
+        // La conexión no está lista, esperar y volver a comprobar
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            resolve(comprobarConexion());
+          }, 1000); // Esperar 1 segundo antes de volver a comprobar
+        });
+      }
+    }
+
+    function mensajesAntiguos(userIdEmisor, userIdReceptor) {
+      $.ajax({
+        type: "POST",
+        url: "/MensajesAntiguos/" + userIdEmisor + "/" + userIdReceptor,
+        success: function (data) {
+          $.each(data, function (index, mensaje) {
+
+            if (mensaje.receptor == userLog2) {
+              if (mensaje.tipoMensaje == "texto") {
+                $("#panelChat-" + userIdReceptor).append('<div class="d-flex justify-content-between">' +
+                  '<p class="small mb-1">' + mensaje.nameRemitente + '</p>' +
+                  '<p class="small mb-1 text-muted">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</p>' +
+                  '</div>' +
+                  '<div class="d-flex flex-row justify-content-start">' +
+                  '     <img class="img-circle" src="/verFoto/' + mensaje.remitente + '"' +
+                  '     alt="avatar 1" style="width: 45px; height: 100%;">' +
+                  '<div>' +
+                  '   <p class="small p-2 ms-3 mb-3 rounded-3" style="background-color: #f5f6f7; color: black;">' + mensaje.contenidoTexto + '</p>' +
+                  ' </div>' +
+                  '</div>');
+
+              }
+              if (mensaje.tipoMensaje == "formularioTransferencia") {
+
+                $("#panelChat-" + userIdReceptor).append('<div class="d-flex justify-content-between">' +
+                  '<p class="small mb-1">' + mensaje.nameRemitente + '</p>' +
+                  '<p class="small mb-1 text-muted">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</p>' +
+                  '</div>' +
+                  '<div class="d-flex flex-row justify-content-start">' +
+                  '   <img class="img-circle" src="/verFoto/' + mensaje.remitente + '"' +
+                  '   alt="avatar 1" style="width: 45px; height: 100%;">' +
+                  '<div>' +
+                  '<div class="small p-2 ms-3 mb-3 rounded-3" style="background-color: #f5f6f7; color: black; height: 205px"> Formulario de Transferencia' +
+                  '<a type="button" data-mdb-toggle="modal" data-mdb-target="#modal_ReporteFormularioT"' +
+                  'class="btn bg-white" onclick="verReporteFormTr(' + mensaje.contenido + ')">' +
+                  '<img src="/verIcoPdfFormulario/' + mensaje.contenido + '" class="img-fluid mb-2" alt="Ver Archivo?" style="height: 150px" />' +
+                  '</a>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>');
+
+              }
+            } else {
+              if (mensaje.tipoMensaje === "texto") {
+                $("#panelChat-" + userIdReceptor).append('<div class="d-flex justify-content-between">' +
+                  '<p class="small mb-1 text-muted">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</p>' +
+                  '<p class="small mb-1">' + mensaje.nameRemitente + '</p>' +
+                  '</div>' +
+                  '<div class="d-flex flex-row justify-content-end mb-4 pt-1">' +
+                  '   <p class="small p-2 me-3 mb-3 text-white rounded-3 bg-warning" style="background-color: #f5f6f7; color: black;">' + mensaje.contenidoTexto + '</p>' +
+                  '<div>' +
+                  '    <img class="img-circle" src="/verFoto/' + mensaje.remitente + '"' +
+                  '     alt="avatar 1" style="width: 45px; height: 45px;">' +
+                  ' </div>' +
+                  '</div>');
+              } else if (mensaje.tipoMensaje === "formularioTransferencia") {
+                $("#panelChat-" + userIdReceptor).append('<div class="d-flex justify-content-between">' +
+                  '<p class="small mb-1 text-muted">' + mensaje.fechaRegistro + ' ' + mensaje.horaRegistro + ' hrs.</p>' +
+                  '<p class="small mb-1">' + mensaje.nameRemitente + '</p>' +
+                  '</div>' +
+                  '<div class="d-flex flex-row justify-content-end mb-4 pt-1" >' +
+                  '  <div class="small p-2 me-3 mb-3 text-white rounded-3 bg-warning" style="background-color: #f5f6f7; color: black; height: 205px" > Formulario de Transferencia' +
+                  '   <a type="button" data-mdb-toggle="modal" data-mdb-target="#modal_ReporteFormularioT"' +
+                  '   class="btn bg-white" onclick="verReporteFormTr(' + mensaje.contenido + ')">' +
+                  '   <img src="/verIcoPdfFormulario/' + mensaje.contenido + '" class="img-fluid mb-2" alt="Ver Archivo?" style="height: 150px" />' +
+                  '   </a>' +
+                  ' </div>' +
+                  '<div>' +
+                  '    <img class="img-circle" src="/verFoto/' + mensaje.remitente + '"' +
+                  '     alt="avatar 1" style="width: 45px; height: 45px">' +
+                  ' </div>' +
+                  '</div>');
+              }
+            }
+
+          });
+        },
+        error: function (error) {
+          console.error("Error al obtener los mensajes:", error);
+        }
+      });
+
+    }
+
+
+  </script>
+
+  <script>
+    var botonPulsado;
+
+    //var botonPulsadoli;
+    //var botonPulsadop;
+    $(document).ready(function () {
+      cargarContenido("/BusquedaArchivo");
+      botonPulsado = document.getElementById("opcionInicial");
+
+      $("#opcion_usuarios").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/USUARIO");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_usuarios");;
+
+        botonPulsado.classList.add("active");
+
+      });
+
+      $("#opcion_archivos").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/DOCUMENTOS");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_archivos");
+
+        botonPulsado.classList.add("active");
+
+      });
+
+      $("#opcion_tipoArchivos").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/TIPOARCHIVO");
+
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_tipoArchivos");
+
+        botonPulsado.classList.add("active");
+
+
+      });
+
+      $("#opcion_Carpeta").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/CARPETAS");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_Carpeta");
+
+        botonPulsado.classList.add("active");
+
+      });
+
+      $("#opcion_Seccion").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/UNIDAD");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_Seccion");
+
+        botonPulsado.classList.add("active");
+
+
+      });
+
+      $("#opcion_Persona").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/PERSONA");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_Persona");
+
+        botonPulsado.classList.add("active");
+
+
+      });
+
+      $("#opcion_Cargos").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/GARGOS");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_Cargos");
+
+        botonPulsado.classList.add("active");
+
+
+      });
+
+      $("#opcion_Volumen").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/VOLUMEN");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_Volumen");
+
+        botonPulsado.classList.add("active");
+
+      });
+
+      $("#opcion_SerieDoc").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/SERIEDOC");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_SerieDoc");
+
+        botonPulsado.classList.add("active");
+
+
+      });
+
+      $("#opcion_Rol").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/ROL");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_Rol");
+
+        botonPulsado.classList.add("active");
+
+
+      });
+
+      $("#opcionInicial").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/BusquedaArchivo");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcionInicial");
+
+        botonPulsado.classList.add("active");
+
+      });
+
+      $("#opcionFT").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/FormTRANSFERENCIA");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcionFT");
+
+        botonPulsado.classList.add("active");
+
+      });
+
+      // Función para cargar el contenido de la opción seleccionada
+      function cargarContenido(url) {
+        const miDiv = document.getElementById('contenido');
+        miDiv.removeAttribute("style");
+
+        $.ajax({
+          url: url,
+          method: "GET",
+          success: function (data) {
+            $("#contenido").html(data); // Actualizar el contenido de la ventana
+            //mostrarElemento();
+            miDiv.setAttribute("style", "opacity: 1; width: 100%; transition: all 0.5s ease-out;");
+
+          }
+        });
+      }
+      $('#fotoPerfilModal').bs_dropzone({
+        maxFiles: 1,
+        acceptedFiles: '.jpeg,.jpg,.png,.bmp',
+        boxClass: 'alert p-5 text-center font-weight-bold',
+        noneColorClass: 'alert alert-success alert-dismissible',
+        dragColorClass: 'alert alert-warning alert-dismissible',
+        doneColorClass: 'alert alert-success alert-dismissible',
+        failColorClass: 'alert alert-danger alert-dismissible',
+        language: {
+          emptyText: 'Introdusca o arrastre un archivo IMG',
+          dragText: '[Soltar aquí]',
+          dropText: 'El archivo se subió correctamente'
+        }
+      });
+    });
+
+    function botonSeleccionado(id) {
+      var elemento = document.getElementById(id);
+      botonPulsado = elemento.id;
+    }
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('#FormularioPerfil').submit(function (event) {
+        event.preventDefault();
+        var form = document.getElementById("FormularioPerfil");
+        var action = form.action;
+        var formData = new FormData(form);
+        //alert("la action es: "+action);
+        //var formData = $(this).serialize();
+        $.ajax({
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: formData,
+          contentType: false,  // No establecer el tipo de contenido aquí
+          processData: false,  // No procesar los datos
+          //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+          success: function (response) {
+            location.reload();
+          },
+          error: function (xhr, status, error) {
+            toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+            console.error(error);
+            // Manejo de errores
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+    function CerrarSesion(id) {
+      $.ajax({
+        url: "/CerrarSesion/" + id,
+        type: "POST",
+        success: function (data) {
+          location.reload();
+        }
+      });
+
+    }
+  </script>
+
+  <script>
+    // Agregar el event listener para el evento 'popstate'
+    window.addEventListener('popstate', function (event) {
+      // Restaurar el estado original del historial para evitar la redirección
+      history.pushState(null, null, window.location.href);
+      // Aquí puedes poner el código que deseas ejecutar cuando se retrocede en el historial del navegador
+      console.log('Se retrocedió en el historial del navegador');
+    });
+  </script>
+
+  <style>
+    .image-container {
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      width: 250px;
+      height: 250px;
+    }
+
+    .image-container img {
+      transition: transform 0.3s;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-container:hover img {
+      transform: scale(1.2);
+    }
+
+    .ventana {
+      width: 90%;
+      opacity: 0;
+    }
+
+    .dropdown-toggle::after {
+      content: none;
+
+    }
+  </style>
+
+  <style>
+    .gradient-custom {
+      background: #f3f2f1;
+      background: linear-gradient(to right, rgb(255, 255, 255), rgb(251, 161, 7), rgb(251, 161, 7), rgb(255, 255, 255), rgb(252, 252, 252));
+    }
+  </style>
+  <script>
+    toastr.options = {
+      "closeButton": true
+    }
+  </script>
+  <!-- Select2 -->
+  <script src="../static/dist/js/select2 4.1.js"></script>
+
+</body>
+
+</html>

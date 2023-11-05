@@ -1,0 +1,82 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4><!--<a class="fa-solid fa-file-circle-plus" type="button"
+                th:attr="onclick='AñadirArchivo(\'' + ${carpeta.id_carpeta} + '\')'"
+                style="color: rgb(110, 188, 14);"></a></h4>-->
+            <!--<input type="hidden" id="id_padre" th:value="${serieDocPadre.id_serie}">
+        <h4 class="modal-title" th:text="'Serie Documental: '+${serieDocPadre.nombre}"-->
+            Tabla del Formulario de Transferencia
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid" id="SubFormulario"></div>
+        <div class="container-fluid" id="SubTabla"></div>
+    </div>
+    <script>
+
+        function cargarModSubFormulario(id) {
+            //var fromT = document.getElementById("id_formTransferencia").value;
+            //alert("CARGAR MOD SUB FORMULARIO");
+            $.ajax({
+                type: 'POST',
+                url: "/ModSubRegistro/" + id,
+                success: function (response) {
+
+                    $("#SubFormulario").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                    $('#FormTransferencia').html('<input type="hidden" name="id_formTransferencia" id="id_formTransferencia" value="' + id + '">');
+                }
+            });
+        }
+
+        function EliminarSubRegistro(id) {
+            var fromT = document.getElementById("id_formTransferencia").value;
+            Swal.fire({
+                title: '!Atención¡',
+                text: '¿Estas Seguro que desea eliminar la columna de la tabla de este Formulario de Transferencia"?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "/EliminarSubRegistro/" + id,
+                        success: function (response) {
+                            cargarSubTabla(fromT);
+                            cargarTabla();
+                            Swal.fire(
+                                'Eliminado!',
+                                'Este registro se ha eliminado con éxito.',
+                                'success'
+                            );
+                        }, error: function (xhr, status, error) {
+                            console.log(error);
+                        }
+                    });
+                }
+            })
+
+
+
+           /* Swal.fire({
+                title: '¿Eliminar Registro?',
+                type: 'error',
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: "Cancelar",
+
+                html:
+                    "<a type='button' class='btn btn-block btn-danger btn-lg' style='width: 150px; height: 50px; display: inline-block; align-items: center; justify-content: center;' onclick='eliminarSubRegistroSeleccionado(\"" + id + "\")'>" +
+                    "Eliminar" +
+                    "</a>",
+            }).then().done();*/
+        }
+
+    </script>
+</div>

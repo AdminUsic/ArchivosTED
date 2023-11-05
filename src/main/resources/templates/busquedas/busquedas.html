@@ -1,0 +1,243 @@
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">MODULO CARPETAS/TOMOS</h1>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+    <div class="container-fluid">
+        <h2 class="text-center display-4">Buscar Carpeta</h2>
+        <form action="/buscarCarpeta" id="FormularioBusquedaCarpeta">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <!-- text input -->
+                            <div class="form-group">
+                                <label for="tipoArchivo">Unidad/Seccion</label>
+                                <select class="select-fieldFormBusque" style="width: 100%;" id="selectUnidadC" name="unidadCarpeta">
+                                    <option value="" selected>Seleccionar</option>
+                                    <option th:each="unid: ${unidades}" th:text="${unid.nombre}"
+                                        th:value="${unid.id_unidad}" th:if="${unid.unidadPadre==null}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipoArchivo">Tomo/Volumen</label>
+                                <select class="select-fieldFormBusque" style="width: 100%;" id="selectVolumen" name="volumenCarpeta">
+                                    <option value="" selected>Seleccionar</option>
+                                    <option th:each="vol: ${volumenes}" th:text="${vol.nombre}"
+                                        th:value="${vol.id_volumen}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <!-- text input -->
+                            <div class="form-group">
+                                <label for="tipoArchivo">Serie Documental</label>
+                                <select class="select-fieldFormBusque" style="width: 100%;" id="selectSerieD"
+                                    name="seriesDocsCarpeta">
+                                    <option value="" selected>Seleccionar</option>
+                                    <option th:each="serie: ${seriesDocs}" th:text="${serie.nombre}"
+                                        th:value="${serie.id_serie}" th:if="${serie.seriePadre==null}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Gestion</label>
+                                <select class="select-fieldFormBusque" style="width: 100%;" id="años" name="gestion">
+                                    <option value="0">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="form-group">
+                    <div class="input-group input-group-lg">
+                        <input type="search" class="form-control form-control-lg" placeholder="Type your keywords here"
+                            value="Lorem ipsum">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-lg btn-default">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>-->
+
+                    <div class="form-group">
+                        <div class="input-group input-group-lg">
+                            <button type="submit" class="btn btn-lg btn-default">
+                                Buscar <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="ventanaRegistrosCarpeta"></div>
+
+    
+    <script>
+        var startYear = 1900;
+        var endYear = new Date().getFullYear();
+        //var endYear = 2100;
+        // Obtén una referencia al elemento select
+        var select = document.getElementById("años");
+        // Agrega el nuevo elemento option al select
+        for (var year = endYear; year >= startYear; year--) {
+            // Crea un nuevo elemento option
+            var option = document.createElement("option");
+            option.text = year;
+            option.value = year;
+            select.add(option);
+        }
+    </script>
+    <style>
+        /*.select2.select2-container {
+        width: 100% !important;
+    }
+
+    .select2.select2-container .select2-selection {
+        border: 1px solid #ccc;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        height: 34px;
+        margin-bottom: 15px;
+        outline: none !important;
+        transition: all .15s ease-in-out;
+    }
+
+    .select2.select2-container .select2-selection .select2-selection__rendered {
+        color: #252525;
+        line-height: 32px;
+        padding-right: 33px;
+    }
+
+    .select2.select2-container .select2-selection .select2-selection__arrow {
+        background: #101010;
+        border-left: 1px solid #ccc;
+        -webkit-border-radius: 0 3px 3px 0;
+        -moz-border-radius: 0 3px 3px 0;
+        border-radius: 0 3px 3px 0;
+        height: 32px;
+        width: 33px;
+    }
+
+    .select2.select2-container.select2-container--open .select2-selection.select2-selection--single {
+        background: #070707;
+    }
+
+    .select2.select2-container.select2-container--open .select2-selection.select2-selection--single .select2-selection__arrow {
+        -webkit-border-radius: 0 3px 0 0;
+        -moz-border-radius: 0 3px 0 0;
+        border-radius: 0 3px 0 0;
+    }
+
+    .select2.select2-container.select2-container--open .select2-selection.select2-selection--multiple {
+        border: 1px solid #34495e;
+    }
+
+    .select2.select2-container .select2-selection--multiple {
+        height: auto;
+        min-height: 34px;
+    }
+
+    .select2.select2-container .select2-selection--multiple .select2-search--inline .select2-search__field {
+        margin-top: 0;
+        height: 32px;
+    }
+
+    .select2.select2-container .select2-selection--multiple .select2-selection__rendered {
+        display: block;
+        padding: 0 4px;
+        line-height: 29px;
+    }
+*/
+        .select2.select2-container .select2-selection--multiple .select2-selection__choice {
+            background-color: #363637;
+            border: 1px solid #090909;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            margin: 4px 4px 0 0;
+            padding: 0 6px 0 22px;
+            height: 24px;
+            line-height: 24px;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .select2.select2-container .select2-selection--multiple .select2-selection__choice .select2-selection__choice__remove {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 22px;
+            width: 22px;
+            margin: 0;
+            text-align: center;
+            color: #ff331c;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /*.select2-container .select2-dropdown {
+        background: transparent;
+        border: none;
+        margin-top: -5px;
+    }
+
+    .select2-container .select2-dropdown .select2-search {
+        padding: 0;
+    }
+
+    .select2-container .select2-dropdown .select2-search input {
+        outline: none !important;
+        border: 1px solid #34495e !important;
+        border-bottom: none !important;
+        padding: 4px 6px !important;
+    }
+
+    .select2-container .select2-dropdown .select2-results {
+        padding: 0;
+    }
+
+    .select2-container .select2-dropdown .select2-results ul {
+        background: #fff;
+        border: 1px solid #34495e;
+    }
+
+    .select2-container .select2-dropdown .select2-results ul .select2-results__option--highlighted[aria-selected] {
+        background-color: #3498db;
+    }*/
+
+    </style>
+    <script>
+        $('.select-fieldFormBusque').select2({
+          theme: 'bootstrap-5'
+        });
+
+        $(document).ready(function () {
+        $('#FormularioBusquedaCarpeta').submit(function (event) {
+            event.preventDefault();
+            var form = document.getElementById("FormularioBusquedaCarpeta");
+            var action = form.action;
+            //alert("la action es: "+action);
+            var formData = $(this).serialize();
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+                success: function (response) {
+                    $("#ventanaRegistrosCarpeta").html(response);
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+                    console.error(error);
+                    // Manejo de errores
+                }
+            });
+        });
+    });
+      </script>

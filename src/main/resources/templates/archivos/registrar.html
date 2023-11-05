@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archivos</title>
+</head>
+
+<body>
+  <div id="contenidoArchivo">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">MODULO DOCUMENTOS</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Dashboard v1</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+
+
+    <div id="FormularioUser"></div>
+    <div id="TablaUser"></div>
+
+    <!-------------- ARCHIVO MODAL -------------->
+    <div class="modal fade" id="modal-xl" tabindex="-1" aria-labelledby="modal-xl" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="ContenidoArchivo">
+
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-------------- Reporte MODAL -------------->
+    <div class="modal fade" id="modalReporte" tabindex="-1" aria-labelledby="modalReporte" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" >
+          <div class="modal-header">
+            <h1 > reporte de registro de archivos total </h1>
+            <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></a>
+          </div>
+          <div class="modal-body"  id="ReporteArchivo">
+
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-------------- FORMULARIO ARCHIVO MODAL -------------->
+    <div class="modal fade" id="formularioArchivo" tabindex="-1" aria-labelledby="formularioArchivo" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="FormularioArchivoModal">
+
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <script>
+      $('#myModal').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+      })
+    </script>
+    <script>
+      function verArchivo(id_archivo) {
+        var titulo = document.getElementById("");
+        var tituloM = document.getElementById("TituloDoc");
+        $('#pdfContainer').html('<embed src="/verPdf/' + id_archivo + '" type="application/pdf" width="100%" height="800px" />');
+      }
+
+      function verReporte() {
+        $('#ReporteArchivo').html('<embed src="/verReporte" type="application/pdf" width="100%" height="800px" />');
+      }
+    </script>
+
+    <script th:inline="javascript">
+      // Carga inicial del div
+      cargarTabla();
+      cargarFormulario();
+
+      function cargarTabla() {
+        $.ajax({
+          type: 'POST',
+          url: "/RegistrosArchivos",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#TablaUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+      }
+
+      function cargarFormulario() {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevoRegistroArchivo",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#FormularioUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+
+          }
+        });
+      }
+
+      function cancelarMod() {
+        $.ajax({
+          type: 'POST',
+          url: "/NuevoRegistroArchivo",  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+
+            $("#FormularioUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            cerrarFormModalArchivo();
+            toastr.info('Modificacion Cancelada');
+          }
+        });
+      }
+
+      function Cancelar() {
+        $.ajax({
+          url: "/DOCUMENTOS",
+          type: "GET",
+          success: function (data) {
+            toastr.info('Accion Cancelada');
+            $("#contenidoUsuario").html(data); // Actualizar el contenido de la ventana
+
+          }
+        });
+
+      }
+
+    </script>
+    <script>
+
+      function EliminarRegistro(id) {
+
+        Swal.fire({
+          title: '¿Eliminar Registro?',
+          type: 'error',
+          showCancelButton: true,
+          showConfirmButton: false,
+          cancelButtonText: "Cancelar",
+
+          html:
+            "<a type='button' class='btn btn-block btn-danger btn-lg' style='width: 150px; height: 50px; display: inline-block; align-items: center; justify-content: center;' onclick='eliminarRegistroSeleccionado(\"" + id + "\")'>" +
+            "Eliminar" +
+            "</a>",
+        }).then().done();
+      }
+
+      function eliminarRegistroSeleccionado(id) {
+        $.ajax({
+          type: 'POST',
+          url: "/EliminarRegistroArchivo/" + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            cargarTabla();
+            Swal.close();
+            var Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+            toastr.error('Se ha Eliminado un Registro');
+          }, error: function (xhr, status, error) {
+            // Maneja los errores de la solicitud AJAX
+            console.log(error);
+          }
+        });
+      }
+
+
+      function cargarModFormulario(id) {
+        //alert("AAAAAAAAAAAAAAAAAAA");
+        $.ajax({
+          url: '/ModArchivo/' + id, // Reemplaza '/ruta_del_servidor' por la URL de tu servidor
+          method: 'GET', // Utiliza el método HTTP que corresponda (GET, POST, etc.)
+          // Envía el parámetro "id" al servidor
+          success: function (response) {
+
+            $("#FormularioUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            var div = document.getElementById("FormularioUser");
+            div.scrollIntoView({ behavior: 'smooth' });
+            toastr.info('¿Modificar Registro?');
+            $('#botonCancelar').html('<a type="button" class="btn btn-default float-right" onclick="cargarFormulario()">Cancelar</a>');
+            /*$('#ArchivoFoto').html('<p class="text-muted m-0">Archivo:</p>\
+<div class="image-container">\
+  <a class="btn" type="button" data-mdb-dismiss="modal" data-mdb-toggle="modal" data-mdb-target="#modal-xl"\
+    th:attr="onclick=\'ContenidoArchivo(\\\'" " + ${archivo.id_archivo} + "\\\")\'">\
+    <img class="icono-image" th:src="@{\\\'/verIcoPdf/\\\' + ${archivo.id_archivo}}" alt="Imagen 1">\
+  </a>\
+</div>');*/
+          },
+          error: function (xhr, status, error) {
+            // Maneja los errores de la solicitud AJAX
+            console.log(error);
+          }
+        });
+      }
+
+      function cargarModFormularioModal(id) {
+        $.ajax({
+          url: '/ModArchivoModal/' + id,
+          method: 'GET',
+          success: function (response) {
+
+            $("#FormularioArchivoModal").html(response);
+            var div = document.getElementById("FormularioArchivoModal");
+            div.scrollIntoView({ behavior: 'smooth' });
+
+            toastr.info('¿Modificar Registro?');
+          },
+          error: function (xhr, status, error) {
+            console.log(error);
+          }
+        });
+      }
+
+      $(document).ready(function () {
+        $('#dataTable').DataTable();
+      });
+
+      function ContenidoArchivo(id) {
+        $.ajax({
+          type: 'GET',
+          url: '/ContenidoArchivo/' + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#ContenidoArchivo").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            //$('#pdfContainer').html('<embed src="/verPdf/' + id + '" type="application/pdf" width="100%" height="800px" />');
+            $('#botonCerrarArchivoC').html('<a type="button" class="btn-close" aria-label="Cerrar" data-mdb-toggle="modal"></a>');
+          }
+        });
+      }
+      function ContenidoArchivoX(id) {
+        $.ajax({
+          type: 'GET',
+          url: '/ContenidoArchivo/' + id,  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#ContenidoArchivo").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            //$('#pdfContainer').html('<embed src="/verPdf/' + id + '" type="application/pdf" width="100%" height="800px" />');
+            $('#botonCerrarArchivoC').html('<a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar" data-mdb-toggle="modal" data-mdb-target="#formularioArchivo"></a>');
+          }
+        });
+      }
+
+    </script>
+    <style>
+      /*.image-container {
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+        width: 120px;
+        height: 120px;
+      }
+
+      .image-container img {
+        transition: transform 0.3s;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .image-container:hover img {
+        transform: scale(1.2);
+      }
+*/
+    /*  .dropdown {
+        position: absolute;
+        right: 0%;
+        top: 0%;
+      }
+
+      .dropdown-menu {
+        right: auto;
+        left: 100%;
+        transform: translateX(-100%);
+      }
+
+      /*.dropdownArch {
+        position: absolute;
+        right: 28%;
+        top: 0%;
+      }
+
+      .dropdownArch-menu {
+        right: auto;
+        left: 100%;
+        transform: translateX(-100%);
+      }*/
+
+      .dropdown-toggle {
+        padding: 1px 10px;
+      }
+
+      .dropdown-toggle::after {
+        content: none;
+        /* Quita el icono de flecha hacia abajo */
+      }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('#searchInput').on('input', function () {
+          var searchText = $(this).val().toLowerCase();
+          $('.image-container').each(function () {
+            var altText = $(this).find('.image').attr('alt').toLowerCase();
+            if (altText.includes(searchText)) {
+              $(this).removeClass('hide');
+            } else {
+              $(this).addClass('hide');
+            }
+          });
+        });
+      });
+
+      function cerrarModalArchivo() {
+        //$('#modal-xl').modal('hide');
+        const miModal = new bootstrap.Modal(document.getElementById('modal-xl'));
+      }
+
+      function cerrarFormModalArchivo() {
+        $('#formularioArchivo').modal('hide');
+      }
+
+    </script>
+
+    <script>
+      //--------MODAL ARCHIVO CARPETA------------------
+      // Función para cerrar Modal 1 y abrir Modal 2
+      function cerrarCarpetaModalAbrirArchivoModal() {
+        const carpetaModal = new bootstrap.Modal(document.getElementById('formularioArchivo'));
+        carpetaModal.hide();
+
+        // Escuchar el evento 'hidden.bs.modal' de Modal 1
+        carpetaModal._element.addEventListener('hidden.bs.modal', function () {
+          const archivoModal = new bootstrap.Modal(document.getElementById('modal-xl'));
+          archivoModal.show();
+        }, { once: true }); // Agregamos { once: true } para asegurarnos de que el evento se ejecute solo una vez
+      }
+
+      // Función para cerrar Modal 2 y abrir nuevamente Modal 1
+      function cerrarArchivoModalAbrirCarpetaModal() {
+        const archivoModal = new bootstrap.Modal(document.getElementById('modal-xl'));
+        archivoModal.hide();
+
+        // Escuchar el evento 'hidden.bs.modal' de Modal 2
+        archivoModal._element.addEventListener('hidden.bs.modal', function () {
+          const carpetaModal = new bootstrap.Modal(document.getElementById('formularioArchivo'));
+          carpetaModal.show();
+        }, { once: true }); // Agregamos { once: true } para asegurarnos de que el evento se ejecute solo una vez
+      }
+    </script>
+
+  </div>
+</body>
+
+</html>

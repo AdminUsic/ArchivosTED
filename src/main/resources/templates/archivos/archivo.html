@@ -1,0 +1,16 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" th:text="${archivo.nombre}"></h4>
+        <div id="botonCerrarArchivoC"></div>
+    </div>
+    <!--<div class="modal-body" style="max-height: 800px; overflow-y: auto;">-->
+        <div class="modal-body" id="modal-body">
+        <!--<div id="pdfContainer"></div>-->
+        <embed th:src="@{/verPdf/__${archivo.id_archivo}__}" type="application/pdf" width="100%" height="650px" />
+    </div>
+<!--    <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+    </div>-->
+    
+</div>

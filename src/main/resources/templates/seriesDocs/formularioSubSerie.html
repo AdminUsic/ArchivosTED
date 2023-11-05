@@ -1,0 +1,114 @@
+<div class="container-fluid">
+    <!-- /.card -->
+    <!-- Horizontal Form -->
+    <div class="card card-info">
+        <div class="card-header">
+            <h2 class="m-0 font-weight-bold card-title"
+                th:text="${edit}? 'Modificar Registro Sub Serie Documental' : 'Registrar Sub Serie Documental'"></h2>
+
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+        <form class="form-horizontal" id="FormularioRegistrarSubSerieDoc" method="POST"
+            th:action="${edit} ? @{/ModSerieDocG} : @{/GuardarRegistroSeriesDoc}" enctype="multipart/form-data">
+            <div class="card-body">
+                <div th:if="${edit == 'true'}">
+                    <input type="hidden" th:field="${serieDoc.id_serie}" />
+                </div>
+                <input type="hidden" th:each="idP: ${id_seriePadre}" th:value="${idP}" name="id_seriePadre" />
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group form-outline">
+                            <input type="text" th:field="${serieDoc.nombre}" class="form-control"
+                                placeholder="Introdusca un nombre" required/>
+                                <label class="form-label">Nombre de la Sub Serie</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer" style="background-color: white;">
+                    <button type="submit" class="btn btn-success"
+                        th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button>
+                    <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+                        class="btn btn-default float-right">Cancelar</a>
+                </div>
+        </form>
+    </div>
+    <!-- /.card -->
+    <script>
+        $(document).ready(function () {
+            $('#FormularioRegistrarSubSerieDoc').submit(function (event) {
+                event.preventDefault();
+                var form = document.getElementById("FormularioRegistrarSubSerieDoc");
+                var action = form.action;
+                var formData = new FormData(form);
+                //alert("la action es: "+action);
+                //var formData = $(this).serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    contentType: false,  // No establecer el tipo de contenido aquí
+                    processData: false,  // No procesar los datos
+                    //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+                    success: function (response) {
+                        if (action == "/ModSerieDocG") {
+                            cargarFormulario();
+                            cargarTabla();
+                            cargarFormulariosSubSerie();
+                            cargarTablaSubSerie();
+                            cargarFormulario();
+                            cargarTabla();
+                            toastr.success('Los datos del Registro se han Modificado Correctamente');
+                        } else {
+                            cargarFormulario();
+                            cargarTabla();
+                            cargarFormulariosSubSerie();
+                            cargarTablaSubSerie();
+                            cargarFormulario();
+                            cargarTabla();
+                            toastr.success('Los datos se han Registrado Correctamente');
+                        }
+                        var div = document.getElementById("dataTable");
+                        div.scrollIntoView({ behavior: 'smooth' });
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+                        console.error(error);
+                        // Manejo de errores
+                    }
+                });
+            });
+        });
+        function limpiarFormularioR() {
+            var form = document.getElementById("FormularioRegistrarSubSerieDoc");
+            form.reset();
+        }
+    </script>
+    <script>
+        Dropzone.options.myForm = {
+            maxFiles: 1,
+            autoProcessQueue: false,
+
+            init: function () {
+                var myForm = document.getElementById("FormularioRegistrarArchi");
+                var dropzone = this;
+
+                myForm.addEventListener("submit", function (event) {
+                    event.preventDefault();
+
+                    if (dropzone.getQueuedFiles().length > 0) {
+                        dropzone.processQueue();
+                    } else {
+                        myForm.submit();
+                    }
+                });
+            }
+        };
+    </script>
+    <script>
+        document.querySelectorAll('.form-outline').forEach((formOutline) => {
+          new mdb.Input(formOutline).init();
+        });
+      </script>
+</div>

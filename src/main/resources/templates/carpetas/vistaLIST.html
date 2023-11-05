@@ -1,0 +1,134 @@
+<div id="FormularioUser"></div>
+<div id="TablaUser"></div>
+<script>
+    cargarTabla();
+    cargarFormulario();
+
+    function cargarModFormulario(id) {
+        //alert("AAAAAAAAAAAAAAAAAAA");
+        $.ajax({
+            url: '/ModCarpeta/' + id, // Reemplaza '/ruta_del_servidor' por la URL de tu servidor
+            method: 'GET', // Utiliza el método HTTP que corresponda (GET, POST, etc.)
+            // Envía el parámetro "id" al servidor
+            success: function (response) {
+                $("#FormularioUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                var div = document.getElementById("FormularioUser");
+                div.scrollIntoView({ behavior: 'smooth' });
+                toastr.info('¿Modificar Registro?');
+            },
+            error: function (xhr, status, error) {
+                // Maneja los errores de la solicitud AJAX
+                console.log(error);
+            }
+        });
+    }
+    function cargarTabla() {
+        $.ajax({
+            type: 'POST',
+            url: "/RegistrosCarpeta",  // Ruta del metodo del controlador en Spring Boot
+            success: function (response) {
+                $("#TablaUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            }
+        });
+    }
+    function cargarFormulario() {
+        $.ajax({
+            type: 'POST',
+            url: "/NuevaCarpeta",  // Ruta del metodo del controlador en Spring Boot
+            success: function (response) {
+                $("#FormularioUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            }
+        });
+    }
+</script>
+<script>
+
+    function cargarFormularioArchivoList(id_carpeta) {
+        $.ajax({
+            type: 'POST',
+            url: "/AgregarArchivoCList/" + id_carpeta,  // Ruta del metodo del controlador en Spring Boot
+            success: function (response) {
+                $("#formularioArchivoCList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            }
+        });
+    }
+
+    function cargarFormularioModArchivoList(id_carpeta) {
+        $.ajax({
+            type: 'POST',
+            url: "/ModificarArchivoCList/" + id_carpeta,  // Ruta del metodo del controlador en Spring Boot
+            success: function (response) {
+                $("#formularioArchivoCList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            }
+        });
+    }
+
+    function cargarTablaArchivoList(id_carpeta) {
+        $.ajax({
+            type: 'POST',
+            url: "/RegistrosArchivosCList/" + id_carpeta,  // Ruta del metodo del controlador en Spring Boot
+            success: function (response) {
+                $("#tablaArchivoCList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            }
+        });
+    }
+
+    function EliminarRegistro(id) {
+        Swal.fire({
+            title: '!Atención¡',
+            text: '¿Estas Seguro que desea la carpeta " ' + nombre + ' "?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: "/EliminarCarpeta/" + id,
+                    success: function (response) {
+                        cargarTabla();
+                        Swal.fire(
+                            'Eliminado!',
+                            'Este registro se ha eliminado con éxito.',
+                            'success'
+                        );
+                    }, error: function (xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+
+            }
+        });
+       /* Swal.fire({
+            title: '¿Eliminar Registro?',
+            type: 'error',
+            showCancelButton: true,
+            showConfirmButton: false,
+            cancelButtonText: "Cancelar",
+
+            html:
+                "<a type='button' class='btn btn-block btn-danger btn-lg' style='width: 150px; height: 50px; display: inline-block; align-items: center; justify-content: center;' onclick='eliminarRegistroSeleccionado(\"" + id + "\")'>" +
+                "Eliminar" +
+                "</a>",
+        }).then().done();*/
+    }
+
+    function eliminarRegistroSeleccionado(id) {
+        $.ajax({
+            type: 'POST',
+            url: "/EliminarCarpeta/" + id,  // Ruta del metodo del controlador en Spring Boot
+            success: function (response) {
+                cargarTabla();
+                Swal.close();
+                toastr.error('Se ha Eliminado un Registro');
+            }, error: function (xhr, status, error) {
+                // Maneja los errores de la solicitud AJAX
+                console.log(error);
+            }
+        });
+    }
+
+</script>

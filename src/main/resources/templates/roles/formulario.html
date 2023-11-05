@@ -1,0 +1,179 @@
+<div class="container-fluid">
+  <!-- /.card -->
+  <!-- Horizontal Form -->
+  <div class="card card-info">
+    <div class="card-header">
+      <h2 class="m-0 font-weight-bold card-title"
+        th:text="${edit}? 'Modificar Volumen/Tomo' : 'Registrar Volumen/Tomo'"></h2>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form class="form-horizontal" id="FormularioRegistrarRol" method="POST"
+      th:action="${edit} ?@{/ModRolG} : @{/GuardarRegistroRol}">
+      <div class="card-body">
+        <div th:if="${edit=='true'}">
+          <input type="hidden" th:field="${rol.id_rol}">
+          <input type="hidden" th:value="${edit}" id="editar">
+          <input type="hidden" id="numeroFila">
+        </div>
+        <!--<div id="numeroFila"></div>-->
+        <div class="row">
+          <div class="col-sm-6">
+            <!-- text input -->
+            <div class="form-group form-outline">
+              <input type="text" th:field="${rol.nombre}" class="form-control" required>
+              <label class="form-label">Rol</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer" style="background-color: white;">
+        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"
+          id="submit"></button>
+        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+          class="btn btn-default float-right">Cancelar</a>
+      </div>
+      <!-- /.card-footer -->
+    </form>
+  </div>
+
+</div>
+<!-- /.card -->
+<script>
+  $(document).ready(function () {
+    $('#FormularioRegistrarRol').submit(function (event) {
+      event.preventDefault();
+
+      var form = document.getElementById("FormularioRegistrarRol");
+
+      var action = form.action;
+
+      //alert("la action es: "+action);
+      var formData = $(this).serialize();
+
+      // Obtener el elemento del botón por su ID
+      var botonInputText = document.getElementById("submit").textContent;
+
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+        success: function (rol) {
+          var tabla = $('#dataTable').DataTable();
+          if (botonInputText == "Guardar Cambios") {
+            cargarFormulario();
+            //cargarTabla();
+            //alert(botonInputText);
+            var filaRegist = parseInt(document.getElementById('numeroFila').value);
+            var tabla = $('#dataTable').DataTable();
+            //alert('el munero de fila es: '+filaRegist);
+            // Buscar la fila correspondiente por el id_rol y actualizar sus valores
+            //var fila = tabla.row('#fila-' + filaRegist);
+            var fila = tabla.row(filaRegist);
+
+            var buttons = '<div class="btn-group" role="group">' +
+              '<a class="btn btn-info" type="button" onclick="cargarModFormulario(' + rol.id_rol + ')">' +
+              '   <i class="fas fa-pencil-alt"></i>' +
+              '</a>' +
+              '<a class="btn btn-danger" type="button" onclick="EliminarRegistro(' + rol.id_rol + ', this)">' +
+              '   <i class="fa-solid fa-trash"></i>' +
+              '</a>' +
+              '</div>';
+
+            fila.data([
+              filaRegist + 1, // Numeración en la primera columna
+              rol.nombre, // Datos actualizados
+              buttons
+            ]);
+
+            tabla.draw();
+            //tabla.draw(); // Volver a dibujar la tabla para aplicar los cambios
+
+            toastr.success('Los datos del Registro se han Modificado Correctamente');
+          } else if (botonInputText == "Registrar") {
+            cargarFormulario();
+            var buttons = '<div class="btn-group" role="group">' +
+              '<a class="btn btn-info" type="button"  style="color: aliceblue;" onclick="cargarModFormulario(' + rol.id_rol + ')">' +
+              '   <i class="fas fa-pencil-alt"></i>' +
+              '</a>' +
+              '<a class="btn btn-danger" type="button"  style="color: aliceblue;" onclick="EliminarRegistro(' + rol.id_rol + ', this)">' +
+              '   <i class="fa-solid fa-trash"></i>' +
+              '</a>' +
+              '</div>';
+
+            // Obtener el número total de filas en la tabla
+            var numeroFilas = tabla.rows().count();
+
+            var newRow = '<tr>' +
+              '<td>' + (numeroFilas + 1) + '</td>' + // Usar el número total de filas + 1
+              '<td class="text-center">' + rol.nombre + '</td>' +
+              '<td class="text-center">' + buttons + '</td>' +
+              '</tr>';
+
+            tabla.row.add($(newRow)).draw();
+
+            var lastRowNode = tabla.row(':last').node();
+            lastRowNode.classList.add('show-opacity');
+
+            lastRowNode.addEventListener('transitionend', function () {
+              lastRowNode.classList.remove('show-opacity');
+            });
+            Swal.fire(
+              'Registrado!',
+              'Los datos se han Registrado Correctamente.',
+              'success'
+            );
+            //toastr.success('Los datos se han Registrado Correctamente');
+            var div = document.getElementById("dataTable");
+            div.scrollIntoView({ behavior: 'smooth' });
+          }
+
+          var div = document.getElementById("dataTable");
+          div.scrollIntoView({ behavior: 'smooth' });
+        },
+        error: function (xhr, status, error) {
+          Swal.fire(
+            'Imposible Registrar!',
+            'Ha ocurrido un error. Por favor, intenta nuevamente.',
+            'error'
+          );
+          //toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+          console.error(error);
+          // Manejo de errores
+        }
+      });
+    });
+  });
+  function limpiarFormularioR() {
+    var form = document.getElementById("FormularioRegistrarRol");
+    form.reset();
+  }
+</script>
+<script>
+  document.querySelectorAll('.form-outline').forEach((formOutline) => {
+    new mdb.Input(formOutline).init();
+  });
+</script>
+<style>
+  .show-opacity {
+    opacity: 0;
+    animation: fade-in 0.5s ease-in-out forwards;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .none-opacity {
+    opacity: 1;
+  }
+</style>
+</div>

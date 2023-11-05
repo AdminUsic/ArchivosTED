@@ -1,0 +1,55 @@
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-info">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold card-title">Registros de Sub Unidades/Sub Secciones</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Nombre de la Sub Unidades/Sub Secciones</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodySubunid">
+                            <tr th:each="Subunid, rowStat:${SubUnidades}" >
+                                <td th:text="${rowStat.count}"></td>
+                                <td class="text-center" th:text="${Subunid.nombre}+'('+${Subunid.sigla}+')'"></td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-info" type="button" title="Editar Registro" style="color: aliceblue;"
+                                            th:attr="onclick='cargarFormularioModSubUnidad(\'' + ${Subunid.id_unidad} + '\')'"><li class="fas fa-pencil-alt "></li></a>
+                                        <a class="btn btn-danger" type="button" title="Eliminar Registro" style="color: aliceblue;"
+                                            th:attr="onclick='EliminarRegistroSubUnidad(\'' + ${Subunid.id_unidad} + '\', \'' + ${Subunid.nombre}+'('+${Subunid.sigla}+')' + '\')'"><li class="fa-solid fa-trash "></li></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Nombre de la Sub Unidades/Sub Secciones</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+    <script>
+        
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
+</section>

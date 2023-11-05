@@ -1,0 +1,206 @@
+<div class="container-fluid">
+  <!-- /.card -->
+  <!-- Horizontal Form -->
+  <div class="card card-info">
+    <div class="card-header">
+      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Usuario' : 'Registrar Usuario'"></h2>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form class="form-horizontal" id="FormularioRegistrarUser" method="POST"
+      th:action="${edit} ?@{/ModUsuarioG} : @{/RegistrarUsuario}" enctype="multipart/form-data">
+      <div class="card-body">
+        <div th:if="${edit=='true'}">
+          <input type="hidden" th:field="${usuario.sesion}">
+          <input type="hidden" th:field="${usuario.id_usuario}">
+        </div>
+        <div class="row">
+          <div th:class="${edit}? 'col-sm-6' : ''">
+            <!-- text input -->
+            <div class="form-group form-outline">
+              <input type="text" th:field="${usuario.nombre_user}" class="form-control"
+                placeholder="Introdusca un nombre" required>
+              <label class="form-label">Nombre Usuario</label>
+            </div>
+            <div class="form-group form-outline">
+              <input type="text" th:field="${usuario.contraseña}" class="form-control"
+                placeholder="Introdusca una contraseña" required>
+              <label class="form-label">Contraseña</label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Persona</label>
+              <select class="select-field" style="width: 100%;" th:field="${usuario.persona}" id="personaSelect">
+                <option th:value="${edit} ? ${usuario.persona.id_persona} : ''"
+                  th:text="${edit} ? ${usuario.persona.nombre} : 'Seleccionar'" selected></option>
+                <option th:each="persona: ${personas}" th:text="${persona.nombre}+' '+${persona.apellido}"
+                  th:value="${persona.id_persona}" th:if="${persona.usuario==null and persona.cargo != null and persona.unidad != null and persona.rol != null}">
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Adjuntar Foto</label>
+              <input type="file" class="custom-file-input" id="fotoFormU" name="foto" accept=".jpg,.jpeg,.png,.bmp">
+              <div id="alertaFotoPerfil"></div>
+            </div>
+          </div>
+          <div th:class="${edit}? 'col-sm-6' : ''">
+            <div id="contenedorElementosFoto"></div>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer" style="background-color: white;">
+        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+          class="btn btn-default float-right">Cancelar</a>
+      </div>
+      <!-- /.card-footer -->
+    </form>
+  </div>
+  <!-- /.card -->
+  <script>
+    $(document).ready(function () {
+      $('#FormularioRegistrarUser').submit(function (event) {
+        event.preventDefault();
+        var form = document.getElementById("FormularioRegistrarUser");
+        var action = form.action;
+        var formData = new FormData(form);
+        var select1 = document.getElementById("personaSelect").value;
+        //alert("la action es: "+action);
+        //var formData = $(this).serialize();
+        if (select1 != "") {
+          $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            contentType: false,  // No establecer el tipo de contenido aquí
+            processData: false,  // No procesar los datos
+            //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+            success: function (response) {
+              if (action == "/ModUsuarioG") {
+                try {
+                  const imagenPerfil = document.getElementById('fotoImg');
+                  // Obtén la referencia a la imagen
+                  // Genera un parámetro único (timestamp) para evitar el caché
+                  const timestamp = new Date().getTime();
+
+                  // Modifica la URL de la imagen para agregar el parámetro único
+                  const nuevaURL = imagenPerfil.getAttribute('src') + '?' + timestamp;
+
+                  // Actualiza la imagen cambiando la URL
+                  imagenPerfil.setAttribute('src', nuevaURL);
+                  contenedorfoto.innerHTML = '';
+                } catch (error) {
+                  alert("Error al borrar cache: " + error);
+                }
+                cargarFormulario();
+                cargarTabla();
+                Swal.fire(
+                  'Registrado!',
+                  'Los datos del Registro se han Modificado Correctamente.',
+                  'success'
+                );
+                //toastr.success('Los datos del Registro se han Modificado Correctamente');
+              } else {
+                cargarFormulario();
+                cargarTabla();
+                Swal.fire(
+                  'Registrado!',
+                  'Los datos se han Registrado Correctamente.',
+                  'success'
+                );
+                //toastr.success('Los datos se han Registrado Correctamente');
+              }
+              var div = document.getElementById("dataTable");
+              div.scrollIntoView({ behavior: 'smooth' });
+            },
+            error: function (xhr, status, error) {
+              Swal.fire(
+                  'Imposible Registrar!',
+                  'Ha ocurrido un error. Por favor, intenta nuevamente.',
+                  'error'
+                );
+              //toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+              console.error(error);
+              // Manejo de errores
+            }
+          });
+        } else if (select1 == ""){
+          toastr.info('Seleccione una persona para este Usuario');
+        }
+      });
+    });
+    function limpiarFormularioR() {
+      var form = document.getElementById("FormularioRegistrarArchi");
+      form.reset();
+    }
+  </script>
+  <script>
+    $('.select-field').select2({
+      theme: 'bootstrap-5'
+    });
+  </script>
+
+  <script>
+    var fileInput;
+    var nombreArchivo;
+    // Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
+    document.getElementById("fotoFormU").addEventListener("change", function () {
+      // Obtenemos el elemento seleccionado
+      fileInput = document.getElementById("fotoFormU");
+      nombreArchivo = fileInput.files[0].name;
+      // Verificamos si se seleccionó un archivo
+      if (fileInput.files.length > 0) {
+        // Obtenemos el nombre del archivo
+        var fileName = fileInput.files[0].name;
+
+        if (!isValidIMG(fileName)) {
+          // Reseteamos el valor del input file para borrar la selección inválida
+          fileInput.value = "";
+          $('#alertaFotoPerfil').html('<div class="alert alert-danger alert-dismissible">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+            '<h6><i class="icon fas fa-ban"></i> El archivo no es Valido!</h6>' +
+            'Solo se Admite Archivos IMG' +
+            '</div>');
+        } else {
+
+          $('#alertaFotoPerfil').html('<div class="alert alert-success alert-dismissible">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+            '<h6><i class="icon fas fa-check"></i> El archivo ' + nombreArchivo + ' es Valido!</h6>' +
+            '</div>');
+        }
+      }
+    });
+
+    // Función para validar si el nombre del archivo tiene extensión PDF
+    function isValidIMG(fileName) {
+      var validExtensions = ["jpg", "jpeg", "png", "bmp"];
+      var fileExtension = fileName.split(".").pop().toLowerCase();
+      return validExtensions.indexOf(fileExtension) !== -1;
+    }
+
+    $(function () {
+
+      $('#fotoFormU').bs_dropzone({
+        maxFiles: 1,
+        acceptedFiles: '.jpeg,.jpg,.png,.bmp',
+        boxClass: 'alert p-5 text-center font-weight-bold',
+        noneColorClass: 'alert alert-success alert-dismissible',
+        dragColorClass: 'alert alert-warning alert-dismissible',
+        doneColorClass: 'alert alert-success alert-dismissible',
+        failColorClass: 'alert alert-danger alert-dismissible',
+        language: {
+          emptyText: 'Introdusca o arrastre un archivo IMG',
+          dragText: '[Soltar aquí]',
+          dropText: 'El archivo se subió correctamente'
+        }
+      });
+
+    });
+  </script>
+  <script>
+    document.querySelectorAll('.form-outline').forEach((formOutline) => {
+      new mdb.Input(formOutline).init();
+    });
+  </script>
+</div>

@@ -1,0 +1,301 @@
+<div>
+    <div class="modal-header ">
+        <ol class="breadcrumb float-sm-right text-center">
+            <li class="breadcrumb-item active text-center" th:text="'   '+${carpeta.volumen.nombre}"></li>
+            <li class="breadcrumb-item active text-center" th:text="'Unidad: ' + ${carpeta.unidad.nombre}"></li>
+            <li class="breadcrumb-item active text-center"
+                th:text="'Serie Documental: ' + ${carpeta.serieDocumental.nombre}"></li>
+            <li class="breadcrumb-item active text-center" th:text="'Gestion: ' + ${carpeta.Gestion}"></li>
+        </ol>
+        <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar" onclick="cancelarMod()"></a>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid" id="body-Carpeta">
+            <div class="card card-info">
+                <div class="container">
+                    <div class="content-header">
+                        <div class="container-fluid">
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <h4 th:if="${carpeta.TotalArchivo == 0}">Esta carpeta contiene no contiene ninguna
+                                        hoja</h4>
+                                    <h4 th:if="${carpeta.TotalArchivo > 0}"
+                                        th:text="(${carpeta.TotalArchivo} > 1) ? 'Esta carpeta contiene ' + ${carpeta.TotalArchivo} + ' hojas en total' : 'Contiene ' + ${carpeta.TotalArchivo} + ' archivo en total'">
+                                    </h4>
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+                        </div><!-- /.container-fluid -->
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-box">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div id="myBtnContainer" class="panel panel-dark-outline tabs-panel">
+                                            <div class="panel-heading">
+                                                <ul class="nav nav-tabs pull-left type-document">
+                                                </ul>
+                                            </div>
+                                            <h4 class="no-margin-top"><a type="button" class="effect-underline"
+                                                    style="text-decoration: none;"
+                                                    onclick="filterSelection('all')">Lista de
+                                                    Archivos</a></h4>
+                                            <div class="panel-body tab-content">
+                                                <div class="tab-pane active documents-panel">
+                                                    <ul class="folders list-unstyled" id="menuList">
+                                                        <div th:each="subSeries: ${carpeta.serieDocumental.subSeries}">
+                                                            <h6 class="no-margin-top">
+                                                                <a type="button" class="effect-underline "
+                                                                    style="text-decoration: none;"
+                                                                    th:attr="onclick='filterSelection(\'' +${subSeries.nombre} + '\')'"
+                                                                    th:text="${subSeries.nombre}"></a>
+                                                            </h6>
+                                                            <li th:each="listArchivos: ${subSeries.archivos}">
+                                                                <a class="dropdown-item" type="button"
+                                                                    data-mdb-dismiss="modal" data-mdb-toggle="modal"
+                                                                    data-mdb-target="#archivoModal"
+                                                                    th:attr="onclick='ContenidoArchivo(\'' + ${listArchivos.id_archivo} + '\')'">
+                                                                    <i class="fa-regular fa-file-pdf"></i>
+                                                                    <small
+                                                                        th:text="'    '+${listArchivos.nombre}"></small>
+                                                                </a>
+                                                            </li>
+                                                        </div>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="container col-md flex-grow-1">
+                                        <div class="row" th:each="subSeries: ${carpeta.serieDocumental.subSeries}">
+                                            <h5 th:class="'filterTitulo '+${subSeries.nombre} "
+                                                th:text="${subSeries.nombre}"></h5>
+                                            <div th:class="'filterDiv col-lg-3 col-xl-3 '+${subSeries.nombre}"
+                                                th:each="ar:${subSeries.archivos}" th:if="${ar.estado!='X'}">
+                                                <div class="file-man-box mailbox-attachment-info">
+                                                    <div class="file-img-box">
+                                                        <a type="button" data-mdb-dismiss="modal"
+                                                            data-mdb-toggle="modal" data-mdb-target="#archivoModal"
+                                                            class="btn bg-white"
+                                                            th:attr="onclick='ContenidoArchivo(\'' + ${ar.id_archivo} + '\')'">
+                                                            <img th:src="@{'/verIcoPdf/' + ${ar.id_archivo}}"
+                                                                class="img-fluid mb-2" alt="Ver Archivo?" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="file-man-title">
+                                                        <h5 class="mb-0 text-overflow" th:text="${ar.Nombre}"></h5>
+                                                        <p class="mb-0"><small
+                                                                th:text="${ar.tipoArchivo.nombre_tipo}"></small>
+                                                        </p>
+                                                        <p class="mb-0">
+                                                            <small
+                                                                th:text="'Autor: '+${ar.persona.nombre}+' '+${ar.persona.apellido}"></small>
+                                                        </p>
+                                                        <p class="mb-0"><small
+                                                                th:text="'Cant. Hojas: '+${ar.cantidadHojas}"></small>
+                                                        </p>
+                                                        <p class="text-muted m-0"><small
+                                                                th:text="${ar.fechaEmision}"></small>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .image-container {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            width: 120px;
+            height: 120px;
+        }
+
+        .image-container img {
+            transition: transform 0.3s;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-container:hover img {
+            transform: scale(1.2);
+        }
+
+        .estiloDropdown {
+            position: absolute;
+            right: 0%;
+            top: 0%;
+        }
+
+        .dropdown-menu {
+            right: auto;
+            left: 100%;
+            transform: translateX(-100%);
+            z-index: 1000;
+        }
+
+        .dropdown-toggle {
+            padding: 1px 10px;
+        }
+
+        /*.dropdown-toggle::after {
+            content: none;
+           
+        }*/
+
+        /*--------------------------------------------------*/
+
+        .filterTitulo {
+            float: left;
+            text-align: center;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .filterDiv {
+            display: none;
+            width: 170px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .show {
+            display: block;
+            opacity: 1;
+        }
+
+
+        .effect-underline:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            display: inline-block;
+            height: 1em;
+            width: 100%;
+            border-bottom: 1px solid;
+            margin-top: 10px;
+            opacity: 0;
+            -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+            transition: opacity 0.35s, transform 0.35s;
+            -webkit-transform: scale(0, 1);
+            transform: scale(0, 1);
+        }
+
+        .effect-underline:hover:after {
+            opacity: 1;
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $('#searchInput').on('input', function () {
+                var searchText = $(this).val().toLowerCase();
+                $('.image-container').each(function () {
+                    var altText = $(this).find('.image').attr('alt').toLowerCase();
+                    if (altText.includes(searchText)) {
+                        $(this).removeClass('hide');
+                    } else {
+                        $(this).addClass('hide');
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script>
+        function EliminarArchivoIco(id, id_carpeta) {
+
+            Swal.fire({
+                title: '¿Eliminar Registro?',
+                type: 'error',
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: "Cancelar",
+
+                html:
+                    "<a type='button' class='btn btn-block btn-danger btn-lg' style='width: 150px; height: 50px; display: inline-flex; align-items: center; justify-content: center;' onclick='eliminarArchivoSeleccionadoIco(\"" + id + "\", \"" + id_carpeta + "\")'>" +
+                    "Eliminar" +
+                    "</a>",
+
+            }).then().done();
+        }
+
+        function eliminarArchivoSeleccionadoIco(id, id_carpeta) {
+            $.ajax({
+                type: 'POST',
+                url: "/EliminarRegistroArchivo/" + id,  // Ruta del metodo del controlador en Spring Boot
+                success: function (response) {
+                    ;
+                    AbrirCarpeta(id_carpeta);
+                    cargarRegistroIco();
+                    Swal.close();
+                    toastr.error('Se ha Eliminado un Registro');
+                }, error: function (xhr, status, error) {
+                    // Maneja los errores de la solicitud AJAX
+                    console.log(error);
+                }
+            });
+        }
+    </script>
+    <script>
+        filterSelection("all");
+        function filterSelection(c) {
+            var x, i, t;
+            x = document.getElementsByClassName("filterDiv");
+            t = document.getElementsByClassName("filterTitulo");
+            if (c == "all") c = "";
+            // Add the "show" class (display:block) to the filtered elements, and remove the "show" class from the elements that are not selected
+            for (i = 0; i < x.length; i++) {
+                w3RemoveClass(x[i], "show");
+                if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+            }
+
+            if (c == "all") c = "";
+            // Add the "show" class (display:block) to the filtered elements, and remove the "show" class from the elements that are not selected
+            for (i = 0; i < t.length; i++) {
+                w3RemoveClass(t[i], "show");
+                if (t[i].className.indexOf(c) > -1) w3AddClass(t[i], "show");
+            }
+        }
+
+        // Show filtered elements
+        function w3AddClass(element, name) {
+            var i, arr1, arr2;
+            arr1 = element.className.split(" ");
+            arr2 = name.split(" ");
+            for (i = 0; i < arr2.length; i++) {
+                if (arr1.indexOf(arr2[i]) == -1) {
+                    element.className += " " + arr2[i];
+                }
+            }
+        }
+
+        // Hide elements that are not selected
+        function w3RemoveClass(element, name) {
+            var i, arr1, arr2;
+            arr1 = element.className.split(" ");
+            arr2 = name.split(" ");
+            for (i = 0; i < arr2.length; i++) {
+                while (arr1.indexOf(arr2[i]) > -1) {
+                    arr1.splice(arr1.indexOf(arr2[i]), 1);
+                }
+            }
+            element.className = arr1.join(" ");
+        }
+
+    </script>
+
+</div>

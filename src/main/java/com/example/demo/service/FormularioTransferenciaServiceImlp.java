@@ -1,0 +1,39 @@
+package com.example.demo.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dao.DataFormularioTransferenciaData;
+import com.example.demo.entity.Archivo;
+import com.example.demo.entity.FormularioTransferencia;
+
+@Service
+public class FormularioTransferenciaServiceImlp implements FormularioTransferenciaService{
+
+    @Autowired
+    private DataFormularioTransferenciaData dataFormularioTransferenciaData;
+
+    @Override
+    public List<FormularioTransferencia> findAll() {
+        return dataFormularioTransferenciaData.findAll();
+    }
+
+    @Override
+    public void save(FormularioTransferencia formularioTransferencia) {
+        dataFormularioTransferenciaData.save(formularioTransferencia);
+    }
+
+    @Override
+    public FormularioTransferencia findOne(Long id) {
+        return dataFormularioTransferenciaData.findById(id).orElse(null);
+    }
+
+    @Override
+    public void delete(Long id) {
+        dataFormularioTransferenciaData.deleteById(id);
+    }
+    
+}

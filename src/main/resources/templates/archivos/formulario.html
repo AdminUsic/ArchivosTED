@@ -1,0 +1,357 @@
+<div class="container-fluid">
+  <!-- /.card -->
+  <!-- Horizontal Form -->
+  <div class="card card-info">
+    <div class="card-header">
+      <h2 class="m-0 font-weight-bold card-title"
+        th:text="${edit}? 'Modificar Registro de Archivo' : 'Registrar Archivo'"></h2>
+      <div class="card-tools">
+        <a type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+          <i class="fas fa-minus"></i>
+        </a>
+      </div>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <div class="card-body">
+      <form class="form-horizontal" id="FormularioRegistrarArchi" method="POST"
+        th:action="${edit} ? @{/ModArchivoG} : @{/GuardarRegistroArchivo}" enctype="multipart/form-data">
+        <div class="card-body">
+          <div th:if="${edit == 'true'}">
+            <input type="hidden" th:field="${archivo.id_archivo}" />
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group form-outline">
+                <input type="number" th:field="${archivo.NroDocumental}" class="form-control"
+                  placeholder="Introdusca el Nro. Documental" min="1" required />
+                <label class="form-label">Nro. Documental:</label>
+              </div>
+              <div class="form-group form-outline">
+                <input type="text" th:field="${archivo.nombre}" class="form-control"
+                  placeholder="Introdusca Nombre del Archivo" required />
+                <label class="form-label">Nombre:</label>
+              </div>
+              <div class="form-group form-outline">
+                <input type="text" th:field="${archivo.descripcion}" class="form-control"
+                  placeholder="Descripción del Archivo" required />
+                <label class="form-label">Descripción:</label>
+              </div>
+              <div class="form-group form-outline">
+                <input type="text" th:field="${archivo.rutaFisica}" class="form-control" placeholder="Ruta del Archivo"
+                  required />
+                <label class="form-label">Ruta del Archivo</label>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Fecha de Emision:</label>
+                <input type="text" class="form-control datepickerform" name="fechaEmision" id="fechaEmision"
+                  placeholder="Seleccione una fecha" th:field="${archivo.fechaEmision}" required />
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group ">
+                <div class="form-group">
+                  <label class="form-label">Tipo de Archivo</label>
+                  <select class="select-field" style="width: 100%;" th:field="${archivo.tipoArchivo}" id="selectTipoAr">
+                    <option th:value="${edit} ? ${archivo.tipoArchivo.id_tipoArchivo} : ''"
+                      th:text="${archivo.tipoArchivo != null} ? ${archivo.tipoArchivo.nombre_tipo} : 'Seleccionar'"
+                      selected></option>
+                    <option th:each="tiposA: ${TiposArchivos}" th:text="${tiposA.nombre_tipo}"
+                      th:value="${tiposA.id_tipoArchivo}"></option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Responsable de la Unidad Documental</label>
+                  <select class="select-field" style="width: 100%;" th:field="${archivo.persona}"
+                    id="selectResponsableAr">
+                    <option th:value="${edit} ? ${archivo.persona.id_persona} : ''"
+                      th:text="${archivo.persona != null} ? ${archivo.persona.nombre + ' ' + archivo.persona.apellido} : 'Seleccionar'"
+                      th:selected="${archivo.persona != null}"></option>
+                    <option th:each="persona: ${personas}" th:text="${persona.nombre}+' '+${persona.apellido}"
+                      th:value="${persona.id_persona}"></option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Carpeta</label>
+                  <select class="select-field" style="width: 100%;" th:field="${archivo.carpeta}" id="selectCarpeta"
+                    onchange="extraerSubSecciones()">
+                    <option th:value="${edit} ? ${archivo.carpeta.id_carpeta} : ''"
+                      th:text="${archivo.carpeta != null} ? ${archivo.carpeta.volumen.nombre}+' | Seccion: '+${archivo.carpeta.unidad.nombre}+' | Serie: '+${archivo.carpeta.serieDocumental.nombre}+' | Gestion: '+${archivo.carpeta.gestion} : 'Seleccionar'"
+                      selected></option>
+                    <option th:each="carp: ${carpetas}"
+                      th:text="${carp.volumen.nombre}+' | Seccion: '+${carp.unidad.nombre}+' | Serie: '+${carp.serieDocumental.nombre}+' | Gestion: '+${carp.gestion}"
+                      th:value="${carp.id_carpeta}"></option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Seccion Documental</label>
+                  <select class="select-field" style="width: 100%;" th:field="${archivo.unidad}" id="subUnidadSelect">
+                    <option th:value="${edit} ? ${archivo.unidad.id_unidad} : ''"
+                      th:text="${edit} ? ${archivo.unidad.nombre} : 'Seleccionar'"></option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div th:class="${edit}? 'col-sm-6' : ''">
+              <div class="form-group">
+                <label class="form-label">Adjuntar Archivo</label>
+                <input type="file" name="PDF" id="PDFformulario" accept=".pdf" data-validation="required"
+                  th:required="${edit==null}">
+                <div id="alertasFormArchivo"></div>
+              </div>
+            </div>
+            <div th:class="${edit}? 'col-sm-6' : ''" th:if="${edit == 'true'}">
+              <div class="form-group">
+                <div id="ArchivoFoto"></div>
+                <divc lass="filtr-item col-sm-2">
+                  <p class="text-muted m-0">Archivo:</p>
+                  <div class="image-container">
+                    <a class="btn" type="button" data-mdb-toggle="modal" data-mdb-target="#modal-xl"
+                      th:attr="onclick='ContenidoArchivo(\'' + ${archivo.id_archivo} + '\')'">
+                      <img class="icono-image" th:src="@{'/verIcoPdf/' + ${archivo.id_archivo}}" alt="Imagen 1">
+                    </a>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer" style="background-color: white;">
+            <button type="submit" class="btn btn-success" th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button>
+            <div id="botonCancelar">
+              <a th:if="${edit == 'true'}" type="button" class="btn btn-default float-right" data-mdb-dismiss="modal"
+                aria-label="Cerrar" onclick="cargarFormulario()">Cancelar</a>
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+  <!-- /.card -->
+  <script>
+    $(document).ready(function () {
+      $('#FormularioRegistrarArchi').submit(function (event) {
+        event.preventDefault();
+        var form = document.getElementById("FormularioRegistrarArchi");
+        var action = form.action;
+        var formData = new FormData(form);
+        //alert("la action es: "+action);
+        //var formData = $(this).serialize();
+
+        var selectTipoAr = document.getElementById("selectTipoAr").value;
+        var selectResponsableAr = document.getElementById("selectResponsableAr").value;
+        var selectCarpeta = document.getElementById("selectCarpeta").value;
+        var selectSeccionDocAR = document.getElementById("subUnidadSelect").value;
+
+        if (selectTipoAr != "" && selectResponsableAr != "" && selectCarpeta != "" && selectSeccionDocAR != "") {
+          $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            contentType: false,  // No establecer el tipo de contenido aquí
+            processData: false,  // No procesar los datos
+            //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+            success: function (response) {
+              var mensaje = response;
+              if (response=="Se ha Registrado el Archivo correctamente") {
+                cargarTabla();
+                cargarFormulario();
+                toastr.success(mensaje);
+                var div = document.getElementById("dataTable");
+                div.scrollIntoView({ behavior: 'smooth' });
+              } else if(mensaje=="Se ha Modificado el Archivo correctamente"){
+                cargarTabla();
+                cargarFormulario();
+                toastr.success(mensaje);
+              } else if(mensaje="ERROR AL REGISTRAR ARCHIVO"){
+                toastr.error(mensaje);
+              } else if(mensaje="ERROR MODIFICAR EL ARCHIVO"){
+                toastr.error(mensaje);
+              }
+/*
+              if (action == "/ModArchivoG") {
+                cargarFormulario();
+                cargarTabla();
+                var Toast = Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 3000
+                });
+                toastr.success('Los datos del Registro se han Modificado Correctamente');
+              } else {
+                cargarFormulario();
+                cargarTabla();
+                var Toast = Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 3000
+                });
+                toastr.success('Los datos se han Registrado Correctamente');
+              }
+              */
+            },
+            error: function (xhr, status, error) {
+              toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+              console.error(error);
+              // Manejo de errores
+            }
+          });
+        } else if (selectTipoAr == "") {
+          toastr.info('Tiene que seleccionar un Tipo de Archivo para este Registro');
+        } else if (selectResponsableAr == "") {
+          toastr.info('Tiene que seleccionar un Responsable de la Unidad Documental para este Registro');
+        } else if (selectCarpeta == "") {
+          toastr.info('Tiene que seleccionar una Carpeta para este Registro');
+        } else if (selectSeccionDocAR == "") {
+          toastr.info('Tiene que seleccionar una Seccion/Unidad para este Registro');
+        }
+
+      });
+    });
+    function limpiarFormularioR() {
+      var form = document.getElementById("FormularioRegistrarArchi");
+      form.reset();
+    }
+  </script>
+
+  <script>
+    $(function () {
+      bsCustomFileInput.init();
+    });
+  </script>
+
+  <script>
+    var fileInput;
+    var nombreArchivo;
+    // Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
+    document.getElementById("PDFformulario").addEventListener("change", function () {
+
+      fileInput = document.getElementById("PDFformulario");
+      nombreArchivo = fileInput.files[0].name;
+      // Verificamos si se seleccionó un archivo
+      if (fileInput.files.length > 0) {
+        // Obtenemos el nombre del archivo
+        var fileName = fileInput.files[0].name;
+        // Verificamos si la extensión del archivo es PDF
+        if (!isValidPDF(fileName)) {
+          // Reseteamos el valor del input file para borrar la selección inválida
+          fileInput.value = "";
+          $('#alertasFormArchivo').html('<div class="alert alert-danger alert-dismissible">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+            '<h6><i class="icon fas fa-ban"></i> El archivo seleccionado no es Válido!</h6>' +
+            'Solo se Admite Archivos tipo PDF' +
+            '</div>');
+        } else {
+
+          $('#alertasFormArchivo').html('<div class="alert alert-success alert-dismissible">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+            '<h6><i class="icon fas fa-check"></i> El archivo ' + nombreArchivo + ' es Válido!</h6>' +
+            '</div>');
+        }
+      }
+    });
+
+    // Función para validar si el nombre del archivo tiene extensión PDF
+    function isValidPDF(fileName) {
+      var validExtensions = ["pdf"];
+      var fileExtension = fileName.split(".").pop().toLowerCase();
+      return validExtensions.indexOf(fileExtension) !== -1;
+    }
+
+    $(function () {
+
+      $('#PDFformulario').bs_dropzone({
+        maxFiles: 1,
+        acceptedFiles: '.pdf',
+        boxClass: 'alert p-5 text-center font-weight-bold',
+        noneColorClass: 'alert alert-success alert-dismissible',
+        dragColorClass: 'alert alert-warning alert-dismissible',
+        doneColorClass: 'alert alert-success alert-dismissible',
+        failColorClass: 'alert alert-danger alert-dismissible',
+        language: {
+          emptyText: 'Introdusca o arrastre un archivo PDF',
+          dragText: '[Soltar aquí]',
+          dropText: 'El archivo se subió correctamente'
+        }
+      });
+
+    });
+
+  </script>
+
+  <script>
+    $('.select-field').select2({
+      theme: 'bootstrap-5'
+    });
+
+  </script>
+
+  <style>
+    .input-group-append {
+      cursor: pointer;
+    }
+  </style>
+
+  <!-- Agrega el siguiente código JavaScript -->
+  <script>
+    // Función para cargar la matriz en el select
+    function cargarMatrizEnSelect(matriz) {
+      var select = document.getElementById("subUnidadSelect");
+
+      // Limpiar el select antes de agregar nuevas opciones
+      select.innerHTML = "";
+      /*var option1 = document.createElement("option");
+      option1.value = "";
+      option1.text = "Seleccionar";
+      select.appendChild(option);*/
+      var cont = 0;
+      matriz.forEach(function (fila) {
+        var option = document.createElement("option");
+        if (cont == 0) {
+          option.value = "";
+          option.text = "Seleccionar";
+          cont++;
+          select.appendChild(option);
+          option = document.createElement("option");
+        }
+        option.value = fila[0];
+        option.text = fila[1];
+        select.appendChild(option);
+      });
+    }
+
+    // Llamada AJAX para obtener la matriz desde el backend
+    // Asumiendo que estás usando jQuery para la llamada AJAX
+    function extraerSubSecciones() {
+      var idExtra = document.getElementById('selectCarpeta').value
+
+      $.ajax({
+        url: "/SubSecciones/" + idExtra, // Reemplaza con la URL de tu endpoint en Spring
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+          cargarMatrizEnSelect(data); // Carga la matriz en el select
+        },
+        error: function (error) {
+          console.error("Error al obtener la matriz desde el backend:", error);
+        },
+      });
+    }
+
+  </script>
+  <script>
+    document.querySelectorAll('.form-outline').forEach((formOutline) => {
+      new mdb.Input(formOutline).init();
+    });
+  </script>
+  <script>
+    $(function () {
+      $('input.datepickerform').datepicker({
+        format: "DD/MM/YYYY",
+        minDate: "1900-01-01"
+      });
+    });
+
+  </script>
+
+</div>

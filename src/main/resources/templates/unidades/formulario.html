@@ -1,0 +1,96 @@
+<div class="container-fluid">
+  <!-- /.card -->
+  <!-- Horizontal Form -->
+  <div class="card card-info">
+    <div class="card-header">
+      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Unidad/Area' : 'Registrar Unidad/Area'">
+      </h2>
+
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form class="form-horizontal" id="FormularioRegistrarUnid" method="POST"
+      th:action="${edit} ?@{/ModUnidadG} : @{/GuardarRegistroUnidad}">
+      <div class="card-body">
+        <div th:if="${edit=='true'}">
+          <input type="hidden" th:field="${unidad.id_unidad}">
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <!-- text input -->
+            <div class="form-group form-outline">
+              <input type="text" th:field="${unidad.nombre}" class="form-control" placeholder="Introdusca un nombre"
+                required>
+              <label class="form-label">Nombre de la Seccion</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer" style="background-color: white;">
+        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+          class="btn btn-default float-right">Cancelar</a>
+      </div>
+      <!-- /.card-footer -->
+    </form>
+  </div>
+  <!-- /.card -->
+  <script>
+    $(document).ready(function () {
+      $('#FormularioRegistrarUnid').submit(function (event) {
+        event.preventDefault();
+        var form = document.getElementById("FormularioRegistrarUnid");
+        var action = form.action;
+        //alert("la action es: "+action);
+        var formData = $(this).serialize();
+        $.ajax({
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: formData,
+          contentType: 'application/x-www-form-urlencoded',
+          success: function (response) {
+            var mensaje = response;
+            //if (action == "/ModUnidadG") {
+              if (mensaje != "Ya existe un registro con este nombre") {
+                cargarFormulario();
+                cargarTabla();
+                var div = document.getElementById("dataTable");
+                div.scrollIntoView({ behavior: 'smooth' });
+                toastr.success(mensaje);
+              } else {
+                toastr.error(mensaje);
+              }
+            //} else {
+              /*if (mensaje == "Se realizó el registro correctamente") {
+                cargarFormulario();
+                cargarTabla();
+                var div = document.getElementById("dataTable");
+                div.scrollIntoView({ behavior: 'smooth' });
+                toastr.success(mensaje);
+              } else {
+                toastr.error(mensaje);
+              }*/
+           // }
+
+          },
+          error: function (xhr, status, error) {
+            toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+            console.error(error);
+            // Manejo de errores
+          }
+        });
+      });
+    });
+    function limpiarFormularioR() {
+      var form = document.getElementById("FormularioRegistrarUnid");
+      form.reset();
+    }
+  </script>
+  <script>
+    document.querySelectorAll('.form-outline').forEach((formOutline) => {
+      new mdb.Input(formOutline).init();
+    });
+  </script>
+
+</div>
