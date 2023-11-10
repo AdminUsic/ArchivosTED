@@ -26,8 +26,7 @@ public class Caja implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_caja;
-
-    private int Nro;
+    
     private int NroCaja;
     private String tituloDoc;
     private int gestion;

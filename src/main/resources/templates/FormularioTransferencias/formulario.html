@@ -21,13 +21,13 @@
               <input type="hidden" th:field="${FormularioTransferencia.id_formularioTransferencia}">
             </div>
             <div class="row">
-              <div class="col-sm-6">
+              <!--<div class="col-sm-6">
                 <div class="form-group form-outline">
                   <input type="number" th:field="${FormularioTransferencia.cantCajas}" class="form-control"
-                    placeholder="Introdusca la cantidad" min="0" required>
+                    placeholder="Introdusca la cantidad" min="0" id="cantCajas" required>
                   <label class="form-label">Cantidad Cajas</label>
                 </div>
-              </div>
+              </div>-->
               <div class="col-sm-6">
                 <div class="form-group form-outline">
                   <input type="number" th:field="${FormularioTransferencia.cantDocumentos}" class="form-control"
@@ -83,6 +83,7 @@
 
   <!-- /.card -->
   <script>
+    //extraerColunma();
     $(document).ready(function () {
       $('#FormularioRegistrarFT').submit(function (event) {
         event.preventDefault();
@@ -103,9 +104,11 @@
               if (mensaje == 'Se realizó el registro correctamente') {
                 cargarFormulario();
                 cargarTabla();
+                //extraerColunma();
+
                 Swal.fire(
                   'Registrado!',
-                  mensaje+'.',
+                  mensaje + '.',
                   'success'
                 );
                 var div = document.getElementById("dataTable");
@@ -139,6 +142,33 @@
     function limpiarFormularioR() {
       var form = document.getElementById("FormularioRegistrarFT");
       form.reset();
+    }
+
+    function extraerColunma() {
+      // Obtén una referencia a la tabla por su id
+      var table = document.getElementById("dataTable");
+
+      // Obtén una referencia al cuerpo de la tabla (<tbody>)
+      var tbody = table.getElementsByTagName("tbody")[0];
+
+      // Crea un array para almacenar el contenido de la segunda columna
+      var secondColumnArray = [];
+
+      // Recorre las filas del cuerpo de la tabla
+      var rows = tbody.rows;
+      for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        // Obtiene el contenido de la celda en la segunda columna
+        var cell = row.cells[1]; // El índice 1 representa la segunda columna
+        var cellContent = cell.textContent.trim(); // Obtén el contenido y elimina espacios en blanco
+
+        // Agrega el contenido al array
+        secondColumnArray.push(cellContent);
+      }
+
+      // Ahora, secondColumnArray contiene el texto de la segunda columna del <tbody> de la tabla
+      //alert(secondColumnArray);
+
     }
   </script>
   <script>

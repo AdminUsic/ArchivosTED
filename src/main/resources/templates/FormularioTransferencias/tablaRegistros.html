@@ -10,7 +10,6 @@
                         <thead class="table-dark">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro. de Caja</th>
                                 <th>Cant. de Cajas</th>
                                 <th>Cant- Documento</th>
                                 <th>Unidad/Seccion</th>
@@ -24,7 +23,6 @@
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center" th:text="${fromT.cantCajas}"></td>
                                 <td class="text-center" th:text="${fromT.cantDocumentos}"></td>
-                                <td class="text-center" th:text="${fromT.cantCajas}"></td>
                                 <td class="text-center" th:text="${fromT.unidad.nombre}"></td>
                                 <td class="text-center" th:text="${fromT.fechaExtrema}"></td>
                                 <td class="text-center">
@@ -53,35 +51,18 @@
                                             <li class="fa-solid fa-trash"></li>
                                         </a>
 
-                                        <a class="btn btn-default" type="button" data-mdb-toggle="modal" style="color: aliceblue;"
+                                        <a class="btn btn-default" type="button" data-mdb-toggle="modal"
                                             data-mdb-target="#modal_ReporteFormularioT"
                                             th:attr="onclick='verReporteFormTr(\'' + ${fromT.id_formularioTransferencia} + '\')'">
                                             <li class="fa-regular fa-file-pdf"></li>
                                         </a>
                                     </div>
-
-                                    <!--<a type="button" class="btn btn-primary dropdown-toggle" data-mdb-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <li class="fas fa-cog"></li>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end " style="z-index: 99999;">
-                                        <li>
-                                            <h6 class="dropdown-header">Opciones Disponibles</h6>
-                                        </li>
-                                        <li><a class="dropdown-item" type="button">Añadir mas datos</a>
-                                        </li>
-                                        <li><a class="dropdown-item" type="button">Editar</a>
-                                        <li><a class="dropdown-item" type="button">Eliminar</a>
-                                        <li><a class="dropdown-item" type="button">Ver Formulario</a>
-                                        </li>
-                                    </ul>-->
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot class="table-secondary">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro. de Caja</th>
                                 <th>Cant. de Cajas</th>
                                 <th>Cant- Documento</th>
                                 <th>Unidad/Seccion</th>

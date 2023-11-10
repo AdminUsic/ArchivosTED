@@ -7,7 +7,6 @@
                         <thead class="table-dark">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro</th>
                                 <th>Nro. Caja</th>
                                 <th>Titulo del Documento</th>
                                 <th>Año</th>
@@ -20,7 +19,6 @@
                         <tbody id="tbodySUB">
                             <tr th:each="caja, rowStat:${cajas}">
                                 <td th:text="${rowStat.count}"></td>
-                                <td class="text-center" th:text="${caja.Nro}"></td>
                                 <td class="text-center" th:text="${caja.NroCaja}"></td>
                                 <td class="text-center" th:text="${caja.tituloDoc}"></td>
                                 <td class="text-center" th:text="${caja.gestion}"></td>
@@ -44,7 +42,6 @@
                         <tfoot class="table-secondary">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro</th>
                                 <th>Nro. Caja</th>
                                 <th>Titulo del Documento</th>
                                 <th>Año</th>

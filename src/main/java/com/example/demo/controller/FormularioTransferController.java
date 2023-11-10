@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -126,6 +127,7 @@ public class FormularioTransferController {
         formularioTransferencia.setFechaRegistro(new Date());
         formularioTransferencia.setHoraRegistro(new Date());
         formularioTransferencia.setEstado("A");
+        formularioTransferencia.setCantCajas(0);
         formularioTransferencia.setPersona(u.getPersona());
         formularioTransferenciaService.save(formularioTransferencia);
         return ResponseEntity.ok("Se realizó el registro correctamente");
@@ -206,6 +208,32 @@ public class FormularioTransferController {
         caja.setGestion(Integer.parseInt(gestion));
         caja.setEstado("A");
         cajaService.save(caja);
+
+        List<Caja> cajas = caja.getFormularioTransferencia().getCajas();
+
+            int contarCajas = 0;
+            int aux = 0;
+
+            int[] filaCant = new int[cajas.size()];
+            int i = 0;
+            for (Caja caja2 : cajas) {
+                filaCant[i] = caja2.getNroCaja();
+                i++;
+            }
+            Arrays.sort(filaCant);
+
+            for (Caja caja2 : cajas) {
+                int c = caja2.getNroCaja();
+                if (c>aux) {
+                    contarCajas++;
+                    System.out.println("CANTIDAD DE CAJAS: " + contarCajas);
+                    aux = c;
+                }
+            }
+            FormularioTransferencia formularioTransferencia = caja.getFormularioTransferencia();
+            formularioTransferencia.setCantCajas(contarCajas);
+            formularioTransferenciaService.save(formularioTransferencia);
+
     }
 
     @PostMapping(value = "/ModSubRegistro/{id_caja}")
@@ -235,6 +263,31 @@ public class FormularioTransferController {
         System.out.println("MOD CAJA SUBN");
         caja.setEstado("A");
         cajaService.save(caja);
+
+        List<Caja> cajas = caja.getFormularioTransferencia().getCajas();
+
+            int contarCajas = 0;
+            int aux = 0;
+
+            int[] filaCant = new int[cajas.size()];
+            int i = 0;
+            for (Caja caja2 : cajas) {
+                filaCant[i] = caja2.getNroCaja();
+                i++;
+            }
+            Arrays.sort(filaCant);
+
+            for (Caja caja2 : cajas) {
+                int c = caja2.getNroCaja();
+                if (c>aux) {
+                    contarCajas++;
+                    System.out.println("CANTIDAD DE CAJAS: " + contarCajas);
+                    aux = c;
+                }
+            }
+            FormularioTransferencia formularioTransferencia = caja.getFormularioTransferencia();
+            formularioTransferencia.setCantCajas(contarCajas);
+            formularioTransferenciaService.save(formularioTransferencia);
     }
 
     @PostMapping(value = "/EliminarSubRegistro/{id_caja}")
@@ -243,7 +296,34 @@ public class FormularioTransferController {
             @PathVariable("id_caja") Long id_caja) {
         System.out.println("Eliminar CAJA");
 
+        Long idF = cajaService.findOne(id_caja).getFormularioTransferencia().getId_formularioTransferencia();
+
         cajaService.delete(id_caja);
+
+        List<Caja> cajas = formularioTransferenciaService.findOne(idF).getCajas();
+
+            int contarCajas = 0;
+            int aux = 0;
+
+            int[] filaCant = new int[cajas.size()];
+            int i = 0;
+            for (Caja caja2 : cajas) {
+                filaCant[i] = caja2.getNroCaja();
+                i++;
+            }
+            Arrays.sort(filaCant);
+
+            for (Caja caja2 : cajas) {
+                int c = caja2.getNroCaja();
+                if (c>aux) {
+                    contarCajas++;
+                    System.out.println("CANTIDAD DE CAJAS: " + contarCajas);
+                    aux = c;
+                }
+            }
+            FormularioTransferencia formularioTransferencia = formularioTransferenciaService.findOne(idF);
+            formularioTransferencia.setCantCajas(contarCajas);
+            formularioTransferenciaService.save(formularioTransferencia);
     }
 
     @GetMapping("/GenerarReporte/{id_formularioTransferencia}")
@@ -262,6 +342,7 @@ public class FormularioTransferController {
     }
 
     public byte[] generarPdf(Long id) throws IOException, DocumentException {
+
         FormularioTransferencia formularioTransferencia = formularioTransferenciaService.findOne(id);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -270,15 +351,12 @@ public class FormularioTransferController {
         Paragraph emptyParagraph = new Paragraph();
 
         try {
-
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
             document.open();
 
             // Encabezado
-
             Path projectPath = Paths.get("").toAbsolutePath();
             String imagen = projectPath + "\\src\\main\\resources\\static\\logo\\logoCabezera.png";
-            // System.out.println("Ruta absoluta de la imagen es: " + imagen);
             String fuenteCalibriRegular = projectPath
                     + "\\src\\main\\resources\\static\\fuenteLetra\\Calibri Regular.ttf";
             String fuenteCalibriBold = projectPath + "\\src\\main\\resources\\static\\fuenteLetra\\Calibri Bold.ttf";
@@ -287,8 +365,7 @@ public class FormularioTransferController {
             Font fontSimple9 = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
             Font fontNegrilla9 = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
 
-            // Este codigo genera una tabla de 3 columnas
-            PdfPTable headerTable = new PdfPTable(4); // Cambiado a 4 columnas para acomodar las celdas
+            PdfPTable headerTable = new PdfPTable(4);
             headerTable.setWidthPercentage(95);
 
             float[] columntable = { 2.5f, 4f, 1f, 1f };
@@ -304,8 +381,8 @@ public class FormularioTransferController {
             headerTable.addCell(celda1);
 
             PdfPCell celda2 = new PdfPCell(
-                    new Phrase("FORMULARIO DE TRANSFERENCIA DE DOCUMENTOS  AL ARCHIVO CENTRAL", fontNegrilla));
-            celda2.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
+                    new Phrase("FORMULARIO DE TRANSFERENCIA DE DOCUMENTOS AL ARCHIVO CENTRAL", fontNegrilla));
+            celda2.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celda2.setHorizontalAlignment(Element.ALIGN_CENTER);
             celda2.setRowspan(4);
             headerTable.addCell(celda2);
@@ -341,7 +418,6 @@ public class FormularioTransferController {
             headerTable.addCell(celda9);
 
             document.add(headerTable);
-
             emptyParagraph.add(" ");
             document.add(emptyParagraph);
 
@@ -459,9 +535,30 @@ public class FormularioTransferController {
 
             List<Caja> cajas = formularioTransferencia.getCajas();
 
+            /*int contarCajas = 0;
+            int aux = 0;
+
+            int[] filaCant = new int[cajas.size()];
+            int i = 0;
+            for (Caja caja2 : cajas) {
+                filaCant[i] = caja2.getNroCaja();
+                i++;
+            }
+            Arrays.sort(filaCant);
+
+            for (Caja caja2 : cajas) {
+                int c = caja2.getNroCaja();
+                if (c>aux) {
+                    contarCajas++;
+                    System.out.println("CANTIDAD DE CAJAS: " + contarCajas);
+                    aux = c;
+                }
+            }*/
+
+            int c = 1;
             for (Caja caja : cajas) {
                 System.out.println("cajas");
-                PdfPCell titleCell = new PdfPCell(new Phrase(String.valueOf(caja.getNro()), fontSimple));
+                PdfPCell titleCell = new PdfPCell(new Phrase(String.valueOf(c), fontSimple));
                 titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 tablaArchivos.addCell(titleCell);
@@ -495,6 +592,7 @@ public class FormularioTransferController {
                 titleCell6.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 titleCell6.setHorizontalAlignment(Element.ALIGN_CENTER);
                 tablaArchivos.addCell(titleCell6);
+                c++;
             }
 
             document.add(tablaArchivos);
@@ -508,70 +606,58 @@ public class FormularioTransferController {
 
             String fechaActualStr = formatoFecha.format(fechaActual);
 
-            String[] separartext = fechaActualStr.split("/");
-            /*List<String> meses = new ArrayList<>();
-            meses.add("Enero");
-            meses.add("Febrero");
-            meses.add("Marzo");
-            meses.add("Abril");
-            meses.add("Mayo");
-            meses.add("Junio");
-            meses.add("Julio");
-            meses.add("Agosto");
-            meses.add("Septiembre");
-            meses.add("Octubre");
-            meses.add("Noviembre");
-            meses.add("Diciembre");*/
-            String fechaActualText = separartext[0]+" de ";
+            String[] separarte = fechaActualStr.split("/");
 
-            switch (Integer.parseInt(separartext[1])) {
+            String fechaActualText = "";
+
+            switch (Integer.parseInt(separarte[1])) {
                 case 1:
-                fechaActualText = fechaActualText + "Enero de ";
+                    fechaActualText = fechaActualText + "Enero de ";
                     break;
                 case 2:
-                fechaActualText = fechaActualText + "Febrero de ";
+                    fechaActualText = fechaActualText + "Febrero de ";
                     break;
                 case 3:
-                fechaActualText = fechaActualText + "Marzo de ";
+                    fechaActualText = fechaActualText + "Marzo de ";
                     break;
                 case 4:
-                fechaActualText = fechaActualText + "Abril de ";
+                    fechaActualText = fechaActualText + "Abril de ";
                     break;
                 case 5:
-                fechaActualText = fechaActualText + "Mayo de ";
+                    fechaActualText = fechaActualText + "Mayo de ";
                     break;
                 case 6:
-                fechaActualText = fechaActualText + "Junio de ";
+                    fechaActualText = fechaActualText + "Junio de ";
                     break;
                 case 7:
-                fechaActualText = fechaActualText + "Julio de ";
+                    fechaActualText = fechaActualText + "Julio de ";
                     break;
                 case 8:
-                fechaActualText = fechaActualText + "Agosto de ";
+                    fechaActualText = fechaActualText + "Agosto de ";
                     break;
                 case 9:
-                fechaActualText = fechaActualText + "Septiembre de ";
+                    fechaActualText = fechaActualText + "Septiembre de ";
                     break;
                 case 10:
-                fechaActualText = fechaActualText + "Octubre de ";
+                    fechaActualText = fechaActualText + "Octubre de ";
                     break;
                 case 11:
-                fechaActualText = fechaActualText + "Noviembre de ";
+                    fechaActualText = fechaActualText + "Noviembre de ";
                     break;
                 case 12:
-                fechaActualText = fechaActualText + "Diciembre de ";
+                    fechaActualText = fechaActualText + "Diciembre de ";
                     break;
 
                 default:
                     break;
             }
-            fechaActualText = fechaActualText + separartext[2];
+
+            fechaActualText = fechaActualText + separarte[2];
             System.out.println("Fecha actual: " + fechaActualStr);
 
-            /*Paragraph paragraph = new Paragraph(
-                    "Pando,              de                                  de                   ", fontSimple);*/
+            emptyParagraph.add(" ");
             Paragraph paragraph = new Paragraph(
-            "Pando, "+fechaActualText, fontSimple);
+                    "Pando, " + fechaActualText, fontSimple);
             paragraph.setAlignment(Paragraph.ALIGN_CENTER);
             document.add(paragraph);
 
@@ -652,7 +738,7 @@ public class FormularioTransferController {
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
         }
     }
-
 }
