@@ -12,4 +12,6 @@ public interface CubiertaService {
 	public Cubierta findOne(Long id);
 
 	public void delete(Long id);
+
+	public Cubierta buscarPorNombre(String nombre);
 }

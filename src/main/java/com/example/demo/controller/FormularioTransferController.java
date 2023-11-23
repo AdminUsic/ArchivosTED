@@ -652,7 +652,7 @@ public class FormularioTransferController {
                     break;
             }
 
-            fechaActualText = fechaActualText + separarte[2];
+            fechaActualText = separarte[0] +" de "+ fechaActualText + separarte[2];
             System.out.println("Fecha actual: " + fechaActualStr);
 
             emptyParagraph.add(" ");
@@ -740,5 +740,30 @@ public class FormularioTransferController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
         }
+    }
+//----------- CUBIERTA AGREGAR ------------------
+    @PostMapping("/RegistrarCubiertaA")
+    public ResponseEntity<String> RegistrarCubiertaA(@RequestParam(value = "nombreCubierta") String nombre) {
+
+        if (cubiertaService.buscarPorNombre(nombre) == null) {
+            Cubierta cubierta = new Cubierta();
+            cubierta.setNombre(nombre);
+            cubierta.setEstado(nombre);
+            cubiertaService.save(cubierta);
+            return ResponseEntity.ok("Se realizó el registro correctamente");
+
+        } else {
+            return ResponseEntity.ok("Ya existe un registro con este nombre");
+        }
+
+    }
+    @PostMapping("/DatoCubierta")
+    public ResponseEntity<String[]> DatoCubierta(@RequestParam(value = "nombreCubierta") String nombre) {
+
+        Cubierta cubierta = cubiertaService.buscarPorNombre(nombre);
+        String[] cub = new String[2];
+        cub[0] = String.valueOf(cubierta.getId_cubierta());
+        cub[1] = cubierta.getNombre();
+        return ResponseEntity.ok(cub);
     }
 }
