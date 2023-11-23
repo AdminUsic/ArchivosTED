@@ -64,15 +64,21 @@
 
                     <div class="row col-sm-6">
                         <div class="form-group">
-                            <label for="tipoArchivo">Cubierta</label>
-                            <select class="select-fieldSubForm2" style="width: 100%;" th:field="${caja.cubierta}"
-                                id="selectCubierta">
-                                <option th:value="${edit} ? ${caja.cubierta.id_cubierta} : ''"
-                                    th:text="${edit} ? ${caja.cubierta.nombre} : 'Seleccionar'" selected>
-                                </option>
-                                <option th:each="cu: ${cubiertas}" th:text="${cu.nombre}" th:value="${cu.id_cubierta}">
-                                </option>
-                            </select>
+                            <label for="tipoArchivo">Cubierta</label><br>
+                            <div class="input-group" style="width: 100%;">
+                                <select class="select-fieldSubForm2" sstyle="width: 90%;" th:field="${caja.cubierta}"
+                                    id="selectCubierta">
+                                    <option th:value="${edit} ? ${caja.cubierta.id_cubierta} : ''"
+                                        th:text="${edit} ? ${caja.cubierta.nombre} : 'Seleccionar'" selected>
+                                    </option>
+                                    <option th:each="cu: ${cubiertas}" th:text="${cu.nombre}"
+                                        th:value="${cu.id_cubierta}">
+                                    </option>
+                                </select>
+                                <a class="btn btn-success" type="button" onclick="AgregarPersonaArchivo()">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
