@@ -21,21 +21,14 @@
               <input type="hidden" th:field="${FormularioTransferencia.id_formularioTransferencia}">
             </div>
             <div class="row">
-              <!--<div class="col-sm-6">
-                <div class="form-group form-outline">
-                  <input type="number" th:field="${FormularioTransferencia.cantCajas}" class="form-control"
-                    placeholder="Introdusca la cantidad" min="0" id="cantCajas" required>
-                  <label class="form-label">Cantidad Cajas</label>
-                </div>
-              </div>-->
-              <div class="col-sm-6">
+              <div class="col-sm-3" style="margin-top: 28px;">
                 <div class="form-group form-outline">
                   <input type="number" th:field="${FormularioTransferencia.cantDocumentos}" class="form-control"
                     placeholder="Introdusca la cantidad" min="0" required>
                   <label class="form-label">Cantidad de Documentos</label>
                 </div>
               </div>
-              <div class="col-sm-6">
+              <div class="col-sm-3">
                 <div class="form-group">
                   <label class="form-label">Fecha de Extrema:</label>
                   <input type="text" class="form-control datepickerformFT" name="fechaExtrema" id="fechaExtrema"
@@ -43,11 +36,9 @@
                 </div>
               </div>
               <div class="col-sm-6">
-                <div class="row">
-                  <div class="row">
-                    <div class="form-group">
-                      <label class="form-label">Unidad/Seccion</label>
-                      <select class="select-field" style="width: 100%;" th:field="${FormularioTransferencia.unidad}"
+                <div class="form-group">
+                  <label class="form-label">Unidad/Seccion</label>
+                  <!--<select class="select-field" style="width: 100%;" th:field="${FormularioTransferencia.unidad}"
                         id="selectSeccion">
                         <optgroup th:label="${edit} ? ${FormularioTransferencia.unidad.unidadPadre.nombre} : ''">
                           <option th:value="${edit} ? ${FormularioTransferencia.unidad.id_unidad} : ''"
@@ -61,10 +52,15 @@
                             th:value="${unid.id_unidad}">
                         </optgroup>
                         </option>
-                      </select>
-
-                    </div>
-                  </div>
+                      </select>-->
+                  <select class="select-field" style="width: 100%;" th:field="${FormularioTransferencia.unidad}"
+                    id="selectSeccion">
+                    <option th:value="${edit} ? ${FormularioTransferencia.unidad.id_unidad} : ''"
+                      th:text="${edit} ? ${FormularioTransferencia.unidad.nombre} : 'Seleccionar'" selected>
+                    </option>
+                    <option th:each="unidP: ${unidades}" th:text="${unidP.nombre}" th:value="${unidP.id_unidad}">
+                    </option>
+                  </select>
                 </div>
               </div>
             </div>

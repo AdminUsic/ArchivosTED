@@ -27,11 +27,11 @@
                                 <td class="text-center" th:text="${caja.notas}"></td>
                                 <td class="text-center">
                                     <div class="btn-group">
-                                        <a class="btn btn-info" type="button"
+                                        <a class="btn btn-info" type="button" style="color: white;"
                                             th:attr="onclick='cargarModSubFormulario(\'' + ${caja.id_caja} + '\')'">
                                             <li class="fas fa-pencil-alt"></li>
                                         </a>
-                                        <a class="btn btn-danger" type="button"
+                                        <a class="btn btn-danger" type="button" style="color: white;"
                                             th:attr="onclick='EliminarSubRegistro(\'' + ${caja.id_caja} + '\')'">
                                             <li class="fa-solid fa-trash"></li>
                                         </a>

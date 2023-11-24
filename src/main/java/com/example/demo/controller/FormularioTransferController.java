@@ -94,6 +94,9 @@ public class FormularioTransferController {
     @Autowired
     UsuarioService usuarioService;
 
+    @Autowired
+    PersonaService personaService;
+
     @GetMapping("/FormTRANSFERENCIA")
     public String FormTRANSFERENCIA(HttpServletRequest request, Model model) {
         // model.addAttribute("archivo", new Archivo());
@@ -103,8 +106,10 @@ public class FormularioTransferController {
 
     @PostMapping(value = "/NuevoRegistroFormTRANSFERENCIA")
     public String NuevoRegistroFormTRANSFERENCIA(HttpServletRequest request, Model model) {
+        Usuario u = (Usuario) request.getSession().getAttribute("userLog");
+        Persona p = usuarioService.findOne(u.getId_usuario()).getPersona();
         model.addAttribute("FormularioTransferencia", new FormularioTransferencia());
-        model.addAttribute("unidades", unidadService.findAll());
+        model.addAttribute("unidades", p.getUnidad().getSubUnidades());
         return "/FormularioTransferencias/formulario";
     }
 

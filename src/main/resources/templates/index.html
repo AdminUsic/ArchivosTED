@@ -256,13 +256,14 @@
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
       </ul>
-
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown user-menu">
           <a type="button" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-            <img th:src="@{'/verFoto/' + ${userLog.id_usuario}}" class="user-image img-circle elevation-2"
-              alt="User Image">
+            <img th:src="@{'/verFoto/' + ${userLog.id_usuario}}" class="user-image img-circle elevation-2" alt="User Image">
+            <span class="position-absolute start-50 translate-middle badge bg-light text-dark" th:text="${userLog.persona.unidad.nombre}">
+              <span class="visually-hidden">unread messages</span>
+            </span>
             <span class="d-none d-md-inline" th:text="${userLog.persona.nombre}+' '+${userLog.persona.apellido}"></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right "
