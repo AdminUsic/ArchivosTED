@@ -259,11 +259,11 @@
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown user-menu">
+          <span class="position-absolute start-50 translate-middle badge bg-light text-dark" th:text="${userLog.persona.unidad.nombre}" >
+            <span class="visually-hidden">unread messages</span>
+          </span>
           <a type="button" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
             <img th:src="@{'/verFoto/' + ${userLog.id_usuario}}" class="user-image img-circle elevation-2" alt="User Image">
-            <span class="position-absolute start-50 translate-middle badge bg-light text-dark" th:text="${userLog.persona.unidad.nombre}">
-              <span class="visually-hidden">unread messages</span>
-            </span>
             <span class="d-none d-md-inline" th:text="${userLog.persona.nombre}+' '+${userLog.persona.apellido}"></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right "
@@ -324,7 +324,8 @@
             <li class="nav-item" id="liOpcionFT">
               <a type="button" class="nav-link" id="opcionFT">
                 <i class="nav-icon fa-solid fa-file-lines" id="liFT"></i>
-                <p id="pFT">Formulario de Transferencia</p>
+                <p id="pFT">Formulario de </p>
+                <div class="text-center"><p>Transferencia</p></div>
               </a>
             </li>
             <li class="nav-item" th:if="${userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
@@ -426,6 +427,14 @@
                 <p id="pRol">Rol</p>
               </a>
             </li>
+            <!--<li class="nav-item" id="lioAOpcionBR"
+              th:if="${userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
+              <a type="button" class="nav-link" id="opcionBR">
+                <i class="nav-icon fa fa-cog"  id="liBR"></i>
+                <p id="pBR">Configuracion de</p>
+                <div class="text-center"><p>Datos</p></div>
+              </a>
+            </li>-->
           </ul>
         </nav>
         <!-- /.sidebar-menu -->
@@ -1257,6 +1266,20 @@
         botonPulsado.classList.add("active");
 
       });
+      $("#opcionBR").click(function (e) {
+        e.preventDefault();
+        
+        cargarContenido("/Backup-restauracion");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcionBR");
+
+        botonPulsado.classList.add("active");
+
+      });
 
       // Función para cargar el contenido de la opción seleccionada
       function cargarContenido(url) {
@@ -1312,7 +1335,8 @@
           processData: false,  // No procesar los datos
           //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
           success: function (response) {
-            location.reload();
+            //location.reload();
+          window.location.href = '/ArchivosTED';
           },
           error: function (xhr, status, error) {
             toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');

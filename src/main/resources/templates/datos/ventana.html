@@ -1,0 +1,208 @@
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Seguridad y Datos</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard v1</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="card card-info card-outline">
+      <div class="card-header">
+        <h3 class="m-0 font-weight-bold card-title"> Panel de Configuracion </h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h4>Encriptación de Archivos</h4>
+                <p>Esta configutacion sirve para ver y cambiar la contraseña actual que se utiliza en la
+                  encriptación del contenido de los archivos guardados en la base de datos.</p>
+              </div>
+              <div class="icon">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <a type="button" style="color: white;" class="small-box-footer" onclick="CambiarContraseña()">
+                Cambiar Configuración? <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h4>Encriptación de Contraseña</h4>
+                <p>Esta configutacion sirve para ver y cambiar la contraseña actual que se utiliza en la
+                  encriptación de las contraseñas guardadas en la base de datos.</p>
+              </div>
+              <div class="icon">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <a href="#" class="small-box-footer">Cambiar Configuración? <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h4>Copia de Seguridad</h4>
+                <p>Esta configutacion sirve para realizar una copia de seguridad de todos los registros guardados en la
+                  base de datos.</p>
+              </div>
+              <div class="icon">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <a href="#" class="small-box-footer">Realizar Copia? <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h4>Restaurar de Datos</h4>
+                <p>Esta configutacion sirve para realizar en una restauración de datos de los registros de base de datos
+                  cargando el archivo de la copia de seguridad de base de datos previamente creada .</p>
+              </div>
+              <div class="icon">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <a href="#" class="small-box-footer">Realizar Copia? <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--MODAL SUBSERIES-->
+<div class="modal fade" id="modal_SubSerie">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content" id="SubVentana">
+
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<script>
+  function CambiarContraseña() {
+    Swal.fire({
+      title: '!Atención¡',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirmar',
+      /*html: '<br><div class="container-fluid">' +
+        '<form class="form-horizontal" id="FormKeyArchivo" method="POST" action="/confirmacionUser">' +
+        '<div class="form-group form-outline">' +
+        '<input type="text" name="newClave" id="newClave" class="form-control" placeholder="Introduzca una clave" required/>' +
+        '<label class="form-label" for="nombre">Introduzca una Clave</label>' +
+        '</div>' +
+        '</form>' +
+        '</div>'*/
+      html: '<br><div class="container-fluid">' +
+        '<p>Por motivo de Seguridad debe introducir su contraseña actual</p' +
+        '<form class="form-horizontal" id="FormKeyArchivo" method="POST" action="/confirmacionUser">' +
+        '<div class="form-group form-outline">' +
+        '<input type="text" name="ciPerson" id="contraseña" class="form-control" placeholder="Introduzca su contraseña" required/>' +
+        '<label class="form-label" for="nombre">Introduzca una Contraseña</label>' +
+        '</div>' +
+        '</form>' +
+        '</p>'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        var formData = $('#FormKeyArchivo').serialize();
+        $.ajax({
+          type: 'POST',
+          url: $('#FormKeyArchivo').attr('action'),
+          data: formData,
+          contentType: 'application/x-www-form-urlencoded',
+          success: function (response) {
+            if (response == 'Se realizó el registro correctamente') {
+              Swal.fire({
+                title: 'Introduce una nueva Clave de Encriptación',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirmar',
+                /*html: '<br><div class="container-fluid">' +
+                  '<form class="form-horizontal" id="FormKeyArchivo" method="POST" action="/confirmacionUser">' +
+                  '<div class="form-group form-outline">' +
+                  '<input type="text" name="newClave" id="newClave" class="form-control" placeholder="Introduzca una clave" required/>' +
+                  '<label class="form-label" for="nombre">Introduzca una Clave</label>' +
+                  '</div>' +
+                  '</form>' +
+                  '</div>'*/
+                html: '<br><div class="container-fluid">' +
+                  '<p>Por motivo de Seguridad debe introducir su contraseña actual</p' +
+                  '<form class="form-horizontal" id="FormKeyArchivo" method="POST" action="/cambiarClave">' +
+                  '<div class="form-group form-outline">' +
+                  '<input type="text" name="ciPerson" id="contraseña" class="form-control" placeholder="Introduzca su contraseña" required/>' +
+                  '<label class="form-label" for="nombre">Introduzca una Contraseña</label>' +
+                  '</div>' +
+                  '</form>' +
+                  '</p>'
+              });
+              /*$.ajax({
+                type: 'POST',
+                url: '/DatoCubierta',
+                data: formData,
+                contentType: 'application/x-www-form-urlencoded',
+                success: function (fila) {
+                  var select = document.getElementById('selectCubierta');
+                  var option = document.createElement('option');
+                  option.value = fila[0];
+                  option.text = fila[1];
+                  option.selected = true;
+                  select.appendChild(option);
+
+                  Swal.fire({
+                    icon: "success",
+                    title: "Registrado!",
+                    text: response + '.',
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+                }, error: function (xhr, status, error) {
+                  console.log(error);
+                }
+              });*/
+              Swal.fire({
+                icon: "success",
+                title: "Registrado!",
+                text: response + '.',
+                showConfirmButton: false,
+                timer: 1500
+              });
+            } else {
+              Swal.fire(
+                'Imposible Registrar!',
+                response + '.',
+                'error'
+              );
+            }
+
+          },
+          error: function (xhr, status, error) {
+            console.log(error);
+          }
+        });
+      }
+    });
+    document.querySelectorAll('.form-outline').forEach((formOutline) => {
+      new mdb.Input(formOutline).init();
+    });
+  }
+</script>

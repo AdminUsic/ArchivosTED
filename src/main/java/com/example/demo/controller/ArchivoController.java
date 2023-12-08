@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -68,6 +69,8 @@ import java.nio.charset.StandardCharsets;
 
 @Controller
 public class ArchivoController {
+    @Value("${miapp.claveEncriptFile}")
+    private String secretKey;
 
     @Autowired
     private ArchivoService archivoService;
@@ -166,19 +169,15 @@ public class ArchivoController {
 
             PDDocument document = PDDocument.load(contenido);
             archivo.setCantidadHojas(document.getNumberOfPages());
-            //archivo.setFechaEmision(fechaEmision);
+            // archivo.setFechaEmision(fechaEmision);
             archivo.setFechaRegistro(new Date());
             archivo.setHoraRegistro(new Date());
             archivo.setEstado("A");
             String nombFile = archivoPdf.getOriginalFilename();
-            int lastIndex = nombFile.lastIndexOf('.');
-            if (lastIndex >= 0) {
-                String extension = nombFile.substring(lastIndex + 1);
-                archivo.setExtension(extension);
-            } else {
-                archivo.setExtension("El archivo no tiene extensión.");
-                // System.out.println("");
-            }
+            String[] extension = nombFile.split(".");
+
+            archivo.setExtension(extension[extension.length - 1]);
+
             document.close();
             archivoService.save(archivo);
             return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
@@ -255,7 +254,8 @@ public class ArchivoController {
                 archivo.setCantidadHojas(archivoAntes.getCantidadHojas());
             } else if (!archivoPdf.isEmpty()) {
                 try {
-                    archivo.setContenido(encrypt(contenido, "Lanza12310099812"));
+                    // archivo.setContenido(encrypt(contenido, "Lanza12310099812"));
+                    archivo.setContenido(encrypt(contenido, secretKey));
                 } catch (Exception e) {
                     System.out.println("ERROR EN LA ENCRIPTACION DEL ARCHIVO MODIFICADO: " + e);
                 }
@@ -302,7 +302,7 @@ public class ArchivoController {
 
         if (archivoOptional.isPresent()) {
             Archivo archivo = archivoOptional.get();
-            String secretKey = "Lanza12310099812";
+            // String secretKey = "Lanza12310099812";
             byte[] contenidoDescencryptado;
             try {
                 contenidoDescencryptado = decrypt(archivo.getContenido(), secretKey);
@@ -330,7 +330,7 @@ public class ArchivoController {
             Archivo archivo = archivoOptional.get();
 
             try {
-                String secretKey = "Lanza12310099812";
+                // String secretKey = "Lanza12310099812";
                 // Cargar el documento PDF
                 byte[] contenidoDescencryptado;
                 try {
@@ -407,7 +407,7 @@ public class ArchivoController {
         ByteArrayResource resource = new ByteArrayResource(bytes);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + "Reporte de lista de Archivos")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + "Reporte de lista de Archivos.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .contentLength(bytes.length)
                 .body(resource);

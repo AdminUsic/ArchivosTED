@@ -361,10 +361,10 @@ public class FormularioTransferController {
 
             // Encabezado
             Path projectPath = Paths.get("").toAbsolutePath();
-            String imagen = projectPath + "\\src\\main\\resources\\static\\logo\\logoCabezera.png";
+            String imagen = projectPath + "/src/main/resources/static/logo/logoCabezera.png";
             String fuenteCalibriRegular = projectPath
-                    + "\\src\\main\\resources\\static\\fuenteLetra\\Calibri Regular.ttf";
-            String fuenteCalibriBold = projectPath + "\\src\\main\\resources\\static\\fuenteLetra\\Calibri Bold.ttf";
+                    + "/src/main/resources/static/fuenteLetra/Calibri Regular.ttf";
+            String fuenteCalibriBold = projectPath + "/src/main/resources/static/fuenteLetra/Calibri Bold.ttf";
             Font fontSimple = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
             Font fontNegrilla = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
             Font fontSimple9 = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);

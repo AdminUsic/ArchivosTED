@@ -4,15 +4,19 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -60,6 +64,24 @@ public class UsuarioController {
     // @PreAuthorize("hasAuthority('ARCHIVOS Y BIBLIOTECA')")
     public String ventanaUsuario(HttpServletRequest request, Model model) {
         System.out.println("PATALLA USUARIO");
+        /*
+         * List<Usuario> usuarios = usuarioService.findAll();
+         * for (Usuario usuario : usuarios) {
+         * String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32
+         * caracteres para AES-128, AES-192 o
+         * // AES-256 respectivamente
+         * try {
+         * String encryptedBytes = encrypt(usuario.getContraseña(), secretKey);
+         * // Convertir los bytes encriptados a un String codificado en base64
+         * usuario.setContraseña(encryptedBytes);
+         * usuarioService.save(usuario);
+         * // archivo.setContenido(encryptedBytes);
+         * System.out.println("Encriptacion Completa");
+         * } catch (Exception e) {
+         * System.out.println("Error en la encriptacion: " + e);
+         * }
+         * }
+         */
         return "/usuarios/registrar";
     }
 
@@ -72,7 +94,19 @@ public class UsuarioController {
 
     @PostMapping(value = "/RegistrosUsuario")
     public String tablaRegistros(HttpServletRequest request, Model model) {
-        model.addAttribute("usuarios", usuarioService.findAll());
+        List<Usuario> usuarios = usuarioService.findAll();
+        for (Usuario usuario : usuarios) {
+            String secretKey = "Lanza12310099812";
+            String contenidoDescencryptado;
+            try {
+                contenidoDescencryptado = decrypt(usuario.getContraseña(), secretKey);
+                usuario.setContraseña(contenidoDescencryptado);
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }
+        // model.addAttribute("usuarios", usuarioService.findAll());
+        model.addAttribute("usuarios", usuarios);
         return "/usuarios/tablaRegistros";
     }
 
@@ -106,14 +140,56 @@ public class UsuarioController {
         usuario.setSesion("OFF");
         usuario.setHoraRegistro(new Date());
         usuario.setFechaRegistro(new Date());
+
+        String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32 caracteres para AES-128, AES-192 o
+        // AES-256 respectivamente
+        try {
+            String encryptedBytes = encrypt(usuario.getContraseña(), secretKey);
+            // Convertir los bytes encriptados a un String codificado en base64
+            usuario.setContraseña(encryptedBytes);
+            // archivo.setContenido(encryptedBytes);
+            System.out.println("Encriptacion Completa");
+        } catch (Exception e) {
+            System.out.println("Error en la encriptacion: " + e);
+        }
+
         usuarioService.save(usuario);
+    }
+
+    // -------------ENCRIPTAR EL CONTRASEÑA -----------------
+
+    private static String encrypt(String data, String secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+        byte[] encryptedBytes = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(encryptedBytes);
+    }
+
+    // -----------------DESENCRIPTAR ------------------
+    private static String decrypt(String encryptedText, String secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
+        byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+        return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 
     @GetMapping(value = "/ModUsuario/{id_usuario}")
     public String EditarUsuario(HttpServletRequest request, Model model,
             @PathVariable("id_usuario") Long id_usuario) {
         System.out.println("EDITAR USUARIOS");
-        model.addAttribute("usuario", usuarioService.findOne(id_usuario));
+        Usuario usuario = usuarioService.findOne(id_usuario);
+        String contenidoDescencryptado;
+        String secretKey = "Lanza12310099812";
+        try {
+            contenidoDescencryptado = decrypt(usuario.getContraseña(), secretKey);
+            usuario.setContraseña(contenidoDescencryptado);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        model.addAttribute("usuario", usuario);
         model.addAttribute("personas", personaService.findAll());
         model.addAttribute("edit", "true");
         return "/usuarios/formulario";
@@ -123,7 +199,16 @@ public class UsuarioController {
     public String ModUsuarioPerfilG(HttpServletRequest request, Model model,
             @PathVariable("id_usuario") Long id_usuario) {
         System.out.println("EDITAR PERFIL");
-        model.addAttribute("perfil", usuarioService.findOne(id_usuario));
+        Usuario usuario = usuarioService.findOne(id_usuario);
+        String contenidoDescencryptado;
+        String secretKey = "Lanza12310099812";
+        try {
+            contenidoDescencryptado = decrypt(usuario.getContraseña(), secretKey);
+            usuario.setContraseña(contenidoDescencryptado);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        model.addAttribute("perfil", usuario);
         model.addAttribute("edit", "true");
         return "/usuarios/formularioModal";
     }
@@ -169,6 +254,19 @@ public class UsuarioController {
         usuario.setFechaRegistro(usuario2.getFechaRegistro());
         usuario.setHoraRegistro(usuario2.getHoraRegistro());
         usuario.setEstado(usuario2.getEstado());
+
+        String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32 caracteres para AES-128, AES-192 o
+        // AES-256 respectivamente
+        try {
+            String encryptedBytes = encrypt(usuario.getContraseña(), secretKey);
+            // Convertir los bytes encriptados a un String codificado en base64
+            usuario.setContraseña(encryptedBytes);
+            // archivo.setContenido(encryptedBytes);
+            System.out.println("Encriptacion Completa");
+        } catch (Exception e) {
+            System.out.println("Error en la encriptacion: " + e);
+        }
+
         usuarioService.save(usuario);
 
         model.addAttribute("userLog", usuario);
@@ -183,9 +281,9 @@ public class UsuarioController {
         // Usuario usuario = usuarioService.findOne(id_usuario);
 
         // personaService.delete(usuario.getPersona().getId_persona());
-        //usuarioService.delete(id_usuario);
+        // usuarioService.delete(id_usuario);
         usuarioService.eliminar(id_usuario);
-        System.out.println("USUARIO ELIMINADO CON EL ID DE "+id_usuario);
+        System.out.println("USUARIO ELIMINADO CON EL ID DE " + id_usuario);
     }
 
     @GetMapping("/verFoto/{id}")

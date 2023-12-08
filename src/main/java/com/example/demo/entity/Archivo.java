@@ -60,7 +60,7 @@ public class Archivo implements Serializable {
 
     private String extension;
 
-        private String estado;
+    private String estado;
 
     @Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")

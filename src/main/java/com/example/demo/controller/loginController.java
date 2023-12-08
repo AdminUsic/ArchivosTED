@@ -1,8 +1,12 @@
 package com.example.demo.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -29,7 +33,7 @@ public class loginController {
     private UsuarioService usuarioService;
 
     @GetMapping(value = "/")
-    public String init(){
+    public String init() {
         return "redirect:/ArchivosTED";
     }
 
@@ -39,14 +43,24 @@ public class loginController {
         if (request.getSession().getAttribute("userLog") != null) {
 
             Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
+            Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+            String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32 caracteres para AES-128, AES-192 o
+            // AES-256 respectivamente
+            String contenidoDescencryptado;
+            try {
+                contenidoDescencryptado = decrypt(userLog.getContraseña(), secretKey);
+                userLog.setContraseña(contenidoDescencryptado);
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
 
-            model.addAttribute("userLog", usuarioService.findOne(usuario.getId_usuario()));
+            model.addAttribute("userLog", userLog);
 
             if (usuarioService.findOne(usuario.getId_usuario()).getPersona().getRol().getNombre().equals("ARCHIVOS")) {
-                //List<Usuario> usuarios = new ArrayList<>();
+                // List<Usuario> usuarios = new ArrayList<>();
                 List<Usuario> usuarios = usuarioService.findAll();
                 for (int i = 0; i < usuarios.size(); i++) {
-                    if (usuarios.get(i)== usuarioService.findOne(usuario.getId_usuario())) {
+                    if (usuarios.get(i) == usuarioService.findOne(usuario.getId_usuario())) {
                         usuarios.remove(i);
                     }
                 }
@@ -61,7 +75,7 @@ public class loginController {
                 }
                 model.addAttribute("userChats", usuarios2);
             }
-
+            System.out.println("METODO DE INICIAR ");
             return "index";
         } else {
             return "login";
@@ -78,6 +92,15 @@ public class loginController {
             HttpSession session = request.getSession(true); // Crear una nueva sesión si no existe
             session.setMaxInactiveInterval(1800);
 
+            String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32 caracteres para AES-128, AES-192 o
+            // AES-256 respectivamente
+            String contenidoDescencryptado;
+            try {
+                contenidoDescencryptado = decrypt(usuario.getContraseña(), secretKey);
+                usuario.setContraseña(contenidoDescencryptado);
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
 
             if (usuario.getContraseña().equals(password)) {
                 usuario.setSesion("ON");
@@ -91,6 +114,15 @@ public class loginController {
         } else {
             return ResponseEntity.ok("Usuario Incorrecto o no registrado");
         }
+    }
+
+    private static String decrypt(String encryptedText, String secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
+        byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+        return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 
 }
