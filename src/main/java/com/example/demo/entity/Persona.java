@@ -3,11 +3,14 @@ package com.example.demo.entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -20,6 +23,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -32,7 +36,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "persona")
-public class Persona implements Serializable{
+public class Persona implements Serializable {
     private static final long serialVersionUID = 2629195288020321924L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,17 +65,13 @@ public class Persona implements Serializable{
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_unidad")
-    @JsonBackReference // Marca esta parte de la relación como "referenciada"
+    @JsonBackReference
     private Unidad unidad;
 
-    /*@OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference // Marca esta parte de la relación como "gestionada"
-    private List<FormularioTransferencia> formularioTransferencias;*/
-
-    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_rol")
-    private Rol rol;
+    // @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    // @ManyToOne(fetch = FetchType.EAGER)
+    // @JoinColumn(name = "id_rol")
+    // private Rol rol;
 
     @PrePersist
     @PreUpdate
@@ -82,10 +82,17 @@ public class Persona implements Serializable{
         estado = estado.toUpperCase();
     }
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="rol_persona",
+    joinColumns=@JoinColumn(name = "id_persona"),
+    inverseJoinColumns = @JoinColumn(name = "id_rol"))
+    private Set<Rol> roles;
+
     @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Usuario usuario;
 
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-private List<FormularioTransferencia> formularioTransferencias;
+    private List<FormularioTransferencia> formularioTransferencias;
 
 }

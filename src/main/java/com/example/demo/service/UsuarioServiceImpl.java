@@ -56,5 +56,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         daoUsuarioData.eliminar(id);
     }
 
+    @Override
+    public List<Usuario> listaUsuarioPorUnidad(Long idUnidad) {
+        return daoUsuarioData.listaUsuarioPorUnidad(idUnidad);
+    }
+
     
 }

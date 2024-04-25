@@ -1,0 +1,60 @@
+<div class="modal-header">
+  <h2 class="m-0 font-weight-bold card-title">Registros</h2>
+  <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></a>
+</div>
+<div class="modal-body">
+  <input type="hidden" id="identU" th:value="${usuario.id_usuario}">
+  <div class="row d-flex justify-content-center">
+    <div class="col-8 d-flex align-items-stretch flex-column">
+      <div class="card bg-light d-flex flex-fill">
+        <div class="card-header text-muted border-bottom-0">
+          <b>Datos Generales:</b>
+        </div>
+        <div class="card-body pt-0">
+          <div class="row">
+            <div class="col-7">
+              <h4 class="lead"><b th:text="${usuario.persona.nombre}+' '+${usuario.persona.apellido}"></b></h4>
+              <p class="text-muted text-sm"><b>C.I.: </b><th:block th:text="${usuario.persona.ci}"></th:block></p>
+              <p class="text-muted text-sm"><b>Cargo: </b><th:block th:text="${usuario.persona.cargo.nombre}"></th:block></p>
+              <!-- <ul class="ml-4 mb-0 fa-ul text-muted">
+                <li class="small"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span> Address: Demo Street
+                  123, Demo City 04312, NJ</li>
+                <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Phone #: + 800 - 12 12
+                  23 52</li>
+              </ul> -->
+            </div>
+            <div class="col-5 text-center">
+              <img th:src="@{'/verFoto/' + ${usuario.id_usuario}}" alt="user-avatar" class="img-circle img-fluid" style="height: 100px;">
+            </div>
+          </div>
+        </div>
+        <!-- <div class="card-footer">
+          <div class="text-right">
+            <a href="#" class="btn btn-sm bg-teal">
+              <i class="fas fa-comments"></i>
+            </a>
+            <a href="#" class="btn btn-sm btn-primary">
+              <i class="fas fa-user"></i> View Profile
+            </a>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+  <div id="tablaRegistroControl"></div>
+</div>
+<div class="modal-footer">
+
+</div>
+<script>
+  $(document).ready(function () {
+
+        $.ajax({
+          type: 'POST',
+          url: "/listarActividadUsuario/"+ $('#identU').val(),  // Ruta del metodo del controlador en Spring Boot
+          success: function (response) {
+            $("#tablaRegistroControl").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          }
+        });
+    });
+</script>

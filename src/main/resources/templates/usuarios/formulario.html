@@ -33,7 +33,7 @@
                 <option th:value="${edit} ? ${usuario.persona.id_persona} : ''"
                   th:text="${edit} ? ${usuario.persona.nombre} : 'Seleccionar'" selected></option>
                 <option th:each="persona: ${personas}" th:text="${persona.nombre}+' '+${persona.apellido}"
-                  th:value="${persona.id_persona}" th:if="${persona.usuario==null and persona.cargo != null and persona.unidad != null and persona.rol != null}">
+                  th:value="${persona.id_persona}" th:if="${persona.usuario==null and persona.cargo != null and persona.unidad != null and persona.roles != null}">
                 </option>
               </select>
             </div>

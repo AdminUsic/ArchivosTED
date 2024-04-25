@@ -27,12 +27,16 @@ import javax.transaction.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import com.example.demo.entity.Archivo;
+import com.example.demo.entity.Control;
 import com.example.demo.entity.Persona;
-
+import com.example.demo.entity.Rol;
 import com.example.demo.entity.Usuario;
+import com.example.demo.service.ControlService;
 import com.example.demo.service.PersonaService;
+import com.example.demo.service.TipoControService;
 import com.example.demo.service.UnidadService;
 import com.example.demo.service.UsuarioService;
+import com.example.demo.service.UtilidadServiceProject;
 import com.itextpdf.text.Image;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,29 +64,27 @@ public class UsuarioController {
     @Autowired
     private UnidadService unidadService;
 
+    @Autowired
+    private UtilidadServiceProject utilidadService;
+
+    @Autowired
+    private TipoControService tipoControService;
+
+    @Autowired
+    private ControlService controService;
+
     @GetMapping(value = "/USUARIO")
     // @PreAuthorize("hasAuthority('ARCHIVOS Y BIBLIOTECA')")
     public String ventanaUsuario(HttpServletRequest request, Model model) {
         System.out.println("PATALLA USUARIO");
-        /*
-         * List<Usuario> usuarios = usuarioService.findAll();
-         * for (Usuario usuario : usuarios) {
-         * String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32
-         * caracteres para AES-128, AES-192 o
-         * // AES-256 respectivamente
-         * try {
-         * String encryptedBytes = encrypt(usuario.getContraseña(), secretKey);
-         * // Convertir los bytes encriptados a un String codificado en base64
-         * usuario.setContraseña(encryptedBytes);
-         * usuarioService.save(usuario);
-         * // archivo.setContenido(encryptedBytes);
-         * System.out.println("Encriptacion Completa");
-         * } catch (Exception e) {
-         * System.out.println("Error en la encriptacion: " + e);
-         * }
-         * }
-         */
-        return "/usuarios/registrar";
+        Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+        if (request.getSession().getAttribute("userLog") != null) {
+            return "/usuarios/registrar";
+        } else {
+            return "login";
+        }
+
     }
 
     @PostMapping(value = "/NuevoUsuario")
@@ -96,10 +98,9 @@ public class UsuarioController {
     public String tablaRegistros(HttpServletRequest request, Model model) {
         List<Usuario> usuarios = usuarioService.findAll();
         for (Usuario usuario : usuarios) {
-            String secretKey = "Lanza12310099812";
             String contenidoDescencryptado;
             try {
-                contenidoDescencryptado = decrypt(usuario.getContraseña(), secretKey);
+                contenidoDescencryptado = utilidadService.decrypt(usuario.getContraseña());
                 usuario.setContraseña(contenidoDescencryptado);
             } catch (Exception e) {
                 // TODO: handle exception
@@ -115,7 +116,8 @@ public class UsuarioController {
     public void RegistrarUsuario(HttpServletRequest request, Model model, @Validated Usuario usuario,
             @RequestParam("foto") MultipartFile foto) throws IOException {
         System.out.println("Registrar Usuario");
-
+        Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
         Persona persona = usuario.getPersona();
         persona.setEstado("A");
         System.out.println("el nombre el usuario es: " + persona.getNombre());
@@ -141,10 +143,8 @@ public class UsuarioController {
         usuario.setHoraRegistro(new Date());
         usuario.setFechaRegistro(new Date());
 
-        String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32 caracteres para AES-128, AES-192 o
-        // AES-256 respectivamente
         try {
-            String encryptedBytes = encrypt(usuario.getContraseña(), secretKey);
+            String encryptedBytes = utilidadService.encrypt(usuario.getContraseña());
             // Convertir los bytes encriptados a un String codificado en base64
             usuario.setContraseña(encryptedBytes);
             // archivo.setContenido(encryptedBytes);
@@ -152,28 +152,15 @@ public class UsuarioController {
         } catch (Exception e) {
             System.out.println("Error en la encriptacion: " + e);
         }
-
         usuarioService.save(usuario);
-    }
-
-    // -------------ENCRIPTAR EL CONTRASEÑA -----------------
-
-    private static String encrypt(String data, String secretKey) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-        byte[] encryptedBytes = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(encryptedBytes);
-    }
-
-    // -----------------DESENCRIPTAR ------------------
-    private static String decrypt(String encryptedText, String secretKey) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
-        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
-        byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-        return new String(decryptedBytes, StandardCharsets.UTF_8);
+        Control control = new Control();
+        control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+        control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+                + " de Usuario con el nombre de " + usuario.getNombre_user());
+        control.setUsuario(userLog);
+        control.setFecha(new Date());
+        control.setHora(new Date());
+        controService.save(control);
     }
 
     @GetMapping(value = "/ModUsuario/{id_usuario}")
@@ -182,9 +169,8 @@ public class UsuarioController {
         System.out.println("EDITAR USUARIOS");
         Usuario usuario = usuarioService.findOne(id_usuario);
         String contenidoDescencryptado;
-        String secretKey = "Lanza12310099812";
         try {
-            contenidoDescencryptado = decrypt(usuario.getContraseña(), secretKey);
+            contenidoDescencryptado = utilidadService.decrypt(usuario.getContraseña());
             usuario.setContraseña(contenidoDescencryptado);
         } catch (Exception e) {
             // TODO: handle exception
@@ -203,7 +189,7 @@ public class UsuarioController {
         String contenidoDescencryptado;
         String secretKey = "Lanza12310099812";
         try {
-            contenidoDescencryptado = decrypt(usuario.getContraseña(), secretKey);
+            contenidoDescencryptado = utilidadService.decrypt(usuario.getContraseña());
             usuario.setContraseña(contenidoDescencryptado);
         } catch (Exception e) {
             // TODO: handle exception
@@ -215,9 +201,10 @@ public class UsuarioController {
 
     @PostMapping(value = "/ModUsuarioG")
     @ResponseBody
-    public void ModUsuario(@Validated Usuario usuario, Model model,
+    public void ModUsuario(@Validated Usuario usuario, Model model, HttpServletRequest request,
             @RequestParam("foto") MultipartFile foto) throws IOException {
-
+        Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
         Usuario usuario2 = usuarioService.findOne(usuario.getId_usuario());
 
         if (!foto.isEmpty()) {
@@ -228,7 +215,22 @@ public class UsuarioController {
         usuario.setFechaRegistro(usuario2.getFechaRegistro());
         usuario.setHoraRegistro(usuario2.getHoraRegistro());
         usuario.setEstado(usuario2.getEstado());
+        try {
+            String encrypted = utilidadService.encrypt(usuario.getContraseña());
+            usuario.setContraseña(encrypted);
+        } catch (Exception e) {
+            System.out.println("Error en la encriptacion: " + e);
+            e.printStackTrace();
+        }
         usuarioService.save(usuario);
+        Control control = new Control();
+        control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
+        control.setDescripcion("Realizó una " + control.getTipoControl().getNombre()
+                + " de Usuario con el nombre de " + usuario.getNombre_user());
+        control.setUsuario(userLog);
+        control.setFecha(new Date());
+        control.setHora(new Date());
+        controService.save(control);
     }
 
     @PostMapping(value = "/ModUsuarioPerfilG")
@@ -255,10 +257,8 @@ public class UsuarioController {
         usuario.setHoraRegistro(usuario2.getHoraRegistro());
         usuario.setEstado(usuario2.getEstado());
 
-        String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32 caracteres para AES-128, AES-192 o
-        // AES-256 respectivamente
         try {
-            String encryptedBytes = encrypt(usuario.getContraseña(), secretKey);
+            String encryptedBytes = utilidadService.encrypt(usuario.getContraseña());
             // Convertir los bytes encriptados a un String codificado en base64
             usuario.setContraseña(encryptedBytes);
             // archivo.setContenido(encryptedBytes);
@@ -278,12 +278,23 @@ public class UsuarioController {
     public void EliminarUsuario(HttpServletRequest request, Model model,
             @PathVariable("id_usuario") Long id_usuario) {
         System.out.println("Eliminar USUARIOS");
+        Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+        Usuario usuario2 = usuarioService.findOne(usuario.getId_usuario());
         // Usuario usuario = usuarioService.findOne(id_usuario);
 
         // personaService.delete(usuario.getPersona().getId_persona());
         // usuarioService.delete(id_usuario);
-        usuarioService.eliminar(id_usuario);
-        System.out.println("USUARIO ELIMINADO CON EL ID DE " + id_usuario);
+        usuarioService.eliminar(usuario2.getId_usuario());
+        Control control = new Control();
+        control.setTipoControl(tipoControService.findAllByTipoControl("Eliminó"));
+        control.setDescripcion(control.getTipoControl().getNombre()
+                + " un registro de Usuario con el nombre de " + usuario.getNombre_user());
+        control.setUsuario(userLog);
+        control.setFecha(new Date());
+        control.setHora(new Date());
+        controService.save(control);
+        // System.out.println("USUARIO ELIMINADO CON EL ID DE " + id_usuario);
     }
 
     @GetMapping("/verFoto/{id}")
@@ -333,24 +344,50 @@ public class UsuarioController {
         Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
         Usuario logueado = usuarioService.findOne(usuario.getId_usuario());
 
-        if (usuarioService.findOne(usuario.getId_usuario()).getPersona().getRol().getNombre().equals("ARCHIVOS")) {
-            List<Usuario> usuarios = usuarioService.findAll();
-            for (Usuario u : usuarios) {
-                if (u.getId_usuario() != usuario.getId_usuario()) {
-                    String[] userData = { u.getNombre_user(), String.valueOf(u.getId_usuario()) };
-                    userChats.add(userData);
+        for (Rol rol : usuarioService.findOne(usuario.getId_usuario()).getPersona().getRoles()) {
+            if (rol.getNombre().equals("ARCHIVOS")) {
+                List<Usuario> usuarios = usuarioService.findAll();
+                for (Usuario u : usuarios) {
+                    if (u.getId_usuario() != usuario.getId_usuario()) {
+                        String[] userData = { u.getNombre_user(), String.valueOf(u.getId_usuario()) };
+                        userChats.add(userData);
+                    }
                 }
-            }
-        } else {
-            List<Usuario> usuarios2 = new ArrayList<>();
-            List<Usuario> usuarios = usuarioService.findAll();
-            for (Usuario usuario3 : usuarios) {
-                if (usuario3.getPersona().getRol().getNombre().equals("ARCHIVOS")) {
-                    String[] userData = { usuario3.getNombre_user(), String.valueOf(usuario3.getId_usuario()) };
-                    userChats.add(userData);
+                break;
+            } else {
+                List<Usuario> usuarios2 = new ArrayList<>();
+                List<Usuario> usuarios = usuarioService.findAll();
+                for (Usuario usuario3 : usuarios) {
+                    for (Rol rol2 : usuario3.getPersona().getRoles()) {
+                        if (rol2.getNombre().equals("ARCHIVOS")) {
+                            String[] userData = { usuario3.getNombre_user(), String.valueOf(usuario3.getId_usuario()) };
+                            userChats.add(userData);
+                        }
+                    }
                 }
             }
         }
+
+        // if (usuarioService.findOne(usuario.getId_usuario()).getPersona().getRol().getNombre().equals("ARCHIVOS")) {
+        //     List<Usuario> usuarios = usuarioService.findAll();
+        //     for (Usuario u : usuarios) {
+        //         if (u.getId_usuario() != usuario.getId_usuario()) {
+        //             String[] userData = { u.getNombre_user(), String.valueOf(u.getId_usuario())
+        //             };
+        //             userChats.add(userData);
+        //         }
+        //     }
+        // } else {
+        //     List<Usuario> usuarios2 = new ArrayList<>();
+        //     List<Usuario> usuarios = usuarioService.findAll();
+        //     for (Usuario usuario3 : usuarios) {
+        //         if (usuario3.getPersona().getRol().getNombre().equals("ARCHIVOS")) {
+        //             String[] userData = { usuario3.getNombre_user(),
+        //                     String.valueOf(usuario3.getId_usuario()) };
+        //             userChats.add(userData);
+        //         }
+        //     }
+        // }
 
         return new ResponseEntity<>(userChats, HttpStatus.OK);
     }

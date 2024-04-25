@@ -19,413 +19,456 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.entity.Archivo;
 import com.example.demo.entity.Carpeta;
+import com.example.demo.entity.Control;
 import com.example.demo.entity.Unidad;
+import com.example.demo.entity.Usuario;
 import com.example.demo.service.ArchivoService;
 import com.example.demo.service.CarpetaService;
+import com.example.demo.service.ControlService;
 import com.example.demo.service.PersonaService;
 import com.example.demo.service.SerieDocumentalService;
 import com.example.demo.service.UnidadService;
+import com.example.demo.service.UsuarioService;
 import com.example.demo.service.VolumenService;
 import com.example.demo.service.TipoArchivoService;
+import com.example.demo.service.TipoControService;
 
 @Controller
 public class CarpetaController {
 
-    @Autowired
-    private CarpetaService carpetaService;
+   @Autowired
+   private CarpetaService carpetaService;
 
-    @Autowired
-    private ArchivoService archivoService;
+   @Autowired
+   private ArchivoService archivoService;
 
-    @Autowired
-    private UnidadService unidadService;
+   @Autowired
+   private UnidadService unidadService;
 
-    @Autowired
-    private PersonaService personaService;
+   @Autowired
+   private PersonaService personaService;
 
-    @Autowired
-    private TipoArchivoService tipoArchivoService;
+   @Autowired
+   private TipoArchivoService tipoArchivoService;
 
-    @Autowired
-    private SerieDocumentalService documentalService;
+   @Autowired
+   private SerieDocumentalService documentalService;
 
-    @Autowired
-    private VolumenService volumenService;
+   @Autowired
+   private VolumenService volumenService;
 
-    @GetMapping(value = "/CARPETAS")
-    public String ventanaCarpeta(HttpServletRequest request, Model model) {
-        System.out.println("PATALLA CARPETA");
+   @Autowired
+   private TipoControService tipoControService;
 
-        return "/carpetas/registrar";
-    }
+   @Autowired
+   private ControlService controService;
 
-    @PostMapping(value = "/VistaIcoCar")
-    public String VistaIcoCar(HttpServletRequest request, Model model) {
-        System.out.println("PATALLA CARPETA Vista Ico");
+   @Autowired
+   private UsuarioService usuarioService;
 
-        return "/carpetas/vistaICO";
-    }
+   @GetMapping(value = "/CARPETAS")
+   public String ventanaCarpeta(HttpServletRequest request, Model model) {
+      System.out.println("PATALLA CARPETA");
 
-    @PostMapping(value = "/VistaListCar")
-    public String VistaLisCar(HttpServletRequest request, Model model) {
-        System.out.println("PATALLA CARPETA Vista List");
+      return "/carpetas/registrar";
+   }
 
-        return "/carpetas/vistaLIST";
-    }
+   @PostMapping(value = "/VistaIcoCar")
+   public String VistaIcoCar(HttpServletRequest request, Model model) {
+      System.out.println("PATALLA CARPETA Vista Ico");
 
-    @PostMapping(value = "/RegistrosCarpetaIco")
-    public String RegistrosCarpetaIco(HttpServletRequest request, Model model) {
-        System.out.println("PATALLA CARPETA Vista List");
-        List<Carpeta> listaCarpetas = new ArrayList<>();
-        for (int i = 0; i < carpetaService.findAll().size(); i++) {
-            Carpeta carpeta = new Carpeta();
-            carpeta = carpetaService.findAll().get(i);
-            carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
-            listaCarpetas.add(carpeta);
-        }
-        for (int i = 0; i < listaCarpetas.size(); i++) {
+      return "/carpetas/vistaICO";
+   }
 
-            String[] palabras = listaCarpetas.get(i).getUnidad().getNombre().split(" ");
+   @PostMapping(value = "/VistaListCar")
+   public String VistaLisCar(HttpServletRequest request, Model model) {
+      System.out.println("PATALLA CARPETA Vista List");
 
-            StringBuilder primerasLetras = new StringBuilder();
+      return "/carpetas/vistaLIST";
+   }
 
-            for (String palabra : palabras) {
-                if (!palabra.isEmpty()) {
-                    if (palabra.equalsIgnoreCase("y")) {
-                        continue;
-                    } else if (palabra.equalsIgnoreCase("de")) {
-                        continue;
-                    }
-                    char primeraLetra = palabra.charAt(0);
-                    primerasLetras.append(primeraLetra);
-                }
+   @PostMapping(value = "/RegistrosCarpetaIco")
+   public String RegistrosCarpetaIco(HttpServletRequest request, Model model) {
+      System.out.println("PATALLA CARPETA Vista List");
+      List<Carpeta> listaCarpetas = new ArrayList<>();
+      for (int i = 0; i < carpetaService.findAll().size(); i++) {
+         Carpeta carpeta = new Carpeta();
+         carpeta = carpetaService.findAll().get(i);
+         carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+         listaCarpetas.add(carpeta);
+      }
+      for (int i = 0; i < listaCarpetas.size(); i++) {
+
+         String[] palabras = listaCarpetas.get(i).getUnidad().getNombre().split(" ");
+
+         StringBuilder primerasLetras = new StringBuilder();
+
+         for (String palabra : palabras) {
+            if (!palabra.isEmpty()) {
+               if (palabra.equalsIgnoreCase("y")) {
+                  continue;
+               } else if (palabra.equalsIgnoreCase("de")) {
+                  continue;
+               }
+               char primeraLetra = palabra.charAt(0);
+               primerasLetras.append(primeraLetra);
             }
-            listaCarpetas.get(i).getUnidad().setSigla(primerasLetras.toString());
-        }
-        model.addAttribute("ListCarpetas", listaCarpetas);
-        return "/carpetas/iconoRegistros";
-    }
+         }
+         listaCarpetas.get(i).getUnidad().setSigla(primerasLetras.toString());
+      }
+      model.addAttribute("ListCarpetas", listaCarpetas);
+      return "/carpetas/iconoRegistros";
+   }
 
-    @PostMapping(value = "/NuevaCarpeta")
-    public String NuevaCarpeta(HttpServletRequest request, Model model) {
-        model.addAttribute("carpeta", new Carpeta());
-        model.addAttribute("archivos", archivoService.findAll());
-        model.addAttribute("unidades", unidadService.findAll());
-        model.addAttribute("volumenes", volumenService.findAll());
-        model.addAttribute("seriesDocs", documentalService.findAll());
-        return "/carpetas/formulario";
-    }
+   @PostMapping(value = "/NuevaCarpeta")
+   public String NuevaCarpeta(HttpServletRequest request, Model model) {
+      model.addAttribute("carpeta", new Carpeta());
+      model.addAttribute("archivos", archivoService.findAll());
+      model.addAttribute("unidades", unidadService.findAll());
+      model.addAttribute("volumenes", volumenService.findAll());
+      model.addAttribute("seriesDocs", documentalService.findAll());
+      return "/carpetas/formulario";
+   }
 
-    @PostMapping(value = "/NuevaCarpetaModal")
-    public String NuevaCarpetaModal(HttpServletRequest request, Model model) {
-        model.addAttribute("carpeta", new Carpeta());
-        model.addAttribute("archivos", archivoService.findAll());
-        model.addAttribute("unidades", unidadService.findAll());
-        model.addAttribute("volumenes", volumenService.findAll());
-        model.addAttribute("seriesDocs", documentalService.findAll());
-        return "/carpetas/formularioModal";
-    }
+   @PostMapping(value = "/NuevaCarpetaModal")
+   public String NuevaCarpetaModal(HttpServletRequest request, Model model) {
+      model.addAttribute("carpeta", new Carpeta());
+      model.addAttribute("archivos", archivoService.findAll());
+      model.addAttribute("unidades", unidadService.findAll());
+      model.addAttribute("volumenes", volumenService.findAll());
+      model.addAttribute("seriesDocs", documentalService.findAll());
+      return "/carpetas/formularioModal";
+   }
 
-    int cantidadTotalHojasCarpeta(Carpeta carpeta) {
-        int sumarCant = 0;
-        for (int j = 0; j < carpeta.getArchivos().size(); j++) {
-            sumarCant = sumarCant + carpeta.getArchivos().get(j).getCantidadHojas();
-        }
-        return sumarCant;
-    }
+   int cantidadTotalHojasCarpeta(Carpeta carpeta) {
+      int sumarCant = 0;
+      for (int j = 0; j < carpeta.getArchivos().size(); j++) {
+         sumarCant = sumarCant + carpeta.getArchivos().get(j).getCantidadHojas();
+      }
+      return sumarCant;
+   }
 
-    @PostMapping(value = "/RegistrosCarpeta")
-    public String tablaRegistros(HttpServletRequest request, Model model) {
+   @PostMapping(value = "/RegistrosCarpeta")
+   public String tablaRegistros(HttpServletRequest request, Model model) {
 
-        List<Carpeta> listaCarpetas = new ArrayList<>();
-        for (int i = 0; i < carpetaService.findAll().size(); i++) {
-            Carpeta carpeta = new Carpeta();
-            carpeta = carpetaService.findAll().get(i);
-            carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
-            listaCarpetas.add(carpeta);
-        }
-        for (int i = 0; i < listaCarpetas.size(); i++) {
+      List<Carpeta> listaCarpetas = new ArrayList<>();
+      for (int i = 0; i < carpetaService.findAll().size(); i++) {
+         Carpeta carpeta = new Carpeta();
+         carpeta = carpetaService.findAll().get(i);
+         carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+         listaCarpetas.add(carpeta);
+      }
+      for (int i = 0; i < listaCarpetas.size(); i++) {
 
-            String[] palabras = listaCarpetas.get(i).getUnidad().getNombre().split(" ");
+         String[] palabras = listaCarpetas.get(i).getUnidad().getNombre().split(" ");
 
-            StringBuilder primerasLetras = new StringBuilder();
+         StringBuilder primerasLetras = new StringBuilder();
 
-            for (String palabra : palabras) {
-                if (!palabra.isEmpty()) {
-                    if (palabra.equalsIgnoreCase("y")) {
-                        continue;
-                    } else if (palabra.equalsIgnoreCase("de")) {
-                        continue;
-                    }
-                    char primeraLetra = palabra.charAt(0);
-                    primerasLetras.append(primeraLetra);
-                }
+         for (String palabra : palabras) {
+            if (!palabra.isEmpty()) {
+               if (palabra.equalsIgnoreCase("y")) {
+                  continue;
+               } else if (palabra.equalsIgnoreCase("de")) {
+                  continue;
+               }
+               char primeraLetra = palabra.charAt(0);
+               primerasLetras.append(primeraLetra);
             }
-            listaCarpetas.get(i).getUnidad().setSigla(primerasLetras.toString());
-        }
-        model.addAttribute("ListCarpetas", listaCarpetas);
+         }
+         listaCarpetas.get(i).getUnidad().setSigla(primerasLetras.toString());
+      }
+      model.addAttribute("ListCarpetas", listaCarpetas);
 
-        return "/carpetas/tablaRegistros";
-    }
+      return "/carpetas/tablaRegistros";
+   }
 
-    @PostMapping(value = "/RegistrarCarpeta")
-    public ResponseEntity<String> RegistrarCarpeta(HttpServletRequest request, Model model, @Validated Carpeta carpeta,
-            @RequestParam(value = "gestion") String gestion) {
-        System.out.println("Registrar Carpeta");
-        carpeta.setEstado("A");
-        carpeta.setHoraRegistro(new Date());
-        carpeta.setFechaRegistro(new Date());
-        carpeta.setGestion(Integer.parseInt(gestion));
-        carpetaService.save(carpeta);
-        return ResponseEntity.ok("Se guardó el nuevo registro Correctamente");
-    }
+   @PostMapping(value = "/RegistrarCarpeta")
+   public ResponseEntity<String> RegistrarCarpeta(HttpServletRequest request, Model model, @Validated Carpeta carpeta,
+         @RequestParam(value = "gestion") String gestion) {
+      System.out.println("Registrar Carpeta");
+      Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(us.getId_usuario());
+      carpeta.setEstado("A");
+      carpeta.setHoraRegistro(new Date());
+      carpeta.setFechaRegistro(new Date());
+      carpeta.setGestion(Integer.parseInt(gestion));
+      carpetaService.save(carpeta);
+      Control control = new Control();
+      control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+      control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+            + " de un Formulario de Transferencia");
+      control.setUsuario(userLog);
+      control.setFecha(new Date());
+      control.setHora(new Date());
+      controService.save(control);
+      return ResponseEntity.ok("Se guardó el nuevo registro Correctamente");
+   }
 
-    @GetMapping(value = "/ModCarpeta/{id_carpeta}")
-    public String EditarCarpeta(HttpServletRequest request, Model model,
-            @PathVariable("id_carpeta") Long id_carpeta) {
-        System.out.println("EDITAR CARPETA");
-        model.addAttribute("carpeta", carpetaService.findOne(id_carpeta));
-        model.addAttribute("archivos", archivoService.findAll());
-        model.addAttribute("unidades", unidadService.findAll());
-        model.addAttribute("volumenes", volumenService.findAll());
-        model.addAttribute("seriesDocs", documentalService.findAll());
-        model.addAttribute("edit", "true");
-        return "/carpetas/formulario";
-    }
+   @GetMapping(value = "/ModCarpeta/{id_carpeta}")
+   public String EditarCarpeta(HttpServletRequest request, Model model,
+         @PathVariable("id_carpeta") Long id_carpeta) {
+      System.out.println("EDITAR CARPETA");
+      model.addAttribute("carpeta", carpetaService.findOne(id_carpeta));
+      model.addAttribute("archivos", archivoService.findAll());
+      model.addAttribute("unidades", unidadService.findAll());
+      model.addAttribute("volumenes", volumenService.findAll());
+      model.addAttribute("seriesDocs", documentalService.findAll());
+      model.addAttribute("edit", "true");
+      return "/carpetas/formulario";
+   }
 
-    @GetMapping(value = "/ModCarpetaModal/{id_carpeta}")
-    public String EditarCarpetaModal(HttpServletRequest request, Model model,
-            @PathVariable("id_carpeta") Long id_carpeta) {
-        System.out.println("EDITAR CARPETA");
-        model.addAttribute("carpeta", carpetaService.findOne(id_carpeta));
-        model.addAttribute("archivos", archivoService.findAll());
-        model.addAttribute("unidades", unidadService.findAll());
-        model.addAttribute("volumenes", volumenService.findAll());
-        model.addAttribute("seriesDocs", documentalService.findAll());
-        model.addAttribute("edit", "true");
-        return "/carpetas/formularioModal";
-    }
+   @GetMapping(value = "/ModCarpetaModal/{id_carpeta}")
+   public String EditarCarpetaModal(HttpServletRequest request, Model model,
+         @PathVariable("id_carpeta") Long id_carpeta) {
+      System.out.println("EDITAR CARPETA");
+      model.addAttribute("carpeta", carpetaService.findOne(id_carpeta));
+      model.addAttribute("archivos", archivoService.findAll());
+      model.addAttribute("unidades", unidadService.findAll());
+      model.addAttribute("volumenes", volumenService.findAll());
+      model.addAttribute("seriesDocs", documentalService.findAll());
+      model.addAttribute("edit", "true");
+      return "/carpetas/formularioModal";
+   }
 
-    @PostMapping(value = "/ModCarpetaG")
-    public ResponseEntity<String> ModCarpeta(@Validated Carpeta carpeta, Model model,
-            @RequestParam(value = "gestion") String gestion) {
-        carpeta.setGestion(Integer.parseInt(gestion));
-        carpeta.setEstado("A");
-        carpetaService.save(carpeta);
-        return ResponseEntity.ok("Se ha Modificado el registro Correctamente");
-    }
+   @PostMapping(value = "/ModCarpetaG")
+   public ResponseEntity<String> ModCarpeta(HttpServletRequest request, @Validated Carpeta carpeta, Model model,
+         @RequestParam(value = "gestion") String gestion) {
+      Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(us.getId_usuario());
+      carpeta.setGestion(Integer.parseInt(gestion));
+      carpeta.setEstado("A");
+      carpetaService.save(carpeta);
+      Control control = new Control();
+      control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
+      control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+            + " de un Formulario de Transferencia");
+      control.setUsuario(userLog);
+      control.setFecha(new Date());
+      control.setHora(new Date());
+      controService.save(control);
+      return ResponseEntity.ok("Se ha Modificado el registro Correctamente");
+   }
 
-    @PostMapping(value = "/EliminarCarpeta/{id_carpeta}")
-    @ResponseBody
-    public void EliminarCarpeta(HttpServletRequest request, Model model,
-            @PathVariable("id_carpeta") Long id_carpeta) {
-        System.out.println("Eliminar CARPETA");
+   @PostMapping(value = "/EliminarCarpeta/{id_carpeta}")
+   @ResponseBody
+   public void EliminarCarpeta(HttpServletRequest request, Model model,
+         @PathVariable("id_carpeta") Long id_carpeta) {
+      System.out.println("Eliminar CARPETA");
+      Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(us.getId_usuario());
+      Carpeta carpeta = carpetaService.findOne(id_carpeta);
 
-        Carpeta carpeta = carpetaService.findOne(id_carpeta);
+      for (int i = 0; i < carpeta.getArchivos().size(); i++) {
+         archivoService.delete(carpeta.getArchivos().get(i).getId_archivo());
+      }
+      carpetaService.delete(id_carpeta);
+      Control control = new Control();
+      control.setTipoControl(tipoControService.findAllByTipoControl("Eliminó"));
+      control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+            + " de un Formulario de Transferencia");
+      control.setUsuario(userLog);
+      control.setFecha(new Date());
+      control.setHora(new Date());
+      controService.save(control);
+   }
 
-        for (int i = 0; i < carpeta.getArchivos().size(); i++) {
-            archivoService.delete(carpeta.getArchivos().get(i).getId_archivo());
-        }
-        carpetaService.delete(id_carpeta);
-    }
+   @PostMapping(value = "/ContenidoCarpeta/{id_carpeta}")
+   public String ContenidoCarpeta(HttpServletRequest request, Model model,
+         @PathVariable("id_carpeta") Long id_carpeta) {
 
-    @PostMapping(value = "/ContenidoCarpeta/{id_carpeta}")
-    public String ContenidoCarpeta(HttpServletRequest request, Model model,
-            @PathVariable("id_carpeta") Long id_carpeta) {
+      Carpeta carpeta = new Carpeta();
+      carpeta = carpetaService.findOne(id_carpeta);
+      carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+      model.addAttribute("carpeta", carpeta);
 
-        Carpeta carpeta = new Carpeta();
-        carpeta = carpetaService.findOne(id_carpeta);
-        carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
-        model.addAttribute("carpeta", carpeta);
+      return "/carpetas/archivoCarpeta";
+   }
 
-        return "/carpetas/archivoCarpeta";
-    }
-    
-    @PostMapping(value = "/ContenidoCarpetaList/{id_carpeta}")
-    public String ContenidoCarpetaList(HttpServletRequest request, Model model,
-            @PathVariable("id_carpeta") Long id_carpeta) {
+   @PostMapping(value = "/ContenidoCarpetaList/{id_carpeta}")
+   public String ContenidoCarpetaList(HttpServletRequest request, Model model,
+         @PathVariable("id_carpeta") Long id_carpeta) {
 
-        Carpeta carpeta = new Carpeta();
-        carpeta = carpetaService.findOne(id_carpeta);
-        carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
-        model.addAttribute("carpeta", carpeta);
+      Carpeta carpeta = new Carpeta();
+      carpeta = carpetaService.findOne(id_carpeta);
+      carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+      model.addAttribute("carpeta", carpeta);
 
-        return "/carpetas/archivoCarpetaList";
-    }
+      return "/carpetas/archivoCarpetaList";
+   }
 
-    @PostMapping(value = "/RegistrosArchivosCList/{id_carpeta}")
-    public String RegistrosArchivosCList(HttpServletRequest request, Model model,
-            @PathVariable("id_carpeta") Long id_carpeta) {
+   @PostMapping(value = "/RegistrosArchivosCList/{id_carpeta}")
+   public String RegistrosArchivosCList(HttpServletRequest request, Model model,
+         @PathVariable("id_carpeta") Long id_carpeta) {
 
-        Carpeta carpeta = new Carpeta();
-        carpeta = carpetaService.findOne(id_carpeta);
-        model.addAttribute("listaArchivos", carpeta.getArchivos());
+      Carpeta carpeta = new Carpeta();
+      carpeta = carpetaService.findOne(id_carpeta);
+      model.addAttribute("listaArchivos", carpeta.getArchivos());
 
-        return "/carpetas/tablaRegistroArchivoList";
-    }
+      return "/carpetas/tablaRegistroArchivoList";
+   }
 
-    @PostMapping(value = "/AgregarArchivo/{id_carpeta}")
-    public String AgregarArchivo(HttpServletRequest request, Model model,
-            @PathVariable("id_carpeta") Long id_carpeta) {
-        model.addAttribute("carp", id_carpeta);
-        model.addAttribute("archivo", new Archivo());
-        model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
-        model.addAttribute("personas", personaService.findAll());
-        model.addAttribute("seriesDocumental", carpetaService.findOne(id_carpeta).getSerieDocumental().getSubSeries());
-        model.addAttribute("seccionesDocumental", carpetaService.findOne(id_carpeta).getUnidad().getSubUnidades());
-        return "/carpetas/formularioArchivoC";
-        
-    }
+   @PostMapping(value = "/AgregarArchivo/{id_carpeta}")
+   public String AgregarArchivo(HttpServletRequest request, Model model,
+         @PathVariable("id_carpeta") Long id_carpeta) {
+      model.addAttribute("carp", id_carpeta);
+      model.addAttribute("archivo", new Archivo());
+      model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
+      model.addAttribute("personas", personaService.findAll());
+      model.addAttribute("seriesDocumental", carpetaService.findOne(id_carpeta).getSerieDocumental().getSubSeries());
+      model.addAttribute("seccionesDocumental", carpetaService.findOne(id_carpeta).getUnidad().getSubUnidades());
+      return "/carpetas/formularioArchivoC";
 
-    @PostMapping(value = "/AgregarArchivoCList/{id_carpeta}")
-    public String AgregarArchivoCList(HttpServletRequest request, Model model,
-            @PathVariable("id_carpeta") Long id_carpeta) {
-        model.addAttribute("carp", id_carpeta);
-        model.addAttribute("archivo", new Archivo());
-        model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
-        model.addAttribute("personas", personaService.findAll());
-        model.addAttribute("seccionesDocumental", carpetaService.findOne(id_carpeta).getUnidad().getSubUnidades());
-        return "/carpetas/formularioArchivoCList";
-        
-    }
+   }
 
-    @PostMapping(value = "/ModificarArchivoC/{id_archivo}")
-    public String ModificarArchivoC(HttpServletRequest request, Model model,
-            @PathVariable("id_archivo") Long id_archivo) {
-        Archivo archivo = archivoService.findOne(id_archivo);
-        model.addAttribute("carp", archivo.getCarpeta().getId_carpeta());
-        model.addAttribute("archivo", archivo);
-        model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
-        model.addAttribute("personas", personaService.findAll());
-        model.addAttribute("seccionesDocumental",
-                carpetaService.findOne(archivo.getCarpeta().getId_carpeta()).getUnidad().getSubUnidades());
-        model.addAttribute("edit", "true");
-        return "/carpetas/formularioArchivoC";
-    }
+   @PostMapping(value = "/AgregarArchivoCList/{id_carpeta}")
+   public String AgregarArchivoCList(HttpServletRequest request, Model model,
+         @PathVariable("id_carpeta") Long id_carpeta) {
+      model.addAttribute("carp", id_carpeta);
+      model.addAttribute("archivo", new Archivo());
+      model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
+      model.addAttribute("personas", personaService.findAll());
+      model.addAttribute("seccionesDocumental", carpetaService.findOne(id_carpeta).getUnidad().getSubUnidades());
+      return "/carpetas/formularioArchivoCList";
 
-    @PostMapping(value = "/ModificarArchivoCList/{id_archivo}")
-    public String ModificarArchivoCList(HttpServletRequest request, Model model,
-            @PathVariable("id_archivo") Long id_archivo) {
-        Archivo archivo = archivoService.findOne(id_archivo);
-        model.addAttribute("carp", archivo.getCarpeta().getId_carpeta());
-        model.addAttribute("archivo", archivo);
-        model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
-        model.addAttribute("personas", personaService.findAll());
-        model.addAttribute("seccionesDocumental",
-                carpetaService.findOne(archivo.getCarpeta().getId_carpeta()).getUnidad().getSubUnidades());
-        model.addAttribute("edit", "true");
-        return "/carpetas/formularioArchivoCList";
-    }
+   }
 
-    @PostMapping("/buscarCarpeta")
-    public String BuscandoCarpeta(HttpServletRequest request, Model model,
-            @RequestParam(value = "unidadCarpeta", required = false) Long unidadCarpeta,
-            @RequestParam(value = "volumenCarpeta", required = false) Long volumenCarpeta,
-            @RequestParam(value = "seriesDocsCarpeta", required = false) Long seriesDocsCarpeta,
-            @RequestParam(value = "gestion", required = false) int gestionCarpeta) {
-        System.out.println("BUSQUEDAS DE CARPETA");
+   @PostMapping(value = "/ModificarArchivoC/{id_archivo}")
+   public String ModificarArchivoC(HttpServletRequest request, Model model,
+         @PathVariable("id_archivo") Long id_archivo) {
+      Archivo archivo = archivoService.findOne(id_archivo);
+      model.addAttribute("carp", archivo.getCarpeta().getId_carpeta());
+      model.addAttribute("archivo", archivo);
+      model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
+      model.addAttribute("personas", personaService.findAll());
+      model.addAttribute("seccionesDocumental",
+            carpetaService.findOne(archivo.getCarpeta().getId_carpeta()).getUnidad().getSubUnidades());
+      model.addAttribute("edit", "true");
+      return "/carpetas/formularioArchivoC";
+   }
 
-        List<Carpeta> listaCarpetas = new ArrayList<>();
+   @PostMapping(value = "/ModificarArchivoCList/{id_archivo}")
+   public String ModificarArchivoCList(HttpServletRequest request, Model model,
+         @PathVariable("id_archivo") Long id_archivo) {
+      Archivo archivo = archivoService.findOne(id_archivo);
+      model.addAttribute("carp", archivo.getCarpeta().getId_carpeta());
+      model.addAttribute("archivo", archivo);
+      model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
+      model.addAttribute("personas", personaService.findAll());
+      model.addAttribute("seccionesDocumental",
+            carpetaService.findOne(archivo.getCarpeta().getId_carpeta()).getUnidad().getSubUnidades());
+      model.addAttribute("edit", "true");
+      return "/carpetas/formularioArchivoCList";
+   }
 
-        if (gestionCarpeta != 0 && unidadCarpeta != null && volumenCarpeta != null && seriesDocsCarpeta != null) {
-            listaCarpetas = carpetaService.buscarPorUnidadSerieVolumenGestion(seriesDocsCarpeta,
-                    unidadCarpeta, volumenCarpeta, gestionCarpeta);
+   @PostMapping("/buscarCarpeta")
+   public String BuscandoCarpeta(HttpServletRequest request, Model model,
+         @RequestParam(value = "unidadCarpeta", required = false) Long unidadCarpeta,
+         @RequestParam(value = "volumenCarpeta", required = false) Long volumenCarpeta,
+         @RequestParam(value = "seriesDocsCarpeta", required = false) Long seriesDocsCarpeta,
+         @RequestParam(value = "gestion", required = false) int gestionCarpeta) {
+      System.out.println("BUSQUEDAS DE CARPETA");
+
+      List<Carpeta> listaCarpetas = new ArrayList<>();
+
+      if (gestionCarpeta != 0 && unidadCarpeta != null && volumenCarpeta != null && seriesDocsCarpeta != null) {
+         listaCarpetas = carpetaService.buscarPorUnidadSerieVolumenGestion(seriesDocsCarpeta,
+               unidadCarpeta, volumenCarpeta, gestionCarpeta);
+         contarPaginas(listaCarpetas);
+         model.addAttribute("ListCarpetas", listaCarpetas);
+      } else {
+         if (gestionCarpeta != 0 && unidadCarpeta != null && volumenCarpeta != null) {
+            listaCarpetas = carpetaService.buscarPorUnidadVolumenGestion(unidadCarpeta, volumenCarpeta,
+                  gestionCarpeta);
             contarPaginas(listaCarpetas);
             model.addAttribute("ListCarpetas", listaCarpetas);
-        } else {
-            if (gestionCarpeta != 0 && unidadCarpeta != null && volumenCarpeta != null) {
-                listaCarpetas = carpetaService.buscarPorUnidadVolumenGestion(unidadCarpeta, volumenCarpeta,
-                        gestionCarpeta);
-                contarPaginas(listaCarpetas);
-                model.addAttribute("ListCarpetas", listaCarpetas);
+         } else {
+            if (seriesDocsCarpeta != null && unidadCarpeta != null && gestionCarpeta != 0) {
+               listaCarpetas = carpetaService.buscarPorUnidadSerieGestion(seriesDocsCarpeta,
+                     unidadCarpeta, gestionCarpeta);
+               contarPaginas(listaCarpetas);
+               model.addAttribute("ListCarpetas", listaCarpetas);
             } else {
-                if (seriesDocsCarpeta != null && unidadCarpeta != null && gestionCarpeta != 0) {
-                    listaCarpetas = carpetaService.buscarPorUnidadSerieGestion(seriesDocsCarpeta,
-                            unidadCarpeta, gestionCarpeta);
-                    contarPaginas(listaCarpetas);
-                    model.addAttribute("ListCarpetas", listaCarpetas);
-                } else {
-                    if (seriesDocsCarpeta != null && unidadCarpeta != null && volumenCarpeta != null) {
-                        listaCarpetas = carpetaService.buscarPorUnidadSerieVolumen(seriesDocsCarpeta, unidadCarpeta,
-                                volumenCarpeta);
+               if (seriesDocsCarpeta != null && unidadCarpeta != null && volumenCarpeta != null) {
+                  listaCarpetas = carpetaService.buscarPorUnidadSerieVolumen(seriesDocsCarpeta, unidadCarpeta,
+                        volumenCarpeta);
+                  contarPaginas(listaCarpetas);
+                  model.addAttribute("ListCarpetas", listaCarpetas);
+               } else {
+                  if (gestionCarpeta != 0 && unidadCarpeta != null) {
+                     listaCarpetas = carpetaService.buscarPorUnidadGestion(unidadCarpeta, gestionCarpeta);
+                     contarPaginas(listaCarpetas);
+                     model.addAttribute("ListCarpetas", listaCarpetas);
+                  }
+                  if (gestionCarpeta != 0 && seriesDocsCarpeta != null) {
+                     listaCarpetas = carpetaService.buscarPorSeriedGestion(seriesDocsCarpeta, gestionCarpeta);
+                     contarPaginas(listaCarpetas);
+                     model.addAttribute("ListCarpetas", listaCarpetas);
+                  } else {
+                     if (gestionCarpeta != 0 && volumenCarpeta != null) {
+                        listaCarpetas = carpetaService.buscarPorVolumenGestion(volumenCarpeta, gestionCarpeta);
                         contarPaginas(listaCarpetas);
                         model.addAttribute("ListCarpetas", listaCarpetas);
-                    } else {
-                        if (gestionCarpeta != 0 && unidadCarpeta != null) {
-                            listaCarpetas = carpetaService.buscarPorUnidadGestion(unidadCarpeta, gestionCarpeta);
-                            contarPaginas(listaCarpetas);
-                            model.addAttribute("ListCarpetas", listaCarpetas);
-                        }
-                        if (gestionCarpeta != 0 && seriesDocsCarpeta != null) {
-                            listaCarpetas = carpetaService.buscarPorSeriedGestion(seriesDocsCarpeta, gestionCarpeta);
-                            contarPaginas(listaCarpetas);
-                            model.addAttribute("ListCarpetas", listaCarpetas);
+                     } else {
+                        if (unidadCarpeta != null && volumenCarpeta != null) {
+                           listaCarpetas = carpetaService.buscarPorUnidadVolumen(unidadCarpeta,
+                                 volumenCarpeta);
+                           contarPaginas(listaCarpetas);
+                           model.addAttribute("ListCarpetas", listaCarpetas);
                         } else {
-                            if (gestionCarpeta != 0 && volumenCarpeta != null) {
-                                listaCarpetas = carpetaService.buscarPorVolumenGestion(volumenCarpeta, gestionCarpeta);
-                                contarPaginas(listaCarpetas);
-                                model.addAttribute("ListCarpetas", listaCarpetas);
-                            } else {
-                                if (unidadCarpeta != null && volumenCarpeta != null) {
-                                    listaCarpetas = carpetaService.buscarPorUnidadVolumen(unidadCarpeta,
-                                            volumenCarpeta);
+                           if (unidadCarpeta != null && seriesDocsCarpeta != null) {
+                              listaCarpetas = carpetaService.buscarPorUnidadSerie(seriesDocsCarpeta,
+                                    unidadCarpeta);
+                              contarPaginas(listaCarpetas);
+                              model.addAttribute("ListCarpetas", listaCarpetas);
+                           } else {
+                              if (gestionCarpeta != 0) {
+                                 listaCarpetas = carpetaService.buscarPorGestion(gestionCarpeta);
+                                 contarPaginas(listaCarpetas);
+                                 model.addAttribute("ListCarpetas", listaCarpetas);
+                              } else {
+                                 if (volumenCarpeta != null) {
+                                    listaCarpetas = volumenService.findOne(volumenCarpeta).getCarpetas();
                                     contarPaginas(listaCarpetas);
                                     model.addAttribute("ListCarpetas", listaCarpetas);
-                                } else {
-                                    if (unidadCarpeta != null && seriesDocsCarpeta != null) {
-                                        listaCarpetas = carpetaService.buscarPorUnidadSerie(seriesDocsCarpeta,
-                                                unidadCarpeta);
-                                        contarPaginas(listaCarpetas);
-                                        model.addAttribute("ListCarpetas", listaCarpetas);
+                                 } else {
+                                    if (seriesDocsCarpeta != null) {
+                                       listaCarpetas = documentalService.findOne(seriesDocsCarpeta)
+                                             .getCarpetas();
+                                       contarPaginas(listaCarpetas);
+                                       model.addAttribute("ListCarpetas", listaCarpetas);
                                     } else {
-                                        if (gestionCarpeta != 0) {
-                                            listaCarpetas = carpetaService.buscarPorGestion(gestionCarpeta);
-                                            contarPaginas(listaCarpetas);
-                                            model.addAttribute("ListCarpetas", listaCarpetas);
-                                        } else {
-                                            if (volumenCarpeta != null) {
-                                                listaCarpetas = volumenService.findOne(volumenCarpeta).getCarpetas();
-                                                contarPaginas(listaCarpetas);
-                                                model.addAttribute("ListCarpetas", listaCarpetas);
-                                            } else {
-                                                if (seriesDocsCarpeta != null) {
-                                                    listaCarpetas = documentalService.findOne(seriesDocsCarpeta)
-                                                            .getCarpetas();
-                                                    contarPaginas(listaCarpetas);
-                                                    model.addAttribute("ListCarpetas", listaCarpetas);
-                                                } else {
-                                                    if (unidadCarpeta != null) {
-                                                        listaCarpetas = unidadService.findOne(unidadCarpeta)
-                                                                .getCarpetas();
-                                                        contarPaginas(listaCarpetas);
-                                                        model.addAttribute("ListCarpetas", listaCarpetas);
-                                                    } else {
-                                                        model.addAttribute("ListCarpetas", null);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                       if (unidadCarpeta != null) {
+                                          listaCarpetas = unidadService.findOne(unidadCarpeta)
+                                                .getCarpetas();
+                                          contarPaginas(listaCarpetas);
+                                          model.addAttribute("ListCarpetas", listaCarpetas);
+                                       } else {
+                                          model.addAttribute("ListCarpetas", null);
+                                       }
                                     }
-                                }
-                            }
+                                 }
+                              }
+                           }
                         }
-                    }
-                }
+                     }
+                  }
+               }
             }
-        }
+         }
+      }
 
-        return "/busquedas/registrosCarpeta";
-    }
+      return "/busquedas/registrosCarpeta";
+   }
 
-        void contarPaginas(List<Carpeta> listaCarpetas) {
-        // List<Carpeta> listaCarpetas = new ArrayList<>();
-        for (int i = 0; i < listaCarpetas.size(); i++) {
-            Carpeta carpeta = new Carpeta();
-            carpeta = listaCarpetas.get(i);
-            carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
-            // listaCarpetas.add(carpeta);
-        }
-        // model.addAttribute("ListCarpetas", listaCarpetas);
-    }
+   void contarPaginas(List<Carpeta> listaCarpetas) {
+      // List<Carpeta> listaCarpetas = new ArrayList<>();
+      for (int i = 0; i < listaCarpetas.size(); i++) {
+         Carpeta carpeta = new Carpeta();
+         carpeta = listaCarpetas.get(i);
+         carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+         // listaCarpetas.add(carpeta);
+      }
+      // model.addAttribute("ListCarpetas", listaCarpetas);
+   }
 
 }

@@ -26,13 +26,15 @@
                 required>
               <label class="form-label">Apellidos</label>
             </div>
-            <div class="form-group form-outline">
-              <input type="number" th:field="${persona.ci}" class="form-control" placeholder="Introdusca C.I." required>
-              <label class="form-label">C.I.</label>
-            </div>
-          </div>
-          <div class="col-sm-6">
             <div class="row">
+              <div class="col-sm-6">
+                <br>
+                <div class="form-group  form-outline">
+                  <input type="number" th:field="${persona.ci}" class="form-control" placeholder="Introdusca C.I."
+                    required>
+                  <label class="form-label">C.I.</label>
+                </div>
+              </div>
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="form-group form-label">Cargo</label>
@@ -43,7 +45,11 @@
                   </select>
                 </div>
               </div>
-              <div class="col-sm-6">
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <!-- <div class="col-sm-6">
                 <div class="form-group">
                   <label class="form-label">Rol</label>
                   <select class="select-field" style="width: 100%;" th:field="${persona.rol}" id="selectRol">
@@ -53,6 +59,15 @@
                     </option>
                   </select>
                 </div>
+              </div> -->
+              <div class="form-group">
+                <label class="form-label">Seleccionar Roles</label>
+                <select class="select-field-Multiple" style="width: 100%;" th:field="${persona.roles}" id="selectRol"
+                  multiple>
+                  <option th:each="rol: ${roles}" th:text="${rol.nombre}" th:value="${rol.id_rol}"
+                    th:selected="${rol == persona.roles}">
+                  </option>
+                </select>
               </div>
             </div>
             <div class="row">
@@ -80,76 +95,107 @@
 
   </div>
   <!-- /.card -->
-  <script>
-    $(document).ready(function () {
-      $('#FormularioRegistrarPerson').submit(function (event) {
-        event.preventDefault();
-        var form = document.getElementById("FormularioRegistrarPerson");
-        var action = form.action;
-        //alert("la action es: " + action);
-        var formData = $(this).serialize();
-        var selectCargo = document.getElementById("selectCargo").value;
-        var selectRol = document.getElementById("selectRol").value;
-        var selectSeccion = document.getElementById("selectSeccion").value;
-
-        if (selectCargo != "" && selectRol != "" && selectSeccion != "") {
-          $.ajax({
-            type: 'POST',
-            url: $(this).attr('action'),
-            data: formData,
-            contentType: 'application/x-www-form-urlencoded',
-            success: function (response) {
-              var mensaje = response;
-              if (mensaje != 'Ya existe un registro con este C.I.') {
-                cargarFormulario();
-                cargarTabla();
-                var div = document.getElementById("dataTable");
-                div.scrollIntoView({ behavior: 'smooth' });
-                //toastr.success(mensaje);
-                Swal.fire(
-                  'Registrado!',
-                  mensaje + '.',
-                  'success'
-                );
-              } else {
-                Swal.fire(
-                  'Imposible Registrar!',
-                  mensaje + '.',
-                  'error'
-                );
-                //toastr.info(mensaje);
-              }
-
-            },
-            error: function (xhr, status, error) {
-              toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error);
-              console.error(error);
-              // Manejo de errores
-            }
-          });
-        } else if (selectCargo == "") {
-          toastr.info('Tiene que seleccionar un cargo para este Registro');
-        } else if (selectRol == "") {
-          toastr.info('Tiene que seleccionar un Rol para este Registro');
-        } else if (selectSeccion == "") {
-          toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
-        }
-
-      });
-    });
-    function limpiarFormularioR() {
-      var form = document.getElementById("FormularioRegistrarPerson");
-      form.reset();
-    }
-  </script>
-  <script>
-    document.querySelectorAll('.form-outline').forEach((formOutline) => {
-      new mdb.Input(formOutline).init();
-    });
-  </script>
-  <script>
-    $('.select-field').select2({
-      theme: 'bootstrap-5'
-    });
-  </script>
 </div>
+<script>
+  $(document).ready(function () {
+    $('#FormularioRegistrarPerson').submit(function (event) {
+      event.preventDefault();
+      var form = document.getElementById("FormularioRegistrarPerson");
+      var action = form.action;
+      //alert("la action es: " + action);
+      var formData = $(this).serialize();
+      var selectCargo = document.getElementById("selectCargo").value;
+      var selectRol = document.getElementById("selectRol").value;
+      var selectSeccion = document.getElementById("selectSeccion").value;
+
+      if (selectCargo != null && selectRol != "" && selectSeccion != "") {
+        $.ajax({
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: formData,
+          contentType: 'application/x-www-form-urlencoded',
+          success: function (response) {
+            var mensaje = response;
+            if (mensaje != 'Ya existe un registro con este C.I.') {
+              cargarFormulario();
+              cargarTabla();
+              var div = document.getElementById("dataTable");
+              div.scrollIntoView({ behavior: 'smooth' });
+              //toastr.success(mensaje);
+              Swal.fire(
+                'Registrado!',
+                mensaje + '.',
+                'success'
+              );
+            } else {
+              Swal.fire(
+                'Imposible Registrar!',
+                mensaje + '.',
+                'error'
+              );
+              //toastr.info(mensaje);
+            }
+
+          },
+          error: function (xhr, status, error) {
+            toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error);
+            console.error(error);
+            // Manejo de errores
+          }
+        });
+      } else if (selectCargo == "") {
+        toastr.info('Tiene que seleccionar un cargo para este Registro');
+      } else if (selectRol == "") {
+        toastr.info('Tiene que seleccionar un Rol para este Registro');
+      } else if (selectSeccion == "") {
+        toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
+      }
+
+    });
+  });
+  function limpiarFormularioR() {
+    var form = document.getElementById("FormularioRegistrarPerson");
+    form.reset();
+  }
+
+  document.querySelectorAll('.form-outline').forEach((formOutline) => {
+    new mdb.Input(formOutline).init();
+  });
+
+  $('.select-field').select2({
+    theme: 'bootstrap-5'
+  });
+  $('.select-field-Multiple').select2({
+          theme: 'bootstrap-5',
+    placeholder: 'Seleccione un o mas opciones'
+  });
+</script>
+<style>
+  .select2.select2-container .select2-selection--multiple .select2-selection__choice {
+    background-color: #FBA107;
+    border: 1px solid #494949;
+    color: #ffffff;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin: 4px 4px 0 0;
+    padding: 0 6px 0 22px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 16px;
+    position: relative;
+  }
+
+  .select2.select2-container .select2-selection--multiple .select2-selection__choice .select2-selection__choice__remove {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 22px;
+    width: 22px;
+    margin: 0;
+    text-align: center;
+    color: #ff331c;
+    font-weight: bold;
+    font-size: 16px;
+  }
+</style>

@@ -12,6 +12,10 @@
 <body class="hold-transition login-page">-->
 <!-- Content Header (Page header) -->
 <!-- HTML -->
+<!-- <div id="contenedor-preloader" class="preloader flex-column justify-content-center align-items-center" style="width: 100%;">
+  <img class="animation__shake" src="../static/logo/oep-organo-electoral-logo-65388333A4-seeklogo.com.png"
+    alt="AdminLTELogo" height="60" width="75">
+</div> -->
 
 <div id="contenidoPersona">
   <div class="content-header">
@@ -46,6 +50,11 @@
         url: "/RegistrosPersona",  // Ruta del metodo del controlador en Spring Boot
         success: function (response) {
           $("#TablaUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          // $('#contenedor-preloader').css(`
+          // height: -10px; 
+          // transition-duration: 3s;
+          // `);
+
         }
       });
     }

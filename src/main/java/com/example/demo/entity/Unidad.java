@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -60,6 +61,10 @@ public class Unidad implements Serializable{
     @JoinColumn(name = "unidad_padre_id")
     @JsonBackReference // Marca esta parte de la relación como "referenciada"
     private Unidad unidadPadre;
+
+    // @OneToOne(fetch = FetchType.EAGER)
+    // @JoinColumn(name = "id_persona")
+    // private Persona responsable;
 
     public void beforeSaveOrUpdate() {
         nombre = nombre.toUpperCase();

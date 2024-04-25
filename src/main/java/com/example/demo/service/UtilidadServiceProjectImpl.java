@@ -1,0 +1,167 @@
+package com.example.demo.service;
+
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.Date;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class UtilidadServiceProjectImpl implements UtilidadServiceProject {
+
+  String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32 caracteres para AES-128, AES-192 o
+  // AES-256 respectivamente
+
+  @Override
+  public String decrypt(String encryptedText) throws Exception {
+    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+    cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+    byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
+    byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+    return new String(decryptedBytes, StandardCharsets.UTF_8);
+  }
+
+  @Override
+  public String encrypt(String data) throws Exception {
+    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+    cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+    byte[] encryptedBytes = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+    return Base64.getEncoder().encodeToString(encryptedBytes);
+  }
+
+  @Override
+  public String fechaActualTexto() {
+    Date fechaActual = new Date();
+
+    SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+
+    String fechaActualStr = formatoFecha.format(fechaActual);
+
+    String[] separarte = fechaActualStr.split("/");
+
+    String fechaActualText = "";
+
+    switch (Integer.parseInt(separarte[1])) {
+      case 1:
+        fechaActualText = fechaActualText + "Enero de ";
+        break;
+      case 2:
+        fechaActualText = fechaActualText + "Febrero de ";
+        break;
+      case 3:
+        fechaActualText = fechaActualText + "Marzo de ";
+        break;
+      case 4:
+        fechaActualText = fechaActualText + "Abril de ";
+        break;
+      case 5:
+        fechaActualText = fechaActualText + "Mayo de ";
+        break;
+      case 6:
+        fechaActualText = fechaActualText + "Junio de ";
+        break;
+      case 7:
+        fechaActualText = fechaActualText + "Julio de ";
+        break;
+      case 8:
+        fechaActualText = fechaActualText + "Agosto de ";
+        break;
+      case 9:
+        fechaActualText = fechaActualText + "Septiembre de ";
+        break;
+      case 10:
+        fechaActualText = fechaActualText + "Octubre de ";
+        break;
+      case 11:
+        fechaActualText = fechaActualText + "Noviembre de ";
+        break;
+      case 12:
+        fechaActualText = fechaActualText + "Diciembre de ";
+        break;
+
+      default:
+        break;
+    }
+    System.out.println("Fecha actual: " + fechaActualStr);
+    return fechaActualText = separarte[0] + " de " + fechaActualText + separarte[2];
+  }
+
+  @Override
+  public String fechaTexto(Date fecha) {
+
+    SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+
+    String fechaActualStr = formatoFecha.format(fecha);
+
+    String[] separarte = fechaActualStr.split("/");
+
+    String fechaActualText = "";
+
+    switch (Integer.parseInt(separarte[1])) {
+      case 1:
+        fechaActualText = fechaActualText + "Enero de ";
+        break;
+      case 2:
+        fechaActualText = fechaActualText + "Febrero de ";
+        break;
+      case 3:
+        fechaActualText = fechaActualText + "Marzo de ";
+        break;
+      case 4:
+        fechaActualText = fechaActualText + "Abril de ";
+        break;
+      case 5:
+        fechaActualText = fechaActualText + "Mayo de ";
+        break;
+      case 6:
+        fechaActualText = fechaActualText + "Junio de ";
+        break;
+      case 7:
+        fechaActualText = fechaActualText + "Julio de ";
+        break;
+      case 8:
+        fechaActualText = fechaActualText + "Agosto de ";
+        break;
+      case 9:
+        fechaActualText = fechaActualText + "Septiembre de ";
+        break;
+      case 10:
+        fechaActualText = fechaActualText + "Octubre de ";
+        break;
+      case 11:
+        fechaActualText = fechaActualText + "Noviembre de ";
+        break;
+      case 12:
+        fechaActualText = fechaActualText + "Diciembre de ";
+        break;
+
+      default:
+        break;
+    }
+    System.out.println("Fecha actual: " + fechaActualStr);
+    return fechaActualText = separarte[0] + " de " + fechaActualText + separarte[2];
+  }
+
+  @Override
+  public byte[] decrypt(byte[] encryptedData) throws Exception {
+    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+    cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+    return cipher.doFinal(encryptedData);
+  }
+
+  @Override
+  public byte[] encrypt(byte[] data) throws Exception {
+    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+    cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+    return cipher.doFinal(data);
+  }
+
+}

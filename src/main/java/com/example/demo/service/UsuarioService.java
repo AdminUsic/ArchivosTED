@@ -20,4 +20,6 @@ public interface UsuarioService {
 
     public void eliminar(Long id);
 
+    public List<Usuario> listaUsuarioPorUnidad(Long idUnidad);
+
 }

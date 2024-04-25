@@ -20,13 +20,17 @@
                             </tr>
                         </thead>
                         <tbody id="tbody">
-                            <tr th:each="person, rowStat:${personas}" th:if="${person.estado != 'X' and person.cargo != null and person.unidad != null and person.rol != null}">
+                            <tr th:each="person, rowStat:${personas}" th:if="${person.estado != 'X' and person.cargo != null and person.unidad != null and person.roles != null}">
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center" th:text="${person.ci}"></td>
                                 <td class="text-center" th:text="${person.nombre}+' '+${person.apellido}"></td>
                                 <td class="text-center" th:text="${person.cargo.nombre}"></td>
                                 <td class="text-center" th:text="${person.unidad.nombre}"></td>
-                                <td class="text-center" th:text="${person.rol.nombre}"></td>
+                                <td class="text-center">
+                                    <ul>
+                                        <li th:each="rol: ${person.roles}" th:text="${rol.nombre}"></li>
+                                    </ul>
+                                </td>
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"

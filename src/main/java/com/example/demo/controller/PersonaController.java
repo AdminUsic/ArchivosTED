@@ -20,11 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dao.DaoPersonaData;
+import com.example.demo.entity.Control;
 import com.example.demo.entity.Persona;
 import com.example.demo.entity.Usuario;
 import com.example.demo.service.CargoService;
+import com.example.demo.service.ControlService;
 import com.example.demo.service.PersonaService;
 import com.example.demo.service.RolService;
+import com.example.demo.service.TipoControService;
 import com.example.demo.service.UnidadService;
 import com.example.demo.service.UsuarioService;
 
@@ -48,10 +51,22 @@ public class PersonaController {
     @Autowired
     private DaoPersonaData daoPersonaData;
 
+    @Autowired
+    private TipoControService tipoControService;
+
+    @Autowired
+    private ControlService controService;
+
     @GetMapping(value = "/PERSONA")
     public String ventanaPersona(HttpServletRequest request, Model model) {
         System.out.println("PATALLA PERSONA");
-        return "/personas/registrar";
+        Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+        if (request.getSession().getAttribute("userLog") != null) {
+            return "/personas/registrar";
+        } else {
+            return "login";
+        }
     }
 
     @PostMapping(value = "/NuevaPersona")
@@ -70,24 +85,43 @@ public class PersonaController {
     }
 
     @PostMapping("/RegistrarPersona")
-    public ResponseEntity<String> RegistrarPersona(@Validated Persona persona) {
-
+    public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Validated Persona persona) {
+        Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
         if (personaService.personaCi(persona.getCi()) == null) {
             persona.setHoraRegistro(new Date());
             persona.setFechaRegistro(new Date());
             persona.setEstado("A");
             personaService.save(persona);
+            Control control = new Control();
+            control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+            control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+                    + " de Persona con el nombre de " + persona.getNombre() +" "+ persona.getApellido()+ " - "
+                    + persona.getCi());
+                    control.setUsuario(userLog);
+            control.setFecha(new Date());
+            control.setHora(new Date());
+            controService.save(control);
             return ResponseEntity.ok("Se realizó el registro correctamente");
         } else {
             if (personaService.personaCi(persona.getCi()) != null) {
                 Persona persona2 = personaService.personaCi(persona.getCi());
                 if (persona2.getCargo() == null && persona2.getUnidad() == null && persona2.getUnidad() == null) {
                     persona2.setCargo(persona.getCargo());
-                    persona2.setRol(persona.getRol());
+                    persona2.setRoles(persona.getRoles());
                     persona2.setUnidad(persona.getUnidad());
                     personaService.save(persona2);
 
                     System.out.println("Se encontro una persona previamente registrada");
+                    Control control = new Control();
+                    control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+                    control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+                            + " de Persona con el nombre de " + persona.getNombre() +" "+ persona.getApellido()+ " - "
+                            + persona2.getCi());
+                            control.setUsuario(userLog);
+                    control.setFecha(new Date());
+                    control.setHora(new Date());
+                    controService.save(control);
                     return ResponseEntity.ok("Se realizó el registro correctamente");
                 } else {
                     return ResponseEntity.ok("Ya existe un registro con este C.I.");
@@ -113,9 +147,10 @@ public class PersonaController {
 
     @PostMapping(value = "/ModPersonaG")
     @ResponseBody
-    public ResponseEntity<String> ModUsuarioG(@Validated Persona persona, Model model) {
+    public ResponseEntity<String> ModUsuarioG(HttpServletRequest request, @Validated Persona persona, Model model) {
         Persona persona2 = personaService.findOne(persona.getId_persona());
-
+        Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
         List<Persona> listapers = personaService.findAll();
         System.out.println("el limite de la lista es: " + listapers.size());
         for (int i = 0; i < listapers.size(); i++) {
@@ -139,54 +174,56 @@ public class PersonaController {
 
             persona.setEstado("A");
             personaService.save(persona);
+            Control control = new Control();
+            control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
+            control.setDescripcion("Realizó una " + control.getTipoControl().getNombre()
+                    + " de un registro de Persona");
+                    control.setUsuario(userLog);
+                    control.setFecha(new Date());
+            control.setHora(new Date());
+            controService.save(control);
             return ResponseEntity.ok("Se modificó el registro correctamente");
         } else {
             return ResponseEntity.ok("Ya existe un registro con este C.I.");
         }
     }
 
-    /*@PostMapping(value = "/EliminarPersona/{id_persona}")
-    @ResponseBody
-    public void EliminarPersona(HttpServletRequest request, Model model,
-            @PathVariable("id_persona") Long id_persona) {
-        System.out.println("Eliminar PERSONA ID: "+id_persona);
-        Persona persona = personaService.findOne(id_persona);
-
-        if (persona.getUsuario() == null) {
-            personaService.delete(id_persona);
-        } else {
-            Usuario usuario = persona.getUsuario();
-            usuarioService.delete(usuario.getId_usuario());
-            personaService.delete(id_persona);
-
-        }
-        daoPersonaData.deleteById(id_persona);
-        System.out.println("SE ELIMINO LA PERSONA ID: "+id_persona);
-    }*/
     @Transactional
     @PostMapping(value = "/EliminarPersona/{id_persona}")
     @ResponseBody
     public void EliminarPersona(HttpServletRequest request, Model model,
             @PathVariable("id_persona") Long id_persona) {
-        System.out.println("Eliminar PERSONA ID: "+id_persona);
+        System.out.println("Eliminar PERSONA ID: " + id_persona);
+        Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(us.getId_usuario());
         Persona persona = personaService.findOne(id_persona);
 
         if (persona.getUsuario() == null) {
             personaService.eliminar(id_persona);
         } else {
             Usuario usuario = persona.getUsuario();
-            //usuarioService.delete(usuario.getId_usuario());
-            //personaService.delete(id_persona);
+            // usuarioService.delete(usuario.getId_usuario());
+            // personaService.delete(id_persona);
             usuarioService.eliminar(usuario.getId_usuario());
             personaService.eliminar(id_persona);
         }
-        System.out.println("SE ELIMINO LA PERSONA ID: "+id_persona);
+        Control control = new Control();
+        control.setTipoControl(tipoControService.findAllByTipoControl("Eliminó"));
+        control.setDescripcion("El usuario " + userLog.getPersona().getNombre() +" "+userLog.getPersona().getApellido() + " -  "
+                + userLog.getPersona().getCi() + " " + control.getTipoControl().getNombre()
+                + " de Persona con el nombre de " + persona.getNombre() +" "+ persona.getApellido());
+        control.setFecha(new Date());
+        control.setHora(new Date());
+        controService.save(control);
+        System.out.println("SE ELIMINO LA PERSONA ID: " + id_persona);
     }
 
     @PostMapping("/RegistrarPersonaA")
     public ResponseEntity<String> RegistrarPersonaA(@RequestParam(value = "nombrePerson") String nombre,
-            @RequestParam(value = "apellidoPerson") String apellido, @RequestParam(value = "ciPerson") String ci) {
-
+            @RequestParam(value = "apellidoPerson") String apellido, @RequestParam(value = "ciPerson") String ci,
+            HttpServletRequest request) {
+        Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(us.getId_usuario());
         if (usuarioService.credenciales(ci) == null) {
             Persona persona = new Persona();
             persona.setNombre(nombre);
@@ -196,6 +233,15 @@ public class PersonaController {
             persona.setFechaRegistro(new Date());
             persona.setEstado("A");
             personaService.save(persona);
+            Control control = new Control();
+            control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+            control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+                    + " de Persona con el nombre de " + persona.getNombre() +" "+ persona.getApellido() + " - "
+                    + persona.getCi());
+                    control.setUsuario(userLog);
+            control.setFecha(new Date());
+            control.setHora(new Date());
+            controService.save(control);
             return ResponseEntity.ok("Se realizó el registro correctamente");
 
         } else {
