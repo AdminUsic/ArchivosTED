@@ -317,7 +317,7 @@
       <div class="sidebar">
         <!-- Sidebar Menu  nav nav-pills nav-sidebar flex-column nav-flat nav-child-indent -->
         <nav class="mt-2">
-          <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu"
+          <!-- <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu"
             data-accordion="false">
             <li class="nav-item" id="liOpcionFT">
               <a type="button" class="nav-link active" id="opcionInicial">
@@ -372,12 +372,6 @@
                     <p id="pTarchivos">Tipos de Archivos</p>
                   </a>
                 </li>
-                <!--<li class="nav-item" id="liOpcionArchivoR">
-                  <a type="button" id="opcion_archivos" class="nav-link">
-                    <i class="nav-icon fa-regular fa-file-lines" id="liArchivoR"></i>
-                    <p id="pArchivoR">Registro de Archivos</p>
-                  </a>
-                </li>-->
                 <li class="nav-item" id="liOpcionSerieDoc">
                   <a type="button" id="opcion_SerieDoc" class="nav-link">
                     <i class="nav-icon fa-regular fa-rectangle-list" id="liSerieDoc"></i>
@@ -437,17 +431,45 @@
                 <p id="pRol">Control de Usuario</p>
               </a>
             </li>
-            <!--<li class="nav-item" id="lioAOpcionBR"
-              th:if="${userLog.persona.rol.nombre=='ADMINISTRATIVO'}">
-              <a type="button" class="nav-link" id="opcionBR">
-                <i class="nav-icon fa fa-cog"  id="liBR"></i>
-                <p id="pBR">Configuracion de</p>
-                <div class="text-center"><p>Datos</p></div>
+          </ul> -->
+          <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu"
+            data-accordion="false">
+            <li class="nav-item">
+              <a type="button" class="nav-link" id="opcion_home" href="#">
+                <i class="nav-icon fa-solid fa-house"></i>
+                <p>Bienvenido</p>
               </a>
-            </li>-->
+            </li>
+            <th:block th:each="rol :${userLog.persona.roles}">
+              <li class="nav-item" th:each="menu: ${rol.menus}"
+                th:if="${menu.menuPadre == null && menu.subMenus.size > 0}">
+                <a type="button" class="nav-link" th:id="${menu.idText}">
+                  <i th:class="${'nav-icon '+ menu.icono}"></i>
+                  <p>
+                    <th:text th:text="${menu.nombre}"></th:text>
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item" th:each="subMenu: ${menu.subMenus}"
+                    th:if="${#lists.contains(subMenu.roles, rol)}">
+                    <a type="button" th:id="${subMenu.idText}" class="nav-link">
+                      <i th:class="${'nav-icon '+ subMenu.icono}"></i>
+                      <p id="pPersona" th:text="${subMenu.nombre}"></p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item" th:each="menu: ${rol.menus}"
+                th:if="${menu.menuPadre == null && menu.subMenus.size == 0}">
+                <a type="button" class="nav-link" th:id="${menu.idText}" href="#">
+                  <i th:class="${'nav-icon '+ menu.icono}"></i>
+                  <p th:text="${menu.nombre}"></p>
+                </a>
+              </li>
+            </th:block>
           </ul>
         </nav>
-        <!-- /.sidebar-menu -->
       </div>
       <!-- /.sidebar -->
     </aside>
@@ -1096,11 +1118,24 @@
   <script>
     var botonPulsado;
 
-    //var botonPulsadoli;
-    //var botonPulsadop;
     $(document).ready(function () {
-      cargarContenido("/BusquedaArchivo");
-      botonPulsado = document.getElementById("opcionInicial");
+      cargarContenido("/Bienvenido");
+      botonPulsado = document.getElementById("opcion_home");
+      botonPulsado.classList.add("active");
+
+      $("#opcion_home").click(function (e) {
+        e.preventDefault();
+        cargarContenido("/Bienvenido");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_home");;
+
+        botonPulsado.classList.add("active");
+
+      });
 
       $("#opcion_usuarios").click(function (e) {
         e.preventDefault();
@@ -1249,7 +1284,7 @@
 
       });
 
-      $("#opcionInicial").click(function (e) {
+      $("#opcion_consulta").click(function (e) {
         e.preventDefault();
         cargarContenido("/BusquedaArchivo");
 
@@ -1257,7 +1292,7 @@
           botonPulsado.classList.remove("active");
         }
 
-        botonPulsado = document.getElementById("opcionInicial");
+        botonPulsado = document.getElementById("opcion_consulta");
 
         botonPulsado.classList.add("active");
 

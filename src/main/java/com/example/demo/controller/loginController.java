@@ -145,4 +145,9 @@ public class loginController {
         }
     }
 
+    @GetMapping(value = "/Bienvenido")
+    public String paginaInicial() throws Exception {
+        return "inicial";
+    }
+
 }

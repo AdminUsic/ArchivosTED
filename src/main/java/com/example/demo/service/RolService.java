@@ -14,4 +14,6 @@ public interface RolService {
     public void delete(Long id);
 
     public Rol UltimoRegistro();
+
+    public Rol rolByNombre(String nombre);
 }

@@ -27,8 +27,8 @@
                                 <td class="text-center" th:text="${person.cargo.nombre}"></td>
                                 <td class="text-center" th:text="${person.unidad.nombre}"></td>
                                 <td class="text-center">
-                                    <ul>
-                                        <li th:each="rol: ${person.roles}" th:text="${rol.nombre}"></li>
+                                    <ul class="list-group list-group-light list-group-small">
+                                        <li class="list-group-item" th:each="rol: ${person.roles}" th:text="${rol.nombre}"></li>
                                     </ul>
                                 </td>
                                 <td class="text-center">

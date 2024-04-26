@@ -12,6 +12,7 @@
                                 <th style="width: 10px">#</th>
                                 <th>Foto</th>
                                 <th>Nombres y Apellidos</th>
+                                <th>C.I.</th>
                                 <th>Nombre de Usuario</th>
                                 <th>Contraseña</th>
                                 <th>Acciones</th>
@@ -29,6 +30,7 @@
                                     
                                 </td>
                                 <td class="text-center" th:text="${user.persona.nombre}+' '+${user.persona.apellido}"></td>
+                                <td class="text-center" th:text="${user.persona.ci}"></td>
                                 <td class="text-center" th:text="${user.nombre_user}"></td>
                                 <td class="text-center" th:text="${user['contraseña']}"></td>
                                 <td class="text-center">
@@ -46,6 +48,7 @@
                                 <th style="width: 10px">#</th>
                                 <th>Foto</th>
                                 <th>Nombres y Apellidos</th>
+                                <th>C.I.</th>
                                 <th>Nombre de Usuario</th>
                                 <th>Contraseña</th>
                                 <th>Acciones</th>

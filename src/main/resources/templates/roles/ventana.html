@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>unidades</title>
-
-</head>
-
-<body>
-  <!-- Content Header (Page header) -->
-  <div id="contenidoRol">
     <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
@@ -27,7 +14,6 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
-    <!-- Preloader -->
 
     <div id="FormularioRol"></div>
     <div id="TablaRol"></div>
@@ -52,29 +38,28 @@
           type: 'POST',
           url: "/NuevoRegistroRol",  // Ruta del metodo del controlador en Spring Boot
           success: function (response) {
-
             $("#FormularioRol").html(response);  // Actualiza el contenido del div con la respuesta del servidor
           }
         });
       }
 
-      function cancelarMod() {
-        $.ajax({
-          type: 'POST',
-          url: "/NuevoRegistroRol",  // Ruta del metodo del controlador en Spring Boot
-          success: function (response) {
+      // function cancelarMod() {
+      //   $.ajax({
+      //     type: 'POST',
+      //     url: "/NuevoRegistroRol",  // Ruta del metodo del controlador en Spring Boot
+      //     success: function (response) {
 
-            $("#FormularioRol").html(response);  // Actualiza el contenido del div con la respuesta del servidor
-            var Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000
-            });
-            toastr.info('Modificacion Cancelada');
-          }
-        });
-      }
+      //       $("#FormularioRol").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+      //       var Toast = Swal.mixin({
+      //         toast: true,
+      //         position: 'top-end',
+      //         showConfirmButton: false,
+      //         timer: 3000
+      //       });
+      //       toastr.info('Modificacion Cancelada');
+      //     }
+      //   });
+      // }
 
       function Cancelar() {
         $.ajax({
@@ -214,7 +199,6 @@
           }
         });
       }
-
     </script>
     <script>
       function actualizarNumeracion() {
@@ -224,8 +208,3 @@
         });
       }
     </script>
-  </div>
-
-</body>
-
-</html>

@@ -11,6 +11,7 @@
                             <tr>
                                 <th style="width: 10px">#</th>
                                 <th>Rol</th>
+                                <th>Menus Disponibles</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -18,6 +19,27 @@
                             <tr th:each="rol, rowStat: ${roles}">
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center" th:text="${rol.nombre}"></td>
+                                <td>
+                                    <p th:if="${rol.menus.size() == 0}">Sin Menús Disponibles</p>
+                                    <!-- <th:block th:each="menu: ${rol.menus}">
+                                        <a href="#" th:text="${menu.nombre}" th:if="${menu.menuPadre == null}"></a>
+                                        <p th:each="subMenu: ${menu.subMenus}" th:text="'-'+${subMenu.nombre}" 
+                                        th:if="${#lists.contains(subMenu.roles, rol)}"></p>
+                                    </th:block> -->
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item" th:each="menu: ${rol.menus}">
+                                            <th:block>
+                                                <a href="#" class="list-group-item list-group-item-action"
+                                                    th:text="${menu.nombre}" th:if="${menu.menuPadre == null}"></a>
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item" th:each="subMenu: ${menu.subMenus}"
+                                                        th:text="'-'+${subMenu.nombre}"
+                                                        th:if="${#lists.contains(subMenu.roles, rol)}"></li>
+                                                </ul>
+                                            </th:block>
+                                        </li>
+                                    </ul>
+                                </td>
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"
@@ -25,17 +47,11 @@
                                             title="Modificar Registro">
                                             <li class="fas fa-pencil-alt "></li>
                                         </a>
-                                        <!--<a class=" btn btn-danger" type="button"
-                                                th:attr="onclick='EliminarRegistro(\'' + ${rol.id_rol} + '\')'" 
-                                                title="Eliminar Registro"><li class="fa-solid fa-trash"></li></a>-->
                                         <a class=" btn btn-danger" type="button" style="color: aliceblue;"
                                             th:attr="onclick='EliminarRegistro(\'' + ${rol.id_rol} + '\', this)'"
                                             title="Eliminar Registro">
                                             <li class="fa-solid fa-trash"></li>
                                         </a>
-                                        <!--<a class="btn btn-danger" type="button" onclick="eliminarRegistro2(this)">
-                                            <i class="fa-solid fa-trash"></i>Eliminar
-                                        </a>-->
                                     </div>
                                 </td>
                             </tr>
@@ -44,6 +60,7 @@
                             <tr>
                                 <th style="width: 10px">#</th>
                                 <th>Rol</th>
+                                <th>Menus Disponibles</th>
                                 <th>Acciones</th>
                             </tr>
                         </tfoot>
@@ -84,6 +101,7 @@
             $('#dataTable').DataTable();
         });
     </script>
+
     <body>
 
 </section>

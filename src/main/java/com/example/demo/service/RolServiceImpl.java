@@ -39,4 +39,9 @@ public class RolServiceImpl implements RolService {
         return daoRolData.UltimoRegistro();
     }
 
+    @Override
+    public Rol rolByNombre(String nombre) {
+        return daoRolData.rolByNombre(nombre);
+    }
+
 }
