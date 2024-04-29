@@ -32,6 +32,7 @@ import com.example.demo.entity.Usuario;
 import com.example.demo.service.ChatService;
 import com.example.demo.service.FormularioTransferenciaService;
 import com.example.demo.service.UsuarioService;
+import com.example.demo.service.UtilidadServiceProject;
 
 import net.minidev.json.JSONObject;
 
@@ -49,6 +50,9 @@ public class ChatController {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    private UtilidadServiceProject utilidadService;
 
     @MessageMapping("/salonA")
     @SendTo("/topic/mensajesGrupo")
@@ -84,11 +88,14 @@ public class ChatController {
 
         Date horaActual = java.sql.Time.valueOf(fechaHoraActual.toLocalTime());
 
-        mensajeR.appendField("fechaRegistro", fechaFormateada);
+        // mensajeR.appendField("fechaRegistro", fechaFormateada);
+        mensajeR.appendField("fechaRegistro", utilidadService.fechaTexto(fechaActual));
         mensajeR.appendField("horaRegistro", horaActual);
         System.out.println("Hora actual como Date: " + horaActual);
-        mensaje.setFechaRegistro(String.valueOf(fechaFormateada));
-        mensaje.setHoraRegistro(String.valueOf(horaActual));
+        // mensaje.setFechaRegistro(String.valueOf(fechaFormateada));
+        // mensaje.setHoraRegistro(String.valueOf(horaActual));
+        mensaje.setFechaRegistro(fechaActual);
+        mensaje.setHoraRegistro(fechaActual);
         chatService.save(mensaje);
         System.out.println("Envia mensaje");
         return mensajeR;
@@ -132,8 +139,10 @@ public class ChatController {
         // mensajeR.appendField("fechaRegistro", fechaFormateada);
         // mensajeR.appendField("horaRegistro", horaActual);
         System.out.println("Hora actual como Date: " + horaActual);
-        mensaje.setFechaRegistro(String.valueOf(fechaFormateada));
-        mensaje.setHoraRegistro(String.valueOf(horaActual));
+        // mensaje.setFechaRegistro(String.valueOf(fechaFormateada));
+        // mensaje.setHoraRegistro(String.valueOf(horaActual));
+        mensaje.setFechaRegistro(new Date());
+        mensaje.setHoraRegistro(new Date());
         chatService.save(mensaje);
 
         // mensajeR.appendField("id_mensaje", );

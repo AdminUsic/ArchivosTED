@@ -145,33 +145,58 @@ public class PersonaController {
         return "/personas/formulario";
     }
 
+    // @PostMapping(value = "/ModPersonaG")
+    // @ResponseBody
+    // public ResponseEntity<String> ModUsuarioG(HttpServletRequest request, @Validated Persona persona, Model model) {
+    //     Persona persona2 = personaService.findOne(persona.getId_persona());
+    //     Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
+    //     Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+    //     List<Persona> listapers = personaService.findAll();
+    //     System.out.println("el limite de la lista es: " + listapers.size());
+    //     for (int i = 0; i < listapers.size(); i++) {
+    //         if (listapers.get(i).getCi() == persona2.getCi()) {
+    //             listapers.remove(i);
+    //             break;
+    //         }
+    //     }
+    //     System.out.println("el nuevo limite de la lista es: " + listapers.size());
+    //     int cont = 0;
+    //     for (int i = 0; i < listapers.size(); i++) {
+    //         if (listapers.get(i).getCi().equals(persona.getCi())) {
+    //             cont++;
+    //             break;
+    //         }
+    //     }
+    //     System.out.println("la variable cont: " + cont);
+    //     if (cont == 0) {
+    //         persona.setFechaRegistro(persona2.getFechaRegistro());
+    //         persona.setHoraRegistro(persona2.getHoraRegistro());
+
+    //         persona.setEstado("A");
+    //         personaService.save(persona);
+    //         Control control = new Control();
+    //         control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
+    //         control.setDescripcion("Realizó una " + control.getTipoControl().getNombre()
+    //                 + " de un registro de Persona");
+    //                 control.setUsuario(userLog);
+    //                 control.setFecha(new Date());
+    //         control.setHora(new Date());
+    //         controService.save(control);
+    //         return ResponseEntity.ok("Se modificó el registro correctamente");
+    //     } else {
+    //         return ResponseEntity.ok("Ya existe un registro con este C.I.");
+    //     }
+    // }
     @PostMapping(value = "/ModPersonaG")
     @ResponseBody
     public ResponseEntity<String> ModUsuarioG(HttpServletRequest request, @Validated Persona persona, Model model) {
         Persona persona2 = personaService.findOne(persona.getId_persona());
         Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
         Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
-        List<Persona> listapers = personaService.findAll();
-        System.out.println("el limite de la lista es: " + listapers.size());
-        for (int i = 0; i < listapers.size(); i++) {
-            if (listapers.get(i).getCi() == persona2.getCi()) {
-                listapers.remove(i);
-                break;
-            }
-        }
-        System.out.println("el nuevo limite de la lista es: " + listapers.size());
-        int cont = 0;
-        for (int i = 0; i < listapers.size(); i++) {
-            if (listapers.get(i).getCi().equals(persona.getCi())) {
-                cont++;
-                break;
-            }
-        }
-        System.out.println("la variable cont: " + cont);
-        if (cont == 0) {
+        
+        if (personaService.personaModCi(persona2.getCi(), persona.getCi()) == null) {
             persona.setFechaRegistro(persona2.getFechaRegistro());
             persona.setHoraRegistro(persona2.getHoraRegistro());
-
             persona.setEstado("A");
             personaService.save(persona);
             Control control = new Control();

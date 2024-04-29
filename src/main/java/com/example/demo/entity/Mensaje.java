@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,13 +32,23 @@ public class Mensaje implements Serializable {
     private Long id_mensaje;
     private String contenidoTexto;
 
-    //private byte[] contenidoFile;
+    // private byte[] contenidoFile;
 
     private String tipoMensaje;
 
-    private String fechaRegistro;
+    // private String fechaRegistro;
 
-    private String horaRegistro;
+    // private String horaRegistro;
+
+    @Column
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "dd-MM-yy")
+    private Date fechaRegistro;
+
+    @Column
+    @Temporal(TemporalType.TIME)
+    @JsonFormat(pattern = "HH:mm:ss")
+    private Date horaRegistro;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_formularioTransferencia")

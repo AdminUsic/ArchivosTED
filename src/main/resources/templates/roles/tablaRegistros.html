@@ -29,7 +29,7 @@
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item" th:each="menu: ${rol.menus}">
                                             <th:block>
-                                                <a href="#" class="list-group-item list-group-item-action"
+                                                <a class="list-group-item list-group-item-action"
                                                     th:text="${menu.nombre}" th:if="${menu.menuPadre == null}"></a>
                                                 <ul class="list-group list-group-flush">
                                                     <li class="list-group-item" th:each="subMenu: ${menu.subMenus}"

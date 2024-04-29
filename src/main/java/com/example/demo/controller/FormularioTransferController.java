@@ -501,7 +501,8 @@ public class FormularioTransferController {
 
          PdfPCell cell9 = new PdfPCell(new Phrase("FECHAS EXTREMAS:", fontNegrilla));
 
-         PdfPCell cell10 = new PdfPCell(new Phrase(formularioTransferencia.getFechaExtrema(), fontSimple));
+         // PdfPCell cell10 = new PdfPCell(new Phrase(formularioTransferencia.getFechaExtrema(), fontSimple));
+         PdfPCell cell10 = new PdfPCell(new Phrase(utilidadService.fechaTexto(formularioTransferencia.getFechaExtrema()), fontSimple));
 
          // Agregar las celdas a la tabla
          tablaSegunda.addCell(cell1);

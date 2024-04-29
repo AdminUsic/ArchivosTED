@@ -37,8 +37,13 @@ public class FormularioTransferencia implements Serializable {
 
     private int cantCajas;
     private int cantDocumentos;
-    private String fechaExtrema;
+    //private String fechaExtrema;
     private String estado;
+
+    @Column
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "dd-MM-yy")
+    private Date fechaExtrema;
 
     @Column
     @Temporal(TemporalType.DATE)

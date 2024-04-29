@@ -17,13 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.entity.Menu;
 import com.example.demo.entity.Persona;
 import com.example.demo.entity.Rol;
 import com.example.demo.entity.Usuario;
+import com.example.demo.service.RolService;
 import com.example.demo.service.UsuarioService;
 import com.example.demo.service.UsuarioServiceImpl;
 import com.example.demo.service.UtilidadServiceProject;
@@ -37,12 +40,15 @@ public class loginController {
     @Autowired
     private UtilidadServiceProject utilidadService;
 
+    @Autowired
+    private RolService rolService;
+
     @GetMapping(value = "/")
     public String init() throws Exception {
 
         // for (Usuario usuario : usuarioService.findAll()) {
-        //     usuario.setContraseña(utilidadService.encrypt(usuario.getContraseña()));
-        //     usuarioService.save(usuario);
+        // usuario.setContraseña(utilidadService.encrypt(usuario.getContraseña()));
+        // usuarioService.save(usuario);
         // }
 
         return "redirect:/ArchivosTED";
@@ -87,24 +93,31 @@ public class loginController {
                     model.addAttribute("userChats", usuarios2);
                 }
             }
-            // if (usuarioService.findOne(userLog.getId_usuario()).getPersona().getRol().getNombre().equals("ARCHIVOS")) {
-            //     // List<Usuario> usuarios = new ArrayList<>();
-            //     List<Usuario> usuarios = usuarioService.findAll();
-            //     for (int i = 0; i < usuarios.size(); i++) {
-            //         if (usuarios.get(i) == usuarioService.findOne(userLog.getId_usuario())) {
-            //             usuarios.remove(i);
-            //         }
-            //     }
-            //     model.addAttribute("userChats", usuarios);
+
+            Rol rol = (Rol) request.getSession().getAttribute("userRol");
+            System.out.println("NOMBRE ROL: "+rol.getNombre());
+            Rol userRol = rolService.findOne(rol.getId_rol());
+            model.addAttribute("listaMenu", userRol.getMenus());
+            // if
+            // (usuarioService.findOne(userLog.getId_usuario()).getPersona().getRol().getNombre().equals("ARCHIVOS"))
+            // {
+            // // List<Usuario> usuarios = new ArrayList<>();
+            // List<Usuario> usuarios = usuarioService.findAll();
+            // for (int i = 0; i < usuarios.size(); i++) {
+            // if (usuarios.get(i) == usuarioService.findOne(userLog.getId_usuario())) {
+            // usuarios.remove(i);
+            // }
+            // }
+            // model.addAttribute("userChats", usuarios);
             // } else {
-            //     List<Usuario> usuarios2 = new ArrayList<>();
-            //     List<Usuario> usuarios = usuarioService.findAll();
-            //     for (Usuario usuario3 : usuarios) {
-            //         if (usuario3.getPersona().getRol().getNombre().equals("ARCHIVOS")) {
-            //             usuarios2.add(usuario3);
-            //         }
-            //     }
-            //     model.addAttribute("userChats", usuarios2);
+            // List<Usuario> usuarios2 = new ArrayList<>();
+            // List<Usuario> usuarios = usuarioService.findAll();
+            // for (Usuario usuario3 : usuarios) {
+            // if (usuario3.getPersona().getRol().getNombre().equals("ARCHIVOS")) {
+            // usuarios2.add(usuario3);
+            // }
+            // }
+            // model.addAttribute("userChats", usuarios2);
             // }
             System.out.println("METODO DE INICIAR ");
             return "index";
@@ -120,9 +133,6 @@ public class loginController {
         Usuario usuario = usuarioService.credenciales(ci);
 
         if (usuario != null) {
-            HttpSession session = request.getSession(true); // Crear una nueva sesión si no existe
-            session.setMaxInactiveInterval(1800);
-
             String contenidoDescencryptado;
             try {
                 contenidoDescencryptado = utilidadService.decrypt(usuario.getContraseña());
@@ -132,11 +142,20 @@ public class loginController {
             }
 
             if (usuario.getContraseña().equals(password)) {
-                usuario.setSesion("ON");
-                usuarioService.save(usuario);
-                session.setAttribute("userLog", usuario);
-                return ResponseEntity.ok("inicia");
-
+                if (usuario.getPersona().getRoles().size() >1) {
+                    //System.out.println("TIENE ROLES");
+                    return ResponseEntity.ok("MostrarRoles");
+                } else {
+                    HttpSession session = request.getSession(true); // Crear una nueva sesión si no existe
+                    session.setMaxInactiveInterval(1800);
+                    usuario.setSesion("ON");
+                    usuarioService.save(usuario);
+                    for (Rol rol : usuario.getPersona().getRoles()) {
+                        session.setAttribute("userRol", rol);
+                        break;
+                    }
+                    return ResponseEntity.ok("inicia");
+                }
             } else {
                 return ResponseEntity.ok("Contrase\u00F1a Incorrecta");
             }
@@ -144,6 +163,38 @@ public class loginController {
             return ResponseEntity.ok("Usuario Incorrecto o no registrado");
         }
     }
+
+    @PostMapping(value = "/MostrarRoles/{user}")
+    public ResponseEntity<?> MonstrarRoles(HttpServletRequest request, Model model,
+            @PathVariable(value = "user") String ci) {
+        Usuario usuario = usuarioService.credenciales(ci);
+        List<String[]> roles = new ArrayList<>();
+        for (Rol rol : usuario.getPersona().getRoles()) {
+            String[] listaRoles = new String[2];
+            listaRoles[0] = String.valueOf(String.valueOf(rol.getId_rol()));
+            listaRoles[1] = rol.getNombre();
+            roles.add(listaRoles);
+        }
+        return ResponseEntity.ok(roles);
+    }
+
+
+    @PostMapping(value = "/SeleccionarRol")
+    public ResponseEntity<String> SeleccionarRol(HttpServletRequest request, Model model, RedirectAttributes flash,
+            @RequestParam(value = "rol") String id_rol,
+            @RequestParam(value = "ciUser") String ci) {
+        Usuario usuario = usuarioService.credenciales(ci);
+        HttpSession session = request.getSession(true); // Crear una nueva sesión si no existe
+        session.setMaxInactiveInterval(1800);
+        usuario.setSesion("ON");
+        usuarioService.save(usuario);
+        session.setAttribute("userLog", usuario);
+
+        Rol rol = rolService.findOne(Long.valueOf(id_rol));
+        session.setAttribute("userRol", rol);
+        return ResponseEntity.ok("inicia");
+    }
+
 
     @GetMapping(value = "/Bienvenido")
     public String paginaInicial() throws Exception {

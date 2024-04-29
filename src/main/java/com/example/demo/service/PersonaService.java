@@ -15,5 +15,7 @@ public interface PersonaService {
 
 	public Persona personaCi(String ci);
 
+	public Persona personaModCi(String ciActual, String ic);
+
 	public void eliminar(Long id);
 }

@@ -14,4 +14,7 @@ public interface DaoPersonaData extends JpaRepository<Persona, Long>{
     @Modifying
     @Query(value = "delete from persona where id_persona = ?1", nativeQuery = true)
     public void eliminar(Long id);
+
+    @Query(value = "select p from Persona p where p.ci != ?1 and p.ci = ?2")
+    public Persona personaModCi(String ciActual, String ic);
 }

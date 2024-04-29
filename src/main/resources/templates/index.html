@@ -440,7 +440,8 @@
                 <p>Bienvenido</p>
               </a>
             </li>
-            <th:block th:each="rol :${userLog.persona.roles}">
+            <!-- LISTA TODAS LAS OPCIONES DE LOS ROLES DEL USUARIO ACTUAL -->
+            <!-- <th:block th:each="rol :${userLog.persona.roles}">
               <li class="nav-item" th:each="menu: ${rol.menus}"
                 th:if="${menu.menuPadre == null && menu.subMenus.size > 0}">
                 <a type="button" class="nav-link" th:id="${menu.idText}">
@@ -452,7 +453,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item" th:each="subMenu: ${menu.subMenus}"
-                    th:if="${#lists.contains(subMenu.roles, rol)}">
+                    th:if="${#lists.contains(subMenu.roles, userRol)}">
                     <a type="button" th:id="${subMenu.idText}" class="nav-link">
                       <i th:class="${'nav-icon '+ subMenu.icono}"></i>
                       <p id="pPersona" th:text="${subMenu.nombre}"></p>
@@ -467,7 +468,35 @@
                   <p th:text="${menu.nombre}"></p>
                 </a>
               </li>
-            </th:block>
+            </th:block> -->
+            <!-- LISTA TODAS LAS OPCIONES DEL ROL ELEGIDO -->
+            
+              <li class="nav-item" th:each="menu: ${listaMenu}"
+                th:if="${menu.menuPadre == null && menu.subMenus.size > 0}">
+                <a type="button" class="nav-link" th:id="${menu.idText}">
+                  <i th:class="${'nav-icon '+ menu.icono}"></i>
+                  <p>
+                    <th:text th:text="${menu.nombre}"></th:text>
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview" th:each="rol :${userLog.persona.roles}">
+                  <li class="nav-item" th:each="subMenu: ${menu.subMenus}"
+                    th:if="${#lists.contains(subMenu.roles, rol)}">
+                    <a type="button" th:id="${subMenu.idText}" class="nav-link">
+                      <i th:class="${'nav-icon '+ subMenu.icono}"></i>
+                      <p id="pPersona" th:text="${subMenu.nombre}"></p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item" th:each="menu: ${listaMenu}"
+                th:if="${menu.menuPadre == null && menu.subMenus.size == 0}">
+                <a type="button" class="nav-link" th:id="${menu.idText}" href="#">
+                  <i th:class="${'nav-icon '+ menu.icono}"></i>
+                  <p th:text="${menu.nombre}"></p>
+                </a>
+              </li>
           </ul>
         </nav>
       </div>

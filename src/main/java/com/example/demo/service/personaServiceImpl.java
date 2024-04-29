@@ -43,5 +43,10 @@ public class personaServiceImpl implements PersonaService{
     public void eliminar(Long id) {
         daoPersonaData.eliminar(id);
     }
+
+    @Override
+    public Persona personaModCi(String ciActual, String ic) {
+        return daoPersonaData.personaModCi(ciActual, ic);
+    }
     
 }
