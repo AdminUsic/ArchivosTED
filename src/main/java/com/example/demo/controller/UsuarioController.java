@@ -362,6 +362,7 @@ public class UsuarioController {
                         if (rol2.getNombre().equals("ARCHIVOS")) {
                             String[] userData = { usuario3.getNombre_user(), String.valueOf(usuario3.getId_usuario()) };
                             userChats.add(userData);
+                            
                         }
                     }
                 }

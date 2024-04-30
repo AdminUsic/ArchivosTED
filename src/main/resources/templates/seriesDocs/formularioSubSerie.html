@@ -21,8 +21,8 @@
                     <div class="col-sm-6">
                         <div class="form-group form-outline">
                             <input type="text" th:field="${serieDoc.nombre}" class="form-control"
-                                placeholder="Introdusca un nombre" required/>
-                                <label class="form-label">Nombre de la Sub Serie</label>
+                                placeholder="Introdusca un nombre" required />
+                            <label class="form-label">Nombre de la Sub Serie</label>
                         </div>
                     </div>
                 </div>
@@ -52,25 +52,26 @@
                     processData: false,  // No procesar los datos
                     //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
                     success: function (response) {
-                        if (action == "/ModSerieDocG") {
-                            cargarFormulario();
+                        var mensaje = response;
+                        if (mensaje === 'Ya existe un registro con este nombre') {
+                            Swal.fire(
+                                'Imposible Registrar!',
+                                mensaje,
+                                'error'
+                            );
+                        } else if (mensaje === 'Se realizó el registro correctamente' || mensaje === 'Se guardaron los cambios correctamente') {
                             cargarTabla();
                             cargarFormulariosSubSerie();
                             cargarTablaSubSerie();
-                            cargarFormulario();
-                            cargarTabla();
-                            toastr.success('Los datos del Registro se han Modificado Correctamente');
-                        } else {
-                            cargarFormulario();
-                            cargarTabla();
-                            cargarFormulariosSubSerie();
-                            cargarTablaSubSerie();
-                            cargarFormulario();
-                            cargarTabla();
-                            toastr.success('Los datos se han Registrado Correctamente');
+                            var div = document.getElementById("dataTable");
+                            div.scrollIntoView({ behavior: 'smooth' });
+                            Swal.fire(
+                                'Registrado!',
+                                mensaje + '.',
+                                'success'
+                            );
                         }
-                        var div = document.getElementById("dataTable");
-                        div.scrollIntoView({ behavior: 'smooth' });
+
                     },
                     error: function (xhr, status, error) {
                         toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
@@ -108,7 +109,7 @@
     </script>
     <script>
         document.querySelectorAll('.form-outline').forEach((formOutline) => {
-          new mdb.Input(formOutline).init();
+            new mdb.Input(formOutline).init();
         });
-      </script>
+    </script>
 </div>

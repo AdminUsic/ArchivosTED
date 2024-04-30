@@ -46,7 +46,7 @@ public class SerieDocumentarController {
 
     @PostMapping(value = "/NuevoRegistroSubSerieDoc/{id_serie}")
     public String NuevoRegistroSubSerieDoc(HttpServletRequest request, Model model,
-    @PathVariable("id_serie") Long id_serie) {
+            @PathVariable("id_serie") Long id_serie) {
 
         model.addAttribute("serieDoc", new SerieDocumental());
         model.addAttribute("id_seriePadre", id_serie);
@@ -55,8 +55,8 @@ public class SerieDocumentarController {
 
     @PostMapping(value = "/RegistrosSubSeriesDoc/{id_serie}")
     public String RegistrosSubSeriesDoc(HttpServletRequest request, Model model,
-    @PathVariable("id_serie") Long id_serie) {
-        List <SerieDocumental> Subseries = documentalService.findOne(id_serie).getSubSeries();
+            @PathVariable("id_serie") Long id_serie) {
+        List<SerieDocumental> Subseries = documentalService.findOne(id_serie).getSubSeries();
         model.addAttribute("Subseries", Subseries);
         return "/seriesDocs/tablaRegistrosSubSerie";
     }
@@ -71,18 +71,23 @@ public class SerieDocumentarController {
 
     @PostMapping("/GuardarRegistroSeriesDoc")
     @ResponseBody
-    public void GuardarRegistroSeriesDoc(HttpServletRequest request, Model model,
+    public ResponseEntity<String> GuardarRegistroSeriesDoc(HttpServletRequest request, Model model,
             SerieDocumental serieDocumental,
-            @RequestParam(value = "id_seriePadre", required = false)Long id_seriePadre) {
+            @RequestParam(value = "id_seriePadre", required = false) Long id_seriePadre) {
         System.out.println("METODO REGISTRAR SERIE DOCUMENTAL");
 
-                if (id_seriePadre != null) {
-            SerieDocumental seriePadre = documentalService.findOne(id_seriePadre);
-            serieDocumental.setSeriePadre(seriePadre);
-        } 
-        serieDocumental.setEstado("A");
-        documentalService.save(serieDocumental);
+        if (documentalService.serieDocumentalNombre(serieDocumental.getNombre()) == null) {
+            if (id_seriePadre != null) {
+                SerieDocumental seriePadre = documentalService.findOne(id_seriePadre);
+                serieDocumental.setSeriePadre(seriePadre);
+            }
+            serieDocumental.setEstado("A");
+            documentalService.save(serieDocumental);
 
+            return ResponseEntity.ok("Se realizó el registro correctamente");
+        } else {
+            return ResponseEntity.ok("Ya existe un registro con este nombre");
+        }
     }
 
     @GetMapping(value = "/ModSerieDoc/{id_serie}")
@@ -110,13 +115,20 @@ public class SerieDocumentarController {
 
     @PostMapping(value = "/ModSerieDocG")
     @ResponseBody
-    public void ModSerieDocG(@Validated SerieDocumental serieDocumental, Model model,
-    @RequestParam(value = "id_seriePadre", required = false)Long id_seriePadre) {
-        if (id_seriePadre != null) {
-            SerieDocumental seriePadre = documentalService.findOne(id_seriePadre);
-            serieDocumental.setSeriePadre(seriePadre);
-        } 
-        documentalService.save(serieDocumental);
+    public ResponseEntity<String> ModSerieDocG(@Validated SerieDocumental serieDocumental, Model model,
+            @RequestParam(value = "id_seriePadre", required = false) Long id_seriePadre) {
+        SerieDocumental serieDocumental2 = documentalService.findOne(serieDocumental.getId_serie());
+        if (documentalService.serieDocumentalModNombre(serieDocumental2.getNombre(),
+                serieDocumental.getNombre()) == null) {
+            if (id_seriePadre != null) {
+                SerieDocumental seriePadre = documentalService.findOne(id_seriePadre);
+                serieDocumental.setSeriePadre(seriePadre);
+            }
+            documentalService.save(serieDocumental);
+            return ResponseEntity.ok("Se guardaron los cambios correctamente");
+        } else {
+            return ResponseEntity.ok("Ya existe un registro con este nombre");
+        }
     }
 
     @PostMapping(value = "/EliminarRegistroSerieDoc/{id_serie}")
@@ -124,9 +136,11 @@ public class SerieDocumentarController {
     public void EliminarRegistroSerieDoc(HttpServletRequest request, Model model,
             @PathVariable("id_serie") Long id_serie) {
         System.out.println("Eliminar SERIE DOCUMENTAL");
-        /*SerieDocumental serieDocumental = documentalService.findOne(id_serie);
-        serieDocumental.setEstado("X");
-        documentalService.save(serieDocumental);*/
+        /*
+         * SerieDocumental serieDocumental = documentalService.findOne(id_serie);
+         * serieDocumental.setEstado("X");
+         * documentalService.save(serieDocumental);
+         */
         documentalService.delete(id_serie);
     }
 

@@ -1,4 +1,3 @@
-
 <div class="container-fluid">
   <!-- /.card -->
   <!-- Horizontal Form -->
@@ -13,7 +12,7 @@
       th:action="${edit} ?@{/ModCargoG} : @{/GuardarRegistroCargo}">
       <div class="card-body">
         <div th:if="${edit=='true'}">
-          <input type="hidden" th:field="${cargo.id_cargo}" >
+          <input type="hidden" th:field="${cargo.id_cargo}">
         </div>
         <div class="row">
           <div class="col-sm-6">
@@ -27,8 +26,7 @@
       </div>
       <!-- /.card-body -->
       <div class="card-footer" style="background-color: white;">
-        <button type="submit" class="btn btn-success"
-          th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
         <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
           class="btn btn-default float-right">Cancelar</a>
       </div>
@@ -50,17 +48,24 @@
           data: formData,
           contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
           success: function (response) {
-            if (action == "/ModCargoG") {
+            var mensaje = response;
+            if (mensaje === 'Ya existe un registro con este nombre') {
+              Swal.fire(
+                'Imposible Registrar!',
+                mensaje,
+                'error'
+              );
+            } else if (mensaje === 'Se realizó el registro correctamente' || mensaje === 'Se guardaron los cambios correctamente') {
               cargarFormulario();
               cargarTabla();
-              toastr.success('Los datos del Registro se han Modificado Correctamente');
-            } else {
-              cargarFormulario();
-              cargarTabla();
-              toastr.success('Los datos se han Registrado Correctamente');
+              var div = document.getElementById("dataTable");
+              div.scrollIntoView({ behavior: 'smooth' });
+              Swal.fire(
+                'Registrado!',
+                mensaje + '.',
+                'success'
+              );
             }
-            var div = document.getElementById("dataTable");
-            div.scrollIntoView({ behavior: 'smooth' });
           },
           error: function (xhr, status, error) {
             toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
@@ -75,9 +80,9 @@
       form.reset();
     }
   </script>
-    <script>
-      document.querySelectorAll('.form-outline').forEach((formOutline) => {
-          new mdb.Input(formOutline).init();
-      });
+  <script>
+    document.querySelectorAll('.form-outline').forEach((formOutline) => {
+      new mdb.Input(formOutline).init();
+    });
   </script>
 </div>

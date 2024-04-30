@@ -13,21 +13,22 @@
       th:action="${edit} ? @{/ModSerieDocG} : @{/GuardarRegistroSeriesDoc}" enctype="multipart/form-data">
       <div class="card-body">
         <div th:if="${edit == 'true'}">
-          <input type="hidden" th:field="${serieDoc.id_serie}"/>
+          <input type="hidden" th:field="${serieDoc.id_serie}" />
         </div>
         <div class="row">
           <div class="col-sm-6">
             <div class="form-group form-outline">
-              <input type="text" th:field="${serieDoc.nombre}" class="form-control" placeholder="Introdusca un nombre" required/>
+              <input type="text" th:field="${serieDoc.nombre}" class="form-control" placeholder="Introdusca un nombre"
+                required />
               <label class="form-label">Nombre Tipo de Archivo</label>
             </div>
+          </div>
         </div>
-      </div>
-      <div class="card-footer" style="background-color: white;">
-        <button type="submit" class="btn btn-success" th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button>
-        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
-          class="btn btn-default float-right">Cancelar</a>
-      </div>
+        <div class="card-footer" style="background-color: white;">
+          <button type="submit" class="btn btn-success" th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button>
+          <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
+            class="btn btn-default float-right">Cancelar</a>
+        </div>
     </form>
   </div>
   <!-- /.card -->
@@ -48,29 +49,26 @@
           processData: false,  // No procesar los datos
           //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
           success: function (response) {
-            if (action == "/ModSerieDocG") {
+            var mensaje = response;
+            if (mensaje === 'Ya existe un registro con este nombre') {
+              Swal.fire(
+                'Imposible Registrar!',
+                mensaje,
+                'error'
+              );
+            } else if (mensaje === 'Se realizó el registro correctamente' || mensaje === 'Se guardaron los cambios correctamente') {
               cargarFormulario();
               cargarTabla();
-              var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
-              });
-              toastr.success('Los datos del Registro se han Modificado Correctamente');
-            } else {
-              cargarFormulario();
-              cargarTabla();
-              var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
-              });
-              toastr.success('Los datos se han Registrado Correctamente');
+              var div = document.getElementById("dataTable");
+              div.scrollIntoView({ behavior: 'smooth' });
+              var div = document.getElementById("dataTable");
+              div.scrollIntoView({ behavior: 'smooth' });
+              Swal.fire(
+                'Registrado!',
+                mensaje + '.',
+                'success'
+              );
             }
-            var div = document.getElementById("dataTable");
-            div.scrollIntoView({ behavior: 'smooth' });
           },
           error: function (xhr, status, error) {
             toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');

@@ -39,5 +39,10 @@ public class UnidadServiceImpl implements UnidadService{
     public Unidad UnidadNombre(String nombre) {
         return daoUnidadData.UnidadNombre(nombre);
     }
+
+    @Override
+    public Unidad UnidadModNombre(String nombreActual, String nombre) {
+        return daoUnidadData.UnidadModNombre(nombreActual, nombre);
+    }
     
 }

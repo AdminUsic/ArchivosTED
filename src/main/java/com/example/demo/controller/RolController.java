@@ -140,23 +140,28 @@ public class RolController {
     public ResponseEntity<String> ModRolG(@Validated Rol rol, Model model, HttpServletRequest request) {
         Usuario u = (Usuario) request.getSession().getAttribute("userLog");
         Usuario userLog = usuarioService.findOne(u.getId_usuario());
-        
-        // Rol rol2 = rolService.findOne(rol.getId_rol());
+
+        Rol rol2 = rolService.findOne(rol.getId_rol());
         // rol2.setNombre(rol.getNombre());
         // rol2.setMenus(rol2.getMenus());
         // rolService.save(rol2);
-        rol.setEstado("A");
-        rolService.save(rol);
+        if (rolService.rolByNombreMod(rol2.getNombre(), rol.getNombre()) == null) {
+            rol.setEstado("A");
+            rolService.save(rol);
 
-        Control control = new Control();
-        control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
-        control.setDescripcion("Realizó una nueva " + control.getTipoControl().getNombre()
-                + " del rol con el nombre de " + rol.getNombre());
-        control.setUsuario(userLog);
-        control.setFecha(new Date());
-        control.setHora(new Date());
-        controService.save(control);
-        return ResponseEntity.ok("Se guardaron los cambios correctamente");
+            Control control = new Control();
+            control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
+            control.setDescripcion("Realizó una nueva " + control.getTipoControl().getNombre()
+                    + " del rol con el nombre de " + rol.getNombre());
+            control.setUsuario(userLog);
+            control.setFecha(new Date());
+            control.setHora(new Date());
+            controService.save(control);
+            return ResponseEntity.ok("Se guardaron los cambios correctamente");
+        } else {
+            return ResponseEntity.ok("Ya existe un registro con este nombre");
+        }
+
     }
 
     @PostMapping(value = "/EliminarRegistroRol/{id_rol}")

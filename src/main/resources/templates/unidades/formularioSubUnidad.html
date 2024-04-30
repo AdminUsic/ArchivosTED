@@ -55,17 +55,23 @@
                     data: formData,
                     contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
                     success: function (response) {
-
                         var mensaje = response;
-                        if (mensaje != "Ya existe un registro con este nombre") {
+                        if (mensaje === 'Ya existe un registro con este nombre') {
+                            Swal.fire(
+                                'Imposible Registrar!',
+                                mensaje,
+                                'error'
+                            );
+                        } else if (mensaje === 'Se realizó el registro correctamente' || mensaje === 'Se guardaron los cambios correctamente') {
+                            cargarVentanaSubUnidades(idPadre);
                             cargarTabla();
-                            cargarFormularioSubUnidad(idPadre);
-                            cargarTablaSubUnidad(idPadre);
                             var div = document.getElementById("dataTable");
                             div.scrollIntoView({ behavior: 'smooth' });
-                            toastr.success(mensaje);
-                        } else {
-                            toastr.error(mensaje);
+                            Swal.fire(
+                                'Registrado!',
+                                mensaje + '.',
+                                'success'
+                            );
                         }
                     },
                     error: function (xhr, status, error) {

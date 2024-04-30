@@ -16,4 +16,6 @@ public interface RolService {
     public Rol UltimoRegistro();
 
     public Rol rolByNombre(String nombre);
+
+    public Rol rolByNombreMod(String nombreActual, String nombre);
 }

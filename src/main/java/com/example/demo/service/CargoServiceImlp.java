@@ -32,5 +32,15 @@ public class CargoServiceImlp implements CargoService{
     public void delete(Long id) {
         cargoData.deleteById(id);
     }
-    
+
+    @Override
+    public Cargo cargoByNombre(String nombre) {
+        return cargoData.cargoByNombre(nombre);
+    }
+
+    @Override
+    public Cargo cargoByNombreMod(String nombreActual, String nombre) {
+        return cargoData.cargoByNombreMod(nombreActual, nombre);
+    }
+
 }

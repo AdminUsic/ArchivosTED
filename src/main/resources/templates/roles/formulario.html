@@ -73,25 +73,24 @@
         data: formData,
         contentType: 'application/x-www-form-urlencoded',
         success: function (response) {
+          console.log(response);
           var mensaje = response;
-          if (mensaje != 'Ya existe un registro con este nombre.') {
+          if (mensaje === 'Ya existe un registro con este nombre') {
+            Swal.fire(
+              'Imposible Registrar!',
+              mensaje,
+              'error'
+            );
+          } else if (mensaje === 'Se realizó el registro correctamente' || mensaje === 'Se guardaron los cambios correctamente') {
             cargarFormulario();
             cargarTabla();
             var div = document.getElementById("dataTable");
             div.scrollIntoView({ behavior: 'smooth' });
-            //toastr.success(mensaje);
             Swal.fire(
               'Registrado!',
               mensaje + '.',
               'success'
             );
-          } else {
-            Swal.fire(
-              'Imposible Registrar!',
-              mensaje + '.',
-              'error'
-            );
-            //toastr.info(mensaje);
           }
 
         },

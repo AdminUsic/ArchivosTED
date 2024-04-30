@@ -15,4 +15,6 @@ public interface UnidadService {
 	public void delete(Long id);
 
 	public Unidad UnidadNombre(String nombre);
+
+	public Unidad UnidadModNombre(String nombreActual, String nombre);
 }

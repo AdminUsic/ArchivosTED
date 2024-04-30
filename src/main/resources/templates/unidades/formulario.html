@@ -51,28 +51,23 @@
           contentType: 'application/x-www-form-urlencoded',
           success: function (response) {
             var mensaje = response;
-            //if (action == "/ModUnidadG") {
-              if (mensaje != "Ya existe un registro con este nombre") {
-                cargarFormulario();
-                cargarTabla();
-                var div = document.getElementById("dataTable");
-                div.scrollIntoView({ behavior: 'smooth' });
-                toastr.success(mensaje);
-              } else {
-                toastr.error(mensaje);
-              }
-            //} else {
-              /*if (mensaje == "Se realizó el registro correctamente") {
-                cargarFormulario();
-                cargarTabla();
-                var div = document.getElementById("dataTable");
-                div.scrollIntoView({ behavior: 'smooth' });
-                toastr.success(mensaje);
-              } else {
-                toastr.error(mensaje);
-              }*/
-           // }
-
+            if (mensaje === 'Ya existe un registro con este nombre') {
+              Swal.fire(
+                'Imposible Registrar!',
+                mensaje,
+                'error'
+              );
+            } else if (mensaje === 'Se realizó el registro correctamente' || mensaje === 'Se guardaron los cambios correctamente') {
+              cargarFormulario();
+              cargarTabla();
+              var div = document.getElementById("dataTable");
+              div.scrollIntoView({ behavior: 'smooth' });
+              Swal.fire(
+                'Registrado!',
+                mensaje + '.',
+                'success'
+              );
+            }
           },
           error: function (xhr, status, error) {
             toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');

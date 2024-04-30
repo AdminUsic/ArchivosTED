@@ -33,5 +33,15 @@ public class SerieDocumentalServiceImpl implements SerieDocumentalService{
     public void delete(Long id) {
         daoSerieDocumentalData.deleteById(id);
     }
+
+    @Override
+    public SerieDocumental serieDocumentalNombre(String nombre) {
+        return serieDocumentalNombre(nombre);
+    }
+
+    @Override
+    public SerieDocumental serieDocumentalModNombre(String nombreActual, String nombre) {
+        return serieDocumentalModNombre(nombreActual, nombre);
+    }
     
 }

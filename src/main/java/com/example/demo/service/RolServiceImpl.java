@@ -44,4 +44,9 @@ public class RolServiceImpl implements RolService {
         return daoRolData.rolByNombre(nombre);
     }
 
+    @Override
+    public Rol rolByNombreMod(String nombreActual, String nombre) {
+        return daoRolData.rolByNombreMod(nombreActual, nombre);
+    }
+
 }

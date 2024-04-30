@@ -112,35 +112,53 @@ public class UnidadController {
         return "/unidades/formulario";
     }
 
+    // @PostMapping(value = "/ModUnidadG")
+    // @ResponseBody
+    // public ResponseEntity<String> ModUnidadG(@Validated Unidad unidad, Model model,
+    //         @RequestParam(value = "id_unidadPadre", required = false) Long id_UnidadPadre) {
+    //     int cont = 0;
+    //     List<Unidad> unidades = unidadService.findAll();
+    //     for (int i = 0; i < unidades.size(); i++) {
+    //         if (unidades.get(i).getNombre() == unidad.getNombre()) {
+    //             unidades.remove(i);
+    //             System.out.println("se removio");
+    //             break;
+    //         }
+    //     }
+
+    //     for (Unidad unidad2 : unidades) {
+    //         if (unidad2.getNombre().equals(unidad.getNombre())) {
+    //             cont++;
+    //             System.out.println("exite");
+    //             break;
+    //         }
+    //     }
+    //     if (cont == 0) {
+    //         if (id_UnidadPadre != null) {
+    //             Unidad unidadPadre = unidadService.findOne(id_UnidadPadre);
+    //             unidad.setUnidadPadre(unidadPadre);
+    //         }
+    //         unidad.setEstado("A");
+    //         unidadService.save(unidad);
+    //         return ResponseEntity.ok("Se modificó el registro correctamente");
+    //     } else {
+    //         return ResponseEntity.ok("Ya existe un registro con este nombre");
+    //     }
+
+    // }
     @PostMapping(value = "/ModUnidadG")
     @ResponseBody
     public ResponseEntity<String> ModUnidadG(@Validated Unidad unidad, Model model,
             @RequestParam(value = "id_unidadPadre", required = false) Long id_UnidadPadre) {
-        int cont = 0;
-        List<Unidad> unidades = unidadService.findAll();
-        for (int i = 0; i < unidades.size(); i++) {
-            if (unidades.get(i).getNombre() == unidad.getNombre()) {
-                unidades.remove(i);
-                System.out.println("se removio");
-                break;
-            }
-        }
-
-        for (Unidad unidad2 : unidades) {
-            if (unidad2.getNombre().equals(unidad.getNombre())) {
-                cont++;
-                System.out.println("exite");
-                break;
-            }
-        }
-        if (cont == 0) {
+        Unidad unidad2 = unidadService.findOne(unidad.getId_unidad());
+        if (unidadService.UnidadModNombre(unidad2.getNombre(), unidad.getNombre()) == null) {
             if (id_UnidadPadre != null) {
                 Unidad unidadPadre = unidadService.findOne(id_UnidadPadre);
                 unidad.setUnidadPadre(unidadPadre);
             }
             unidad.setEstado("A");
             unidadService.save(unidad);
-            return ResponseEntity.ok("Se modificó el registro correctamente");
+            return ResponseEntity.ok("Se guardaron los cambios correctamente");
         } else {
             return ResponseEntity.ok("Ya existe un registro con este nombre");
         }

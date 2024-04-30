@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import com.example.demo.entity.Unidad;
 
 public interface DaoUnidadData extends JpaRepository<Unidad, Long>{
-    @Query(value = "select * from unidad u where u.nombre = ?1", nativeQuery = true)
+    @Query(value = "select u from Unidad u where u.nombre = ?1")
     public Unidad UnidadNombre(String nombre);
+
+    @Query(value = "select u from Unidad u where u.nombre != ?1 and u.nombre = ?2")
+    public Unidad UnidadModNombre(String nombreActual, String nombre);
 }
