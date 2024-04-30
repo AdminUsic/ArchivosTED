@@ -41,6 +41,7 @@ import com.example.demo.entity.Cubierta;
 import com.example.demo.entity.FormularioTransferencia;
 import com.example.demo.entity.Persona;
 import com.example.demo.entity.SerieDocumental;
+import com.example.demo.entity.Unidad;
 import com.example.demo.entity.Usuario;
 import com.example.demo.entity.Volumen;
 import com.example.demo.service.CajaService;
@@ -130,7 +131,12 @@ public class FormularioTransferController {
    public String RegistrosFormTRANSFERENCIA(HttpServletRequest request, Model model) {
       Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
       Usuario usuario2 = usuarioService.findOne(usuario.getId_usuario());
+      model.addAttribute("rolesUserLog", usuario2.getPersona().getRoles());
       model.addAttribute("FormulariosTransferencias", usuario2.getPersona().getFormularioTransferencias());
+      // model.addAttribute("usuariosArchivos", usuarioService.listaUsuarioPorNombreRol("ARCHIVOS"));
+      Unidad unidad = unidadService.UnidadNombre("ARCHIVO Y BIBLIOTECA");
+      model.addAttribute("usuariosArchivos", usuarioService.listaUsuarioPorUnidad(unidad.getId_unidad()));
+      model.addAttribute("idUserLog", usuario2.getId_usuario());
       return "/FormularioTransferencias/tablaRegistros";
    }
 
@@ -501,8 +507,10 @@ public class FormularioTransferController {
 
          PdfPCell cell9 = new PdfPCell(new Phrase("FECHAS EXTREMAS:", fontNegrilla));
 
-         // PdfPCell cell10 = new PdfPCell(new Phrase(formularioTransferencia.getFechaExtrema(), fontSimple));
-         PdfPCell cell10 = new PdfPCell(new Phrase(utilidadService.fechaTexto(formularioTransferencia.getFechaExtrema()), fontSimple));
+         // PdfPCell cell10 = new PdfPCell(new
+         // Phrase(formularioTransferencia.getFechaExtrema(), fontSimple));
+         PdfPCell cell10 = new PdfPCell(
+               new Phrase(utilidadService.fechaTexto(formularioTransferencia.getFechaExtrema()), fontSimple));
 
          // Agregar las celdas a la tabla
          tablaSegunda.addCell(cell1);

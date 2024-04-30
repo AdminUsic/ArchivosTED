@@ -22,4 +22,6 @@ public interface UsuarioService {
 
     public List<Usuario> listaUsuarioPorUnidad(Long idUnidad);
 
+    public List<Usuario> listaUsuarioPorNombreRol(String nombreRol);
+
 }

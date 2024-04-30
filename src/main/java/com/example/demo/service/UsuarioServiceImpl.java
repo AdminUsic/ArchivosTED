@@ -61,5 +61,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         return daoUsuarioData.listaUsuarioPorUnidad(idUnidad);
     }
 
-    
+    @Override
+    public List<Usuario> listaUsuarioPorNombreRol(String nombreRol) {
+        return daoUsuarioData.listaUsuarioPorNombreRol(nombreRol);
+    }
+
 }

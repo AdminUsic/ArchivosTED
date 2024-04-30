@@ -66,12 +66,12 @@
         <div class="modal-header">
           <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
 
-          <div th:if="${#lists.contains(userLog.persona.roles.![nombre], 'ARCHIVOS')}" class="btn-group dropend">
+          <div th:if="!${#lists.contains(userLog.persona.roles.![nombre], 'ARCHIVOS')}" class="btn-group dropend">
             <a type="button" class="btn btn-default dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
-              Enviar Formulario a...
+              <i class="fa-solid fa-envelope-open-text"></i>
             </a>
             <ul class="dropdown-menu">
-              <li class="dropdown-item font-weight-bold">Usuarios de Archivos</li>
+              <li class="dropdown-item font-weight-bold">Enviar formulario a:</li>
               <li>
                 <hr class="dropdown-divider" />
               </li>
