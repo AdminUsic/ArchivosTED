@@ -36,12 +36,12 @@ public class SerieDocumentalServiceImpl implements SerieDocumentalService{
 
     @Override
     public SerieDocumental serieDocumentalNombre(String nombre) {
-        return serieDocumentalNombre(nombre);
+        return daoSerieDocumentalData.serieDocumentalNombre(nombre);
     }
 
     @Override
     public SerieDocumental serieDocumentalModNombre(String nombreActual, String nombre) {
-        return serieDocumentalModNombre(nombreActual, nombre);
+        return daoSerieDocumentalData.serieDocumentalModNombre(nombreActual, nombre);
     }
     
 }

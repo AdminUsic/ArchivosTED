@@ -95,7 +95,7 @@ public class loginController {
             }
 
             Rol rol = (Rol) request.getSession().getAttribute("userRol");
-            System.out.println("NOMBRE ROL: "+rol.getNombre());
+            System.out.println("NOMBRE ROL: " + rol.getNombre());
             Rol userRol = rolService.findOne(rol.getId_rol());
             model.addAttribute("listaMenu", userRol.getMenus());
             // if
@@ -131,8 +131,9 @@ public class loginController {
             @RequestParam(value = "user", required = false) String ci,
             @RequestParam(value = "password", required = false) String password) {
         Usuario usuario = usuarioService.credenciales(ci);
-
+        System.out.println("INICIAR");
         if (usuario != null) {
+            System.out.println("INICIAR");
             String contenidoDescencryptado;
             try {
                 contenidoDescencryptado = utilidadService.decrypt(usuario.getContraseña());
@@ -142,18 +143,22 @@ public class loginController {
             }
 
             if (usuario.getContraseña().equals(password)) {
-                if (usuario.getPersona().getRoles().size() >1) {
-                    //System.out.println("TIENE ROLES");
+                if (usuario.getPersona().getRoles().size() > 1) {
+                    System.out.println("TIENE ROLES");
                     return ResponseEntity.ok("MostrarRoles");
+
                 } else {
+                    System.out.println("TIENE UN ROL");
                     HttpSession session = request.getSession(true); // Crear una nueva sesión si no existe
                     session.setMaxInactiveInterval(1800);
                     usuario.setSesion("ON");
                     usuarioService.save(usuario);
-                    for (Rol rol : usuario.getPersona().getRoles()) {
-                        session.setAttribute("userRol", rol);
-                        break;
-                    }
+                    session.setAttribute("userLog", usuario);
+
+                    List<Rol> roles = new ArrayList<>(usuario.getPersona().getRoles());
+                    session.setAttribute("userRol", roles.get(0));
+                    System.out.println(roles.get(0).getNombre());
+
                     return ResponseEntity.ok("inicia");
                 }
             } else {
@@ -178,7 +183,6 @@ public class loginController {
         return ResponseEntity.ok(roles);
     }
 
-
     @PostMapping(value = "/SeleccionarRol")
     public ResponseEntity<String> SeleccionarRol(HttpServletRequest request, Model model, RedirectAttributes flash,
             @RequestParam(value = "rol") String id_rol,
@@ -194,7 +198,6 @@ public class loginController {
         session.setAttribute("userRol", rol);
         return ResponseEntity.ok("inicia");
     }
-
 
     @GetMapping(value = "/Bienvenido")
     public String paginaInicial() throws Exception {

@@ -61,7 +61,8 @@
                                                                     th:attr="onclick='filterSelection(\'' +${subSeries.nombre} + '\')'"
                                                                     th:text="${subSeries.nombre}"></a>
                                                             </h6>
-                                                            <li th:each="listArchivos: ${subSeries.archivos}"  th:if="${listArchivos.carpeta.id_carpeta == carpeta.id_carpeta}">
+                                                            <li th:each="listArchivos: ${subSeries.archivos}"
+                                                                th:if="${listArchivos.carpeta.id_carpeta == carpeta.id_carpeta}">
                                                                 <div class="dropdown ">
                                                                     <a class="dropdown-toggle"
                                                                         data-mdb-toggle="dropdown" aria-expanded="false"
@@ -102,9 +103,11 @@
                                             th:if="${carpeta.archivos.size > 0}">
                                             <h5 th:class="'filterTitulo '+${subSeries.nombre} "
                                                 th:text="${subSeries.nombre}"></h5>
-                                            <div th:class="'filterDiv col-lg-3 col-xl-3 '+${subSeries.nombre}"
-                                                th:each="ar:${subSeries.archivos}" th:if="${ar.estado!='X'} and ${ar.carpeta.id_carpeta == carpeta.id_carpeta}">
-                                                <div class="file-man-box mailbox-attachment-info">
+                                            <!-- <div th:class="'filterDiv col-lg-3 col-xl-3 '+${subSeries.nombre}" 
+                                            <div th:class="'filterDiv '+${subSeries.nombre}"
+                                                th:each="arch:${subSeries.archivos}"
+                                                th:if="${arch.estado!='X'} and ${arch.carpeta.id_carpeta == carpeta.id_carpeta}">-->
+                                            <!-- <div class="file-man-box mailbox-attachment-info">
                                                     <div class="file-img-box">
                                                         <a type="button" data-mdb-dismiss="modal"
                                                             data-mdb-toggle="modal" data-mdb-target="#archivoModal"
@@ -115,7 +118,7 @@
                                                         </a>
                                                     </div>
                                                     <div class="file-man-title">
-                                                        <h5 class="mb-0 text-overflow" th:text="${ar.Nombre}"></h5>
+                                                        <h5 class="mb-0 text-overflow" th:text="${ar.nombre}"></h5>
                                                         <p class="mb-0"><small
                                                                 th:text="${ar.tipoArchivo.nombre_tipo}"></small>
                                                         </p>
@@ -146,8 +149,66 @@
                                                                 class="fas fa-trash">
                                                             </i><small> Eliminar Archivo</small></a>
                                                     </div>
+                                                </div> -->
+                                            <!-- <div class="document document.success"
+                                                    style="background-color: #314557;"
+                                                    th:each="arch:${subSeries.archivos}" th:if="${arch.estado!='X'}"> -->
+
+                                            <div th:class="'document document.success filterDiv '+${subSeries.nombre}"
+                                                style="background-color: #314557; " th:each="arch:${subSeries.archivos}"
+                                                th:if="${arch.estado!='X'} and ${arch.carpeta.id_carpeta == carpeta.id_carpeta}">
+                                                <div class="position-absolute top-0 end-0 m-2 d-flex justify-content-end">
+                                                    <div class="btn-group">
+                                                        <a class="btn btn-sm btn-info file-close" style="color: white;" type="button"
+                                                        th:attr="onclick='ModificarArchivo(\'' + ${arch.id_archivo} + '\')'">
+                                                            <i class="fas fa-pencil-alt"></i>
+                                                        </a>
+                                                        <a class="btn btn-sm btn-danger file-close" style="color: white;" type="button"
+                                                        th:attr="onclick='EliminarArchivoIco(\'' + ${arch.id_archivo} + '\',\'' + ${arch.carpeta.id_carpeta} + '\', \'' + ${arch.nombre} + '\')'">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <!-- <div th:class="'dropdown filterDiv '+${subSeries.nombre}">
+                                                    <a class="btn file-close dropdown-toggle position-absolute top-0 end-0 m-2"
+                                                        style="background-color: white;" type="button"
+                                                        data-toggle="dropdown">
+                                                        <i class='fas fa-ellipsis-v'></i>
+                                                    </a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" type="button"
+                                                            th:attr="onclick='ModificarArchivo(\'' + ${arch.id_archivo} + '\')'">
+                                                            <i class="fas fa-pencil-alt"></i><small> Editar
+                                                                Archivo</small></a>
+                                                        <a class="dropdown-item" type="button"
+                                                            th:attr="onclick='EliminarArchivoIco(\'' + ${arch.id_archivo} + '\',\'' + ${arch.carpeta.id_carpeta} + '\', \'' + ${arch.nombre} + '\')'">
+                                                            <i class="fas fa-trash"></i><small> Eliminar
+                                                                Archivo</small></a>
+                                                    </div>
+                                                </div> -->
+                                                <div class="document-body">
+                                                    <i>
+                                                        <a type="button" data-mdb-dismiss="modal"
+                                                            data-mdb-toggle="modal" data-mdb-target="#archivoModal"
+                                                            th:attr="onclick='ContenidoArchivo(\'' + ${arch.id_archivo} + '\')'">
+                                                            <img th:src="@{'/verIcoPdf/' + ${arch.id_archivo}}"
+                                                                class="img-fluid mb-2" alt="Ver Archivo?" />
+                                                        </a>
+                                                    </i>
+                                                </div>
+                                                <div class="document-footer" style="height: 100%;">
+                                                    <span class="document-name" th:text="${arch.nombre}"></span>
+                                                    <span class="document-name"
+                                                        th:text="'Emisor: '+${arch.persona.nombre}+' '+${arch.persona.apellido}"></span>
+                                                    <span class="document-name"
+                                                        th:text="'Cant. Hojas: '+${arch.cantidadHojas}"></span>
+                                                    <span class="document-name"
+                                                        th:text="'Emisión: ' + ${#dates.format(arch.fechaEmision, 'dd/MM/yy')}"></span>
+                                                    <span class="document-name"
+                                                        th:text="'Ubicacion: '+ ${arch.rutaFisica}"></span>
                                                 </div>
                                             </div>
+                                            <!-- </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -179,19 +240,17 @@
             transform: scale(1.2);
         }
 
-        .estiloDropdown {
+        /* .estiloDropdown {
             position: absolute;
             right: 0%;
             top: 0%;
         }
 
-        /*.dropdown-menu {
-            right: auto;
-            left: 100%;
-            transform: translateX(-100%);
-            z-index: 1000;
-        }
+        .dropdown-menu {
+            z-index: 9999;
+        } */
 
+        /*
         .dropdown-toggle {
             padding: 1px 10px;
         }*/
@@ -255,10 +314,9 @@
 
         .filterDiv {
             display: none;
-            width: 170px;
             opacity: 0;
             transform: scale(0.8);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .show {
@@ -267,7 +325,6 @@
             transform: translateY(0);
             transform: scale(1);
         }
-
 
         .effect-underline:after {
             content: '';
@@ -349,72 +406,72 @@
              }
              element.className = arr1.join(" ");
          }*/
-         $(document).ready(function () {
-    $('#searchInput').on('input', function () {
-        var searchText = $(this).val().toLowerCase();
-        $('.image-container').each(function () {
-            var altText = $(this).find('.image').attr('alt').toLowerCase();
-            if (altText.includes(searchText)) {
-                $(this).removeClass('hide');
-            } else {
-                $(this).addClass('hide');
-            }
+        $(document).ready(function () {
+            $('#searchInput').on('input', function () {
+                var searchText = $(this).val().toLowerCase();
+                $('.image-container').each(function () {
+                    var altText = $(this).find('.image').attr('alt').toLowerCase();
+                    if (altText.includes(searchText)) {
+                        $(this).removeClass('hide');
+                    } else {
+                        $(this).addClass('hide');
+                    }
+                });
+            });
         });
-    });
-});
 
-filterSelection("all");
+        filterSelection("all");
 
-function filterSelection(c) {
-    var x, i, t;
-    x = document.getElementsByClassName("filterDiv");
-    t = document.getElementsByClassName("filterTitulo");
-    if (c == "all") c = "";
-    // Agrega la clase "show" (display:block) a los elementos filtrados y elimina la clase "show" de los elementos que no están seleccionados
-    for (i = 0; i < x.length; i++) {
-        w3RemoveClass(x[i], "show");
-        if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
-    }
+        function filterSelection(c) {
+            var x, i, t;
+            x = document.getElementsByClassName("filterDiv");
+            t = document.getElementsByClassName("filterTitulo");
+            if (c == "all") c = "";
+            // Agrega la clase "show" (display:block) a los elementos filtrados y elimina la clase "show" de los elementos que no están seleccionados
+            for (i = 0; i < x.length; i++) {
+                w3RemoveClass(x[i], "show");
+                if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+            }
 
-    if (c == "all") c = "";
-    // Agrega la clase "show" (display:block) a los elementos filtrados y elimina la clase "show" de los elementos que no están seleccionados
-    for (i = 0; i < t.length; i++) {
-        w3RemoveClass(t[i], "show");
-        if (t[i].className.indexOf(c) > -1) w3AddClass(t[i], "show");
-    }
-}
-
-// Muestra elementos filtrados
-function w3AddClass(element, name) {
-    var i, arr1, arr2;
-    arr1 = element.className.split(" ");
-    arr2 = name.split(" ");
-    for (i = 0; i < arr2.length; i++) {
-        if (arr1.indexOf(arr2[i]) == -1) {
-            element.className += " " + arr2[i];
-            // Agregar este bloque para el efecto de zoom
-            setTimeout(() => {
-                element.style.opacity = 1;
-                element.style.transform = "scale(1)";
-            }, 10);
+            if (c == "all") c = "";
+            // Agrega la clase "show" (display:block) a los elementos filtrados y elimina la clase "show" de los elementos que no están seleccionados
+            for (i = 0; i < t.length; i++) {
+                w3RemoveClass(t[i], "show");
+                if (t[i].className.indexOf(c) > -1) w3AddClass(t[i], "show");
+            }
         }
-    }
-}
 
-function w3RemoveClass(element, name) {
-    var i, arr1, arr2;
-    arr1 = element.className.split(" ");
-    arr2 = name.split(" ");
-    for (i = 0; i < arr2.length; i++) {
-        while (arr1.indexOf(arr2[i]) > -1) {
-            arr1.splice(arr1.indexOf(arr2[i]), 1);
+        // Muestra elementos filtrados
+        function w3AddClass(element, name) {
+            var i, arr1, arr2;
+            arr1 = element.className.split(" ");
+            arr2 = name.split(" ");
+            for (i = 0; i < arr2.length; i++) {
+                if (arr1.indexOf(arr2[i]) == -1) {
+                    element.className += " " + arr2[i];
+                    // Agregar este bloque para el efecto de zoom
+                    setTimeout(() => {
+                        element.style.opacity = 1;
+                        element.style.transform = "scale(1)";
+                    }, 10);
+                }
+            }
         }
-    }
-    element.className = arr1.join(" ");
-    // Restablece la animación al quitar la clase
-    element.style.opacity = 0;
-    element.style.transform = "scale(0.8)";
-}
+
+        function w3RemoveClass(element, name) {
+            var i, arr1, arr2;
+            arr1 = element.className.split(" ");
+            arr2 = name.split(" ");
+            for (i = 0; i < arr2.length; i++) {
+                while (arr1.indexOf(arr2[i]) > -1) {
+                    arr1.splice(arr1.indexOf(arr2[i]), 1);
+                }
+            }
+            element.className = arr1.join(" ");
+            // Restablece la animación al quitar la clase
+            element.style.opacity = 0;
+            element.style.transform = "scale(0.8)";
+        }
 
 
     </script>

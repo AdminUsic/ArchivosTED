@@ -32,8 +32,10 @@
               <select class="select-field" style="width: 100%;" th:field="${usuario.persona}" id="personaSelect">
                 <option th:value="${edit} ? ${usuario.persona.id_persona} : ''"
                   th:text="${edit} ? ${usuario.persona.nombre} : 'Seleccionar'" selected></option>
-                <option th:each="persona: ${personas}" th:text="${persona.nombre}+' '+${persona.apellido}"
-                  th:value="${persona.id_persona}" th:if="${persona.usuario==null and persona.cargo != null and persona.unidad != null and persona.roles != null}">
+                <option th:each="persona: ${personas}"
+                  th:text="${persona.nombre}+' '+${persona.apellido}+' - '+${persona.ci}"
+                  th:value="${persona.id_persona}"
+                  th:if="${persona.usuario==null and persona.cargo != null and persona.unidad != null and persona.roles != null}">
                 </option>
               </select>
             </div>
@@ -116,16 +118,16 @@
             },
             error: function (xhr, status, error) {
               Swal.fire(
-                  'Imposible Registrar!',
-                  'Ha ocurrido un error. Por favor, intenta nuevamente.',
-                  'error'
-                );
+                'Imposible Registrar!',
+                'Ha ocurrido un error. Por favor, intenta nuevamente.',
+                'error'
+              );
               //toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
               console.error(error);
               // Manejo de errores
             }
           });
-        } else if (select1 == ""){
+        } else if (select1 == "") {
           toastr.info('Seleccione una persona para este Usuario');
         }
       });

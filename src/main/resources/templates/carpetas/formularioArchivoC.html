@@ -123,9 +123,16 @@
                     </div>
                 </div>
                 <div class="card-footer" style="background-color: white;">
-                    <button type="submit" class="btn btn-success"
-                        th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button>
-                    <a type="button" onclick="cancelarModArchivo()" class="btn btn-default float-right">Cancelar</a>
+                    <div class="d-flex justify-content-between">
+                        <div id="botonesFormulario">
+                            <input type="submit" class="btn btn-success" th:value="${edit} ? 'Guardar Cambios' : 'Registrar'">
+                            <!-- <button type="submit" class="btn btn-success"
+                            th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button> -->
+                        </div>
+                        
+                        <a type="button" onclick="cancelarModArchivo()" class="btn btn-default">Cancelar</a>
+                    </div>
+                    
                 </div>
         </form>
     </div>
@@ -135,6 +142,16 @@
         $(document).ready(function () {
             $('#FormularioRegistrarArchi').submit(function (event) {
                 event.preventDefault();
+
+                var botonCargando = `<button id="submitButton" class="btn btn-success" disabled>
+                                                <span class="spinner-border spinner-border-sm" role="status"
+                                                    aria-hidden="true"></span>
+                                                <span class="visually-hidden">Loading...</span>
+                                                Cargando...
+                                            </button>`;
+                var botonRegistrar = `<input class="btn btn-success" type="submit" value="Registrar">`;
+                var botonModificar = `<input class="btn btn-success" type="submit" value="Modificar">`;
+                $('#botonesFormulario').html(botonCargando);
                 var form = document.getElementById("FormularioRegistrarArchi");
                 var id_carpeta = document.getElementById("id_carpeta").value;
                 var action = form.action;
@@ -160,15 +177,37 @@
                             if (response == "Se ha Registrado el Archivo correctamente") {
                                 AbrirCarpeta(id_carpeta);
                                 cargarRegistroIco();
-                                toastr.success(mensaje);
+                                $('#botonesFormulario').html(botonRegistrar);
+                                Swal.fire(
+                                    'Registrado!',
+                                    response + '.',
+                                    'success'
+                                );
                             } else if (mensaje == "Se ha Modificado el Archivo correctamente") {
                                 AbrirCarpeta(id_carpeta);
                                 cargarRegistroIco();
-                                toastr.success(mensaje);
+                                $('#botonesFormulario').html(botonModificar);
+                                Swal.fire(
+                                    'Registrado!',
+                                    response + '.',
+                                    'success'
+                                );
                             } else if (mensaje = "ERROR AL REGISTRAR ARCHIVO") {
-                                toastr.error(mensaje);
+                                //toastr.error(mensaje);
+                                $('#botonesFormulario').html(botonRegistrar);
+                                Swal.fire(
+                                    'Imposible Registrar!',
+                                    mensaje + '.',
+                                    'error'
+                                );
                             } else if (mensaje = "ERROR MODIFICAR EL ARCHIVO") {
-                                toastr.error(mensaje);
+                                //toastr.error(mensaje);
+                                $('#botonesFormulario').html(botonModificar);
+                                Swal.fire(
+                                    'Imposible Registrar!',
+                                    mensaje + '.',
+                                    'error'
+                                );
                             }
                             /*
                             if (action == "/ModArchivoG") {
@@ -201,11 +240,29 @@
                         }
                     });
                 } else if (selectSeccionDAC == "") {
-                    toastr.info('Tiene que seleccionar una Unidad/Seccion Documental para este Registro');
+                    //toastr.info('Tiene que seleccionar una Unidad/Seccion Documental para este Registro');
+                    $('#botonesFormulario').html(botonRegistrar);
+                    Swal.fire(
+                        'Imposible Registrar!',
+                        'Tiene que seleccionar una Unidad/Seccion Documental para este Registro',
+                        'error'
+                    );
                 } else if (selectTipoAC == "") {
-                    toastr.info('Tiene que seleccionar un Tipo de Archivo para este Registro');
+                    //toastr.info('Tiene que seleccionar un Tipo de Archivo para este Registro');
+                    $('#botonesFormulario').html(botonRegistrar);
+                    Swal.fire(
+                        'Imposible Registrar!',
+                        'Tiene que seleccionar un Tipo de Archivo para este Registro',
+                        'error'
+                    );
                 } else if (selectResponsableAC == "") {
-                    toastr.info('Tiene que seleccionar al Responsable de la Unidad Documental para este Registro');
+                    //toastr.info('Tiene que seleccionar al Responsable de la Unidad Documental para este Registro');
+                    $('#botonesFormulario').html(botonRegistrar);
+                    Swal.fire(
+                        'Imposible Registrar!',
+                        'Tiene que seleccionar al Responsable de la Unidad Documental para este Registro',
+                        'error'
+                    );
                 }
 
             });
@@ -352,7 +409,7 @@
                                         var option = document.createElement('option');
                                         option.value = fila[0];
                                         option.text = fila[1];
-                                        option.selected = true; 
+                                        option.selected = true;
                                         select.appendChild(option);
 
                                         Swal.fire(

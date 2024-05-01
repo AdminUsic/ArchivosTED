@@ -52,6 +52,8 @@ public class Archivo implements Serializable {
 
     private byte[] contenido;
 
+    private byte[] icono;
+
     //@Column(length = 10000)
     //private String contenidoEncryptado;
     private int cantidadHojas;

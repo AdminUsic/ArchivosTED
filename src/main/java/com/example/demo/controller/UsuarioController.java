@@ -117,7 +117,7 @@ public class UsuarioController {
             @RequestParam("foto") MultipartFile foto) throws IOException {
         System.out.println("Registrar Usuario");
         Usuario user = (Usuario) request.getSession().getAttribute("userLog");
-        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
         Persona persona = usuario.getPersona();
         persona.setEstado("A");
         System.out.println("el nombre el usuario es: " + persona.getNombre());
