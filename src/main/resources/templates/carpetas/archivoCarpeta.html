@@ -155,7 +155,7 @@
                                                     th:each="arch:${subSeries.archivos}" th:if="${arch.estado!='X'}"> -->
 
                                             <div th:class="'document document.success filterDiv '+${subSeries.nombre}"
-                                                style="background-color: #314557; " th:each="arch:${subSeries.archivos}"
+                                                style="background-color: #6e7072; padding: 1px;" th:each="arch:${subSeries.archivos}"
                                                 th:if="${arch.estado!='X'} and ${arch.carpeta.id_carpeta == carpeta.id_carpeta}">
                                                 <div class="position-absolute top-0 end-0 m-2 d-flex justify-content-end">
                                                     <div class="btn-group">

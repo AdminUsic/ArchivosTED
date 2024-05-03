@@ -32,6 +32,7 @@ import com.example.demo.entity.Persona;
 import com.example.demo.entity.Rol;
 import com.example.demo.entity.Usuario;
 import com.example.demo.service.ControlService;
+import com.example.demo.service.PermisoService;
 import com.example.demo.service.PersonaService;
 import com.example.demo.service.TipoControService;
 import com.example.demo.service.UnidadService;
@@ -73,6 +74,9 @@ public class UsuarioController {
     @Autowired
     private ControlService controService;
 
+    @Autowired
+    private PermisoService permisoService;
+
     @GetMapping(value = "/USUARIO")
     // @PreAuthorize("hasAuthority('ARCHIVOS Y BIBLIOTECA')")
     public String ventanaUsuario(HttpServletRequest request, Model model) {
@@ -91,6 +95,7 @@ public class UsuarioController {
     public String NuevoUsuario(HttpServletRequest request, Model model) {
         model.addAttribute("usuario", new Usuario());
         model.addAttribute("personas", personaService.findAll());
+        model.addAttribute("permisos", permisoService.findAll());
         return "/usuarios/formulario";
     }
 
@@ -177,6 +182,7 @@ public class UsuarioController {
         }
         model.addAttribute("usuario", usuario);
         model.addAttribute("personas", personaService.findAll());
+        model.addAttribute("permisos", permisoService.findAll());
         model.addAttribute("edit", "true");
         return "/usuarios/formulario";
     }

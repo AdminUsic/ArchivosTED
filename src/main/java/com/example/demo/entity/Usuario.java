@@ -3,6 +3,7 @@ package com.example.demo.entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -67,4 +70,10 @@ public class Usuario implements Serializable {
     @OneToMany(mappedBy = "destino")
     private List<Mensaje> mensajesRecibidos;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="usuario_permiso",
+    joinColumns=@JoinColumn(name = "id_usuario"),
+    inverseJoinColumns = @JoinColumn(name = "id_permiso"))
+    private Set<Permiso> permisos;
 }

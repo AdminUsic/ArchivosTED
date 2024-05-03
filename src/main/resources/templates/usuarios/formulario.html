@@ -28,6 +28,15 @@
               <label class="form-label">Contraseña</label>
             </div>
             <div class="form-group">
+              <label class="form-label">Asignar Permisos</label>
+              <select class="select-field-Multiple" style="width: 100%;" th:field="${usuario.permisos}" id="selectRol"
+                multiple>
+                <option th:each="permiso: ${permisos}" th:text="${permiso.nombre}" th:value="${permiso.id_permiso}"
+                  th:selected="${permiso == usuario.permisos}">
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
               <label class="form-label">Persona</label>
               <select class="select-field" style="width: 100%;" th:field="${usuario.persona}" id="personaSelect">
                 <option th:value="${edit} ? ${usuario.persona.id_persona} : ''"
@@ -62,6 +71,15 @@
   <!-- /.card -->
   <script>
     $(document).ready(function () {
+      $('.select-field').select2({
+        theme: 'bootstrap-5'
+      });
+      $('.select-field-Multiple').select2({
+        theme: 'bootstrap-5',
+        placeholder: 'Seleccione un o mas opciones'
+      });
+
+      // METODO AJAX PARA PROCESAR EL ENVIO
       $('#FormularioRegistrarUser').submit(function (event) {
         event.preventDefault();
         var form = document.getElementById("FormularioRegistrarUser");
@@ -137,12 +155,6 @@
       form.reset();
     }
   </script>
-  <script>
-    $('.select-field').select2({
-      theme: 'bootstrap-5'
-    });
-  </script>
-
   <script>
     var fileInput;
     var nombreArchivo;
