@@ -20,7 +20,8 @@
                 <td th:text="${rowStat.count}"></td>
                 <td class="text-center" th:text="${control.descripcion}"></td>
                 <td class="text-center" th:text="${control.tipoControl.nombre}"></td>
-                <td class="text-center" th:text="${control.fecha}+ '-' +${control.hora}"></td>
+                <td class="text-center" th:text="${#dates.format(control.fecha, 'dd/MM/yy') + ' - ' + #dates.format(control.hora, 'HH:mm:ss')}"></td>
+
               </tr>
             </tbody>
             <tfoot class="table-secondary">

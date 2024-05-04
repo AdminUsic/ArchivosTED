@@ -113,9 +113,6 @@ public class FormularioTransferController {
 
    @GetMapping("/FormTRANSFERENCIA")
    public String FormTRANSFERENCIA(HttpServletRequest request, Model model) {
-      // model.addAttribute("archivo", new Archivo());
-      // model.addAttribute("listaArchivos", archivosData.findAll());
-
       if (request.getSession().getAttribute("userLog") != null) {
          return "/FormularioTransferencias/registrar";
       } else {

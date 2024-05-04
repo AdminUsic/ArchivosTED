@@ -24,7 +24,7 @@
                                 <td class="text-center" th:text="${fromT.cantCajas}"></td>
                                 <td class="text-center" th:text="${fromT.cantDocumentos}"></td>
                                 <td class="text-center" th:text="${fromT.unidad.nombre}"></td>
-                                <td class="text-center" th:text="${fromT.fechaExtrema}"></td>
+                                <td class="text-center" th:text="${#dates.format(fromT.fechaExtrema, 'dd/MM/yy')}"></td>
                                 <!-- <td class="text-center">
                                     <div class="list-group">
                                         <div th:if="${fromT.cajas != null}">
