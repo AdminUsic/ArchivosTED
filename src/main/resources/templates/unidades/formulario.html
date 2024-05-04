@@ -1,40 +1,37 @@
 <div class="container-fluid">
   <!-- /.card -->
   <!-- Horizontal Form -->
-  <div class="card card-info">
-    <div class="card-header">
-      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Unidad/Area' : 'Registrar Unidad/Area'">
-      </h2>
-
-    </div>
-    <!-- /.card-header -->
-    <!-- form start -->
-    <form class="form-horizontal" id="FormularioRegistrarUnid" method="POST"
-      th:action="${edit} ?@{/ModUnidadG} : @{/GuardarRegistroUnidad}">
-      <div class="card-body">
-        <div th:if="${edit=='true'}">
-          <input type="hidden" th:field="${unidad.id_unidad}">
-        </div>
-        <div class="row">
-          <div class="col-sm-6">
-            <!-- text input -->
-            <div class="form-group form-outline">
-              <input type="text" th:field="${unidad.nombre}" class="form-control" placeholder="Introdusca un nombre"
-                required>
-              <label class="form-label">Nombre de la Seccion</label>
-            </div>
+  <div class="modal-header ">
+    <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Unidad/Area' : 'Registrar Unidad/Area'">
+    </h2>
+    <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal" id="cerrarVentanaFormulario">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <!-- /.card-header -->
+  <!-- form start -->
+  <form class="form-horizontal" id="FormularioRegistrarUnid" method="POST"
+    th:action="${edit} ?@{/ModUnidadG} : @{/GuardarRegistroUnidad}">
+    <div class="modal-body">
+      <div th:if="${edit=='true'}">
+        <input type="hidden" th:field="${unidad.id_unidad}">
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <!-- text input -->
+          <div class="form-group form-outline">
+            <input type="text" th:field="${unidad.nombre}" class="form-control" placeholder="Introdusca un nombre"
+              required>
+            <label class="form-label">Nombre de la Seccion</label>
           </div>
         </div>
       </div>
-      <!-- /.card-body -->
-      <div class="card-footer" style="background-color: white;">
-        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
-        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
-          class="btn btn-default float-right">Cancelar</a>
-      </div>
-      <!-- /.card-footer -->
-    </form>
-  </div>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+      <a type="button" aria-label="Cerrar" data-mdb-toggle="modal" class="btn btn-default float-right">Cancelar</a>
+    </div>
+  </form>
   <!-- /.card -->
   <script>
     $(document).ready(function () {
@@ -62,6 +59,7 @@
               cargarTabla();
               var div = document.getElementById("dataTable");
               div.scrollIntoView({ behavior: 'smooth' });
+              $('#cerrarVentanaFormulario').click();
               Swal.fire(
                 'Registrado!',
                 mensaje + '.',

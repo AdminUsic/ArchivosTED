@@ -1,8 +1,14 @@
 <section class="content">
     <div class="container-fluid">
         <div class="card card-info">
-            <div class="card-header py-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold card-title">Registros de Roles</h6>
+                <button type="button" class="btn btn-success ml-auto px-4 py-2" data-mdb-toggle="modal"
+                    data-mdb-target="#formularioRegistroModal" onclick="cargarFormulario();"
+                    th:if="${#lists.contains(permisos.![nombre], 'registrar_rol')}">
+                    <span class="mr-2">Registrar</span>
+                    <i class="fas fa-plus-circle"></i>
+                </button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -12,7 +18,7 @@
                                 <th style="width: 10px">#</th>
                                 <th>Rol</th>
                                 <th>Menus Disponibles</th>
-                                <th>Acciones</th>
+                                <th th:if="${#lists.contains(permisos.![nombre], 'editar_rol') or #lists.contains(permisos.![nombre], 'eliminar_rol')}">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody">
@@ -40,15 +46,18 @@
                                         </li>
                                     </ul>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center" th:if="${#lists.contains(permisos.![nombre], 'editar_rol') or #lists.contains(permisos.![nombre], 'eliminar_rol')}">
                                     <div class="btn-group">
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"
+                                            data-mdb-toggle="modal" data-mdb-target="#formularioRegistroModal"
                                             th:attr="onclick='cargarModFormulario(\'' + ${rol.id_rol} + '\', this)'"
+                                            th:if="${#lists.contains(permisos.![nombre], 'editar_rol')}"
                                             title="Modificar Registro">
                                             <li class="fas fa-pencil-alt "></li>
                                         </a>
                                         <a class=" btn btn-danger" type="button" style="color: aliceblue;"
                                             th:attr="onclick='EliminarRegistro(\'' + ${rol.id_rol} + '\', this)'"
+                                            th:if="${#lists.contains(permisos.![nombre], 'eliminar_rol')}"
                                             title="Eliminar Registro">
                                             <li class="fa-solid fa-trash"></li>
                                         </a>
@@ -61,7 +70,7 @@
                                 <th style="width: 10px">#</th>
                                 <th>Rol</th>
                                 <th>Menus Disponibles</th>
-                                <th>Acciones</th>
+                                <th th:if="${#lists.contains(permisos.![nombre], 'editar_rol') or #lists.contains(permisos.![nombre], 'eliminar_rol')}">Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -105,3 +114,27 @@
     <body>
 
 </section>
+<style>
+    /* Estilos CSS personalizados para el botón */
+    .btn-success {
+        background-color: #28a745;
+        /* Cambiar el color de fondo */
+        border-color: #28a745;
+        /* Cambiar el color del borde */
+        color: #fff;
+        /* Cambiar el color del texto */
+        transition: background-color 0.3s ease;
+        /* Agregar transición suave */
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        /* Cambiar el color de fondo al pasar el mouse */
+    }
+
+    /* Estilos para el icono de Font Awesome */
+    .btn-success .fas {
+        margin-left: 5px;
+        /* Ajustar el espacio entre el texto y el icono */
+    }
+</style>

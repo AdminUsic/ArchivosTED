@@ -65,7 +65,7 @@ public class PersonaController {
         if (request.getSession().getAttribute("userLog") != null) {
             return "/personas/registrar";
         } else {
-            return "login";
+            return "expiracion";
         }
     }
 
@@ -80,6 +80,9 @@ public class PersonaController {
 
     @PostMapping(value = "/RegistrosPersona")
     public String tablaRegistros(HttpServletRequest request, Model model) {
+        Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
+        model.addAttribute("permisos", userLog.getPermisos());
         model.addAttribute("personas", personaService.findAll());
         return "/personas/tablaRegistros";
     }

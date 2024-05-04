@@ -1,9 +1,14 @@
-
 <section class="content">
     <div class="container-fluid">
         <div class="card card-info">
-            <div class="card-header py-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold card-title">Registros de Personas</h6>
+                <button type="button" class="btn btn-success ml-auto px-4 py-2" data-mdb-toggle="modal"
+                    data-mdb-target="#formularioRegistroModal" onclick="cargarFormulario();"
+                    th:if="${#lists.contains(permisos.![nombre], 'registrar_persona')}">
+                    <span class="mr-2">Registrar</span>
+                    <i class="fa-solid fa-user-plus"></i>
+                </button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -16,11 +21,14 @@
                                 <th>Cargo</th>
                                 <th>Unidad/Seccion</th>
                                 <th>Rol</th>
-                                <th>Acciones</th>
+                                <th
+                                    th:if="${#lists.contains(permisos.![nombre], 'editar_persona') or #lists.contains(permisos.![nombre], 'eliminar_persona')}">
+                                    Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody">
-                            <tr th:each="person, rowStat:${personas}" th:if="${person.estado != 'X' and person.cargo != null and person.unidad != null and person.roles != null}">
+                            <tr th:each="person, rowStat:${personas}"
+                                th:if="${person.estado != 'X' and person.cargo != null and person.unidad != null and person.roles != null}">
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center" th:text="${person.ci}"></td>
                                 <td class="text-center" th:text="${person.nombre}+' '+${person.apellido}"></td>
@@ -28,15 +36,23 @@
                                 <td class="text-center" th:text="${person.unidad.nombre}"></td>
                                 <td class="text-center">
                                     <ul class="list-group list-group-light list-group-small">
-                                        <li class="list-group-item" th:each="rol: ${person.roles}" th:text="${rol.nombre}"></li>
+                                        <li class="list-group-item" th:each="rol: ${person.roles}"
+                                            th:text="${rol.nombre}"></li>
                                     </ul>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center" th:if="${#lists.contains(permisos.![nombre], 'editar_persona') or #lists.contains(permisos.![nombre], 'eliminar_persona')}">
                                     <div class="btn-group">
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"
-                                            th:attr="onclick='cargarModFormulario(\'' + ${person.id_persona} + '\')'"><li class="fas fa-pencil-alt"></li></a>
+                                            data-mdb-toggle="modal" data-mdb-target="#formularioRegistroModal"
+                                            th:if="${#lists.contains(permisos.![nombre], 'editar_persona')}"
+                                            th:attr="onclick='cargarModFormulario(\'' + ${person.id_persona} + '\')'">
+                                            <li class="fas fa-pencil-alt"></li>
+                                        </a>
                                         <a class="btn btn-danger" type="button" style="color: aliceblue;"
-                                            th:attr="onclick='EliminarRegistro(\'' + ${person.id_persona} + '\', \'' + ${person.nombre}+' '+${person.apellido} + '\')'"><li class="fa-solid fa-trash"></li></a>
+                                            th:if="${#lists.contains(permisos.![nombre], 'eliminar_persona')}"
+                                            th:attr="onclick='EliminarRegistro(\'' + ${person.id_persona} + '\', \'' + ${person.nombre}+' '+${person.apellido} + '\')'">
+                                            <li class="fa-solid fa-trash"></li>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -49,7 +65,9 @@
                                 <th>Cargo</th>
                                 <th>Unidad/Seccion</th>
                                 <th>Rol</th>
-                                <th>Acciones</th>
+                                <th
+                                    th:if="${#lists.contains(permisos.![nombre], 'editar_persona') or #lists.contains(permisos.![nombre], 'eliminar_persona')}">
+                                    Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -64,3 +82,27 @@
         });
     </script>
 </section>
+<style>
+    /* Estilos CSS personalizados para el botón */
+    .btn-success {
+        background-color: #28a745;
+        /* Cambiar el color de fondo */
+        border-color: #28a745;
+        /* Cambiar el color del borde */
+        color: #fff;
+        /* Cambiar el color del texto */
+        transition: background-color 0.3s ease;
+        /* Agregar transición suave */
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        /* Cambiar el color de fondo al pasar el mouse */
+    }
+
+    /* Estilos para el icono de Font Awesome */
+    .btn-success .fas {
+        margin-left: 5px;
+        /* Ajustar el espacio entre el texto y el icono */
+    }
+</style>

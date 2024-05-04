@@ -69,14 +69,19 @@ public class CarpetaController {
    @GetMapping(value = "/CARPETAS")
    public String ventanaCarpeta(HttpServletRequest request, Model model) {
       System.out.println("PATALLA CARPETA");
-
-      return "/carpetas/registrar";
+      if (request.getSession().getAttribute("userLog") != null) {
+         return "/carpetas/registrar";
+      } else {
+         return "expiracion";
+      }
    }
 
    @PostMapping(value = "/VistaIcoCar")
    public String VistaIcoCar(HttpServletRequest request, Model model) {
       System.out.println("PATALLA CARPETA Vista Ico");
-
+      Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(user.getId_usuario());
+      model.addAttribute("permisos", userLog.getPermisos());
       return "/carpetas/vistaICO";
    }
 
@@ -117,6 +122,9 @@ public class CarpetaController {
          listaCarpetas.get(i).getUnidad().setSigla(primerasLetras.toString());
       }
       model.addAttribute("ListCarpetas", listaCarpetas);
+      Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(user.getId_usuario());
+      model.addAttribute("permisos", userLog.getPermisos());
       return "/carpetas/iconoRegistros";
    }
 
@@ -178,7 +186,9 @@ public class CarpetaController {
          listaCarpetas.get(i).getUnidad().setSigla(primerasLetras.toString());
       }
       model.addAttribute("ListCarpetas", listaCarpetas);
-
+      Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(user.getId_usuario());
+      model.addAttribute("permisos", userLog.getPermisos());
       return "/carpetas/tablaRegistros";
    }
 
@@ -280,7 +290,9 @@ public class CarpetaController {
       carpeta = carpetaService.findOne(id_carpeta);
       carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
       model.addAttribute("carpeta", carpeta);
-
+      Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(user.getId_usuario());
+      model.addAttribute("permisos", userLog.getPermisos());
       return "/carpetas/archivoCarpeta";
    }
 
@@ -292,7 +304,9 @@ public class CarpetaController {
       carpeta = carpetaService.findOne(id_carpeta);
       carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
       model.addAttribute("carpeta", carpeta);
-
+      Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(user.getId_usuario());
+      model.addAttribute("permisos", userLog.getPermisos());
       return "/carpetas/archivoCarpetaList";
    }
 
@@ -303,7 +317,9 @@ public class CarpetaController {
       Carpeta carpeta = new Carpeta();
       carpeta = carpetaService.findOne(id_carpeta);
       model.addAttribute("listaArchivos", carpeta.getArchivos());
-
+      Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(user.getId_usuario());
+      model.addAttribute("permisos", userLog.getPermisos());
       return "/carpetas/tablaRegistroArchivoList";
    }
 

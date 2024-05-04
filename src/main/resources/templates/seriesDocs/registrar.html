@@ -25,8 +25,14 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
+    <div class="modal fade" id="formularioRegistroModal" aria-labelledby="formularioRegistroModal" tabindex="-1" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content" id="FormularioSeriesDoc" style="overflow-y: auto;">
+        </div>
+      </div>
+    </div>
 
-    <div id="FormularioSeriesDoc"></div>
     <div id="TablaSeriesDoc"></div>
 
     <!--MODAL SUBSERIES-->
@@ -42,7 +48,7 @@
     <script th:inline="javascript">
       // Carga inicial del div
       cargarTabla();
-      cargarFormulario();
+      //cargarFormulario();
 
       function cargarTabla() {
         $.ajax({

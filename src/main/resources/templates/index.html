@@ -263,7 +263,7 @@
             th:text="${userLog.persona.unidad.nombre}">
             <span class="visually-hidden">unread messages</span>
           </span>
-          <a type="button" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+          <a type="button" class="nav-link dropdown-toggle botonPerfi" data-toggle="dropdown" aria-expanded="true">
             <img th:src="@{'/verFoto/' + ${userLog.id_usuario}}" class="user-image img-circle elevation-2"
               alt="User Image">
             <span class="d-none d-md-inline" th:text="${userLog.persona.nombre}+' '+${userLog.persona.apellido}"></span>
@@ -1427,7 +1427,11 @@
           //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
           success: function (response) {
             //location.reload();
-            window.location.href = '/ArchivosTED';
+            if (response == "continua") {
+              window.location.href = '/ArchivosTED';  
+            }else{
+              location.reload();
+            }
           },
           error: function (xhr, status, error) {
             toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
@@ -1501,6 +1505,29 @@
       background: linear-gradient(to right, rgb(255, 255, 255), rgb(251, 161, 7), rgb(251, 161, 7), rgb(255, 255, 255), rgb(252, 252, 252));
     }
   </style>
+  <style>
+    .botonPerfi:hover {
+        /* Cambiar el color de fondo al pasar el ratón por encima */
+        background-color: #f7f7f7e8;
+        /* Cambia este color según tus preferencias */
+        color: #474747;
+        /* Agregar una transición suave para un efecto más atractivo */
+        transition: background-color 0.3s ease;
+        /* Agregar sombra para un efecto de elevación */
+        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+        /* Ajusta según tus preferencias */
+        border-radius: 4px;
+    }
+
+    /* Cambiar el color del texto cuando el botón está en hover */
+    .botonPerfi:hover i {
+        color: #ffffff;
+        /* Cambia este color según tus preferencias */
+        /* Agregar una transición suave para el cambio de color */
+        transition: color 0.3s ease;
+        border-radius: 4px;
+    }
+</style>
   <script>
     toastr.options = {
       "closeButton": true

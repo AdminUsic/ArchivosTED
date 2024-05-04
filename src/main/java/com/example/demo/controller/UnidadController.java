@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.entity.Unidad;
+import com.example.demo.entity.Usuario;
 import com.example.demo.service.UnidadService;
+import com.example.demo.service.UsuarioService;
 
 @Controller
 public class UnidadController {
@@ -24,10 +26,16 @@ public class UnidadController {
     @Autowired
     private UnidadService unidadService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @GetMapping("/UNIDAD")
     public String ventanaDocumentos(HttpServletRequest request, Model model) {
-
-        return "/unidades/registrar";
+        if (request.getSession().getAttribute("userLog") != null) {
+            return "/unidades/registrar";
+        } else {
+            return "expiracion";
+        }
     }
 
     @PostMapping(value = "/NuevaUnidad")
@@ -62,6 +70,9 @@ public class UnidadController {
             listaUnidades.get(i).setSigla(primerasLetras.toString());
         }
         model.addAttribute("unidades", listaUnidades);
+              Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
+        model.addAttribute("permisos", userLog.getPermisos());
         return "/unidades/tablaRegistros";
     }
 

@@ -39,21 +39,17 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- Preloader -->
-
-    <div id="FormularioUser"></div>
+    <div class="modal fade" id="formularioRegistroModal" aria-labelledby="formularioRegistroModal" tabindex="-1"
+      aria-hidden="true" data-mdb-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content" id="FormularioUser" style="overflow-y: auto;">
+        </div>
+      </div>
+    </div>
     <div id="TablaUser"></div>
 
-
-
-
-    <!-- jQuery 
-    <script src="../../../../plugins/jquery/jquery.min.js"></script>-->
-
-
     <script th:inline="javascript">
-      // Carga inicial del div
       cargarTabla();
-      cargarFormulario();
 
       function cargarTabla() {
         $.ajax({
@@ -120,7 +116,7 @@
 
         Swal.fire({
           title: '!Atención¡',
-          text: '¿Estas seguro que desea eliminar este registro del Cargo " '+nombre+' "?',
+          text: '¿Estas seguro que desea eliminar este registro del Cargo " ' + nombre + ' "?',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',

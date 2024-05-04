@@ -13,18 +13,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.entity.Archivo;
 import com.example.demo.entity.TipoArchivo;
+import com.example.demo.entity.Usuario;
 import com.example.demo.service.TipoArchivoService;
+import com.example.demo.service.UsuarioService;
 
 @Controller
 public class TipoArchivoController {
     @Autowired
     private TipoArchivoService tipoArchivoService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @GetMapping("/TIPOARCHIVO")
     public String ventanaDocumentos(HttpServletRequest request, Model model) {
 //        model.addAttribute("archivo", new Archivo());
         //model.addAttribute("listaArchivos", archivosData.findAll());
-        return "/tipoArchivos/registrar";
+        if (request.getSession().getAttribute("userLog") != null) {
+            return "/tipoArchivos/registrar";
+        } else {
+            return "expiracion";
+        }
+        
     }
 
     @PostMapping(value="/NuevoRegistroTipoArchivo")
@@ -36,6 +46,9 @@ public class TipoArchivoController {
     @PostMapping(value="/RegistrosTipoArchivos")
     public String tablaRegistros(HttpServletRequest request, Model model) {
         model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
+              Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
+        model.addAttribute("permisos", userLog.getPermisos());
         return "/tipoArchivos/tablaRegistros";
     }
 

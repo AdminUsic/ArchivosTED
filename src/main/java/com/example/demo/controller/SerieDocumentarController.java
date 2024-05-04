@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.entity.SerieDocumental;
 import com.example.demo.entity.Unidad;
+import com.example.demo.entity.Usuario;
 import com.example.demo.service.SerieDocumentalService;
+import com.example.demo.service.UsuarioService;
 
 @Controller
 public class SerieDocumentarController {
@@ -25,11 +27,18 @@ public class SerieDocumentarController {
     @Autowired
     private SerieDocumentalService documentalService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @GetMapping("/SERIEDOC")
     public String ventanaDocumentos(HttpServletRequest request, Model model) {
         // model.addAttribute("archivo", new Archivo());
         // model.addAttribute("listaArchivos", archivosData.findAll());
-        return "/seriesDocs/registrar";
+        if (request.getSession().getAttribute("userLog") != null) {
+            return "/seriesDocs/registrar";
+        } else {
+            return "expiracion";
+        }
     }
 
     @PostMapping(value = "/NuevoRegistroSerieDoc")
@@ -41,6 +50,9 @@ public class SerieDocumentarController {
     @PostMapping(value = "/RegistrosTipoSeriesDoc")
     public String tablaRegistros(HttpServletRequest request, Model model) {
         model.addAttribute("seriesDocs", documentalService.findAll());
+        Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
+        model.addAttribute("permisos", userLog.getPermisos());
         return "/seriesDocs/tablaRegistros";
     }
 

@@ -39,20 +39,19 @@
       </div>
     </div>
 
-    <div id="FormularioUnid"></div>
+    <div class="modal fade" id="formularioRegistroModal" aria-labelledby="formularioRegistroModal" tabindex="-1"
+      aria-hidden="true" data-mdb-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content" id="FormularioUnid" style="overflow-y: auto;">
+        </div>
+      </div>
+    </div>
     <div id="TablaUnid"></div>
-
-
-
-
-    <!-- jQuery 
-    <script src="../../../../plugins/jquery/jquery.min.js"></script>-->
-
 
     <script th:inline="javascript">
       // Carga inicial del div
       cargarTabla();
-      cargarFormulario();
+      //cargarFormulario();
 
       function cargarTabla() {
         $.ajax({

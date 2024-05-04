@@ -81,14 +81,13 @@ public class UsuarioController {
     // @PreAuthorize("hasAuthority('ARCHIVOS Y BIBLIOTECA')")
     public String ventanaUsuario(HttpServletRequest request, Model model) {
         System.out.println("PATALLA USUARIO");
-        Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
-        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+        Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
         if (request.getSession().getAttribute("userLog") != null) {
             return "/usuarios/registrar";
         } else {
-            return "login";
+            return "expiracion";
         }
-
     }
 
     @PostMapping(value = "/NuevoUsuario")
@@ -101,6 +100,8 @@ public class UsuarioController {
 
     @PostMapping(value = "/RegistrosUsuario")
     public String tablaRegistros(HttpServletRequest request, Model model) {
+        Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
         List<Usuario> usuarios = usuarioService.findAll();
         for (Usuario usuario : usuarios) {
             String contenidoDescencryptado;
@@ -112,6 +113,7 @@ public class UsuarioController {
             }
         }
         // model.addAttribute("usuarios", usuarioService.findAll());
+        model.addAttribute("permisos", userLog.getPermisos());
         model.addAttribute("usuarios", usuarios);
         return "/usuarios/tablaRegistros";
     }
@@ -241,11 +243,11 @@ public class UsuarioController {
 
     @PostMapping(value = "/ModUsuarioPerfilG")
     @ResponseBody
-    public void ModUsuarioPerfilG(@Validated Usuario usuario, Model model,
+    public ResponseEntity<String> ModUsuarioPerfilG(@Validated Usuario usuario, Model model, HttpServletRequest request,
             @RequestParam("nombreP") String nombreP, @RequestParam("apellido") String apellido,
             @RequestParam("ci") String ci,
             @RequestParam("foto") MultipartFile foto) throws IOException {
-
+                if (request.getSession().getAttribute("userLog") != null) {
         Usuario usuario2 = usuarioService.findOne(usuario.getId_usuario());
 
         if (!foto.isEmpty()) {
@@ -276,6 +278,11 @@ public class UsuarioController {
         usuarioService.save(usuario);
 
         model.addAttribute("userLog", usuario);
+        
+            return ResponseEntity.ok("continua");
+        } else {
+            return ResponseEntity.ok("cerrada");
+        }
     }
 
     @Transactional

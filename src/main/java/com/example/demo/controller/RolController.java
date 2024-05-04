@@ -21,6 +21,7 @@ import com.example.demo.entity.Unidad;
 import com.example.demo.entity.Usuario;
 import com.example.demo.service.ControlService;
 import com.example.demo.service.MenuService;
+import com.example.demo.service.PermisoService;
 import com.example.demo.service.RolService;
 import com.example.demo.service.TipoControService;
 import com.example.demo.service.UsuarioService;
@@ -42,18 +43,14 @@ public class RolController {
     @Autowired
     private ControlService controService;
 
-    // @GetMapping("/ROL")
-    // public String ventanaDocumentos(HttpServletRequest request, Model model) {
-    // Usuario u = (Usuario) request.getSession().getAttribute("userLog");
-    // Usuario userLog = usuarioService.findOne(u.getId_usuario());
-    // return "/roles/registrar";
-    // }
 
     @GetMapping("/ROL")
     public String ventanaDocumentos(HttpServletRequest request, Model model) {
-        Usuario u = (Usuario) request.getSession().getAttribute("userLog");
-        Usuario userLog = usuarioService.findOne(u.getId_usuario());
-        return "/roles/ventana";
+        if (request.getSession().getAttribute("userLog") != null) {
+            return "/roles/ventana";
+        } else {
+            return "expiracion";
+        }
     }
 
     @PostMapping(value = "/NuevoRegistroRol")
@@ -66,6 +63,9 @@ public class RolController {
 
     @PostMapping(value = "/RegistrosRoles")
     public String RegistrosRoles(HttpServletRequest request, Model model) {
+        Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
+        model.addAttribute("permisos", userLog.getPermisos());
         model.addAttribute("roles", rolService.findAll());
         return "/roles/tablaRegistros";
     }

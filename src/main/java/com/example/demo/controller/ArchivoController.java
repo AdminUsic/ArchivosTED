@@ -109,8 +109,11 @@ public class ArchivoController {
 
    @GetMapping("/DOCUMENTOS")
    public String ventanaDocumentos(HttpServletRequest request, Model model) {
-
-      return "/archivos/registrar";
+      if (request.getSession().getAttribute("userLog") != null) {
+         return "/archivos/registrar";
+      } else {
+         return "expiracion";
+      }
    }
 
    @PostMapping(value = "/NuevoRegistroArchivo")
@@ -152,199 +155,204 @@ public class ArchivoController {
       return ResponseEntity.ok(subSecciones);
    }
 
-//    @PostMapping("/GuardarRegistroArchivo")
-//    public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest request, Model model,
-//          @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
-//          @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
-//       System.out.println("METODO REGISTRAR ARCHIVO");
-//       Usuario us = (Usuario) request.getSession().getAttribute("userLog");
-//       Usuario userLog = usuarioService.findOne(us.getId_usuario());
-//       try {
-//          byte[] contenido = archivoPdf.getBytes();
-//          System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
+   // @PostMapping("/GuardarRegistroArchivo")
+   // public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest
+   // request, Model model,
+   // @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
+   // @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
+   // System.out.println("METODO REGISTRAR ARCHIVO");
+   // Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+   // Usuario userLog = usuarioService.findOne(us.getId_usuario());
+   // try {
+   // byte[] contenido = archivoPdf.getBytes();
+   // System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
 
-//          try {
-//             byte[] encryptedBytes = utilidadService.encrypt(contenido);
-//             // Convertir los bytes encriptados a un String codificado en base64
-//             archivo.setContenido(encryptedBytes);
-//             System.out.println("Encriptacion Completa");
-//          } catch (Exception e) {
-//             System.out.println("Error en la encriptacion: " + e);
-//          }
-//          if (id_carpeta != null) {
-//             Carpeta carpeta = carpetaService.findOne(id_carpeta);
-//             archivo.setCarpeta(carpeta);
-//          }
+   // try {
+   // byte[] encryptedBytes = utilidadService.encrypt(contenido);
+   // // Convertir los bytes encriptados a un String codificado en base64
+   // archivo.setContenido(encryptedBytes);
+   // System.out.println("Encriptacion Completa");
+   // } catch (Exception e) {
+   // System.out.println("Error en la encriptacion: " + e);
+   // }
+   // if (id_carpeta != null) {
+   // Carpeta carpeta = carpetaService.findOne(id_carpeta);
+   // archivo.setCarpeta(carpeta);
+   // }
 
-//          PDDocument document = PDDocument.load(contenido);
-//          archivo.setCantidadHojas(document.getNumberOfPages());
-//          // archivo.setFechaEmision(fechaEmision);
-//          archivo.setFechaRegistro(new Date());
-//          archivo.setHoraRegistro(new Date());
-//          archivo.setEstado("A");
-//          String nombFile = archivoPdf.getOriginalFilename();
-//          // String[] extension = nombFile.split(".");
+   // PDDocument document = PDDocument.load(contenido);
+   // archivo.setCantidadHojas(document.getNumberOfPages());
+   // // archivo.setFechaEmision(fechaEmision);
+   // archivo.setFechaRegistro(new Date());
+   // archivo.setHoraRegistro(new Date());
+   // archivo.setEstado("A");
+   // String nombFile = archivoPdf.getOriginalFilename();
+   // // String[] extension = nombFile.split(".");
 
-//          // archivo.setExtension(extension[extension.length - 1]);
-//          String[] extension = nombFile.split("\\.");
-// archivo.setExtension(extension[extension.length - 1]);
+   // // archivo.setExtension(extension[extension.length - 1]);
+   // String[] extension = nombFile.split("\\.");
+   // archivo.setExtension(extension[extension.length - 1]);
 
+   // document.close();
+   // archivoService.save(archivo);
+   // Control control = new Control();
+   // control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+   // control.setDescripcion("Realizó un nuevo " +
+   // control.getTipoControl().getNombre()
+   // + " de una nueva documental "+archivo.getNombre());
+   // control.setUsuario(userLog);
+   // control.setFecha(new Date());
+   // control.setHora(new Date());
+   // controService.save(control);
+   // return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
+   // } catch (IOException e) {
+   // System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
+   // return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
+   // }
+   // }
+   // @PostMapping("/GuardarRegistroArchivo")
+   // public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest
+   // request, Model model,
+   // @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
+   // @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
+   // System.out.println("METODO REGISTRAR ARCHIVO");
+   // Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+   // Usuario userLog = usuarioService.findOne(us.getId_usuario());
+   // try {
+   // byte[] contenido = archivoPdf.getBytes();
+   // System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
 
-//          document.close();
-//          archivoService.save(archivo);
-//          Control control = new Control();
-//          control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
-//          control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
-//                + " de una nueva documental "+archivo.getNombre());
-//          control.setUsuario(userLog);
-//          control.setFecha(new Date());
-//          control.setHora(new Date());
-//          controService.save(control);
-//          return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
-//       } catch (IOException e) {
-//          System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
-//          return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
-//       }
-//    }
-// @PostMapping("/GuardarRegistroArchivo")
-// public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest request, Model model,
-//      @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
-//      @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
-//   System.out.println("METODO REGISTRAR ARCHIVO");
-//   Usuario us = (Usuario) request.getSession().getAttribute("userLog");
-//   Usuario userLog = usuarioService.findOne(us.getId_usuario());
-//   try {
-//      byte[] contenido = archivoPdf.getBytes();
-//      System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
+   // try {
+   // byte[] encryptedBytes = utilidadService.encrypt(contenido);
+   // // Convertir los bytes encriptados a un String codificado en base64
+   // archivo.setContenido(encryptedBytes);
+   // System.out.println("Encriptacion Completa");
+   // } catch (Exception e) {
+   // System.out.println("Error en la encriptacion: " + e);
+   // }
+   // if (id_carpeta != null) {
+   // Carpeta carpeta = carpetaService.findOne(id_carpeta);
+   // archivo.setCarpeta(carpeta);
+   // }
 
-//      try {
-//         byte[] encryptedBytes = utilidadService.encrypt(contenido);
-//         // Convertir los bytes encriptados a un String codificado en base64
-//         archivo.setContenido(encryptedBytes);
-//         System.out.println("Encriptacion Completa");
-//      } catch (Exception e) {
-//         System.out.println("Error en la encriptacion: " + e);
-//      }
-//      if (id_carpeta != null) {
-//         Carpeta carpeta = carpetaService.findOne(id_carpeta);
-//         archivo.setCarpeta(carpeta);
-//      }
+   // PDDocument document = PDDocument.load(contenido);
+   // archivo.setCantidadHojas(document.getNumberOfPages());
+   // // archivo.setFechaEmision(fechaEmision);
+   // archivo.setFechaRegistro(new Date());
+   // archivo.setHoraRegistro(new Date());
+   // archivo.setEstado("A");
+   // String nombFile = archivoPdf.getOriginalFilename();
+   // archivo.setExtension(getFileExtension(nombFile));
 
-//      PDDocument document = PDDocument.load(contenido);
-//      archivo.setCantidadHojas(document.getNumberOfPages());
-//      // archivo.setFechaEmision(fechaEmision);
-//      archivo.setFechaRegistro(new Date());
-//      archivo.setHoraRegistro(new Date());
-//      archivo.setEstado("A");
-//      String nombFile = archivoPdf.getOriginalFilename();
-//      archivo.setExtension(getFileExtension(nombFile));
+   // // Guardar la primera página del PDF como imagen WebP
+   // BufferedImage firstPageImage = renderFirstPageAsImage(document);
+   // ByteArrayOutputStream baos = new ByteArrayOutputStream();
+   // ImageIO.write(firstPageImage, "webp", baos);
+   // byte[] icono = baos.toByteArray();
+   // archivo.setIcono(icono);
 
-//      // Guardar la primera página del PDF como imagen WebP
-//      BufferedImage firstPageImage = renderFirstPageAsImage(document);
-//      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//      ImageIO.write(firstPageImage, "webp", baos);
-//      byte[] icono = baos.toByteArray();
-//      archivo.setIcono(icono);
+   // document.close();
+   // archivoService.save(archivo);
+   // Control control = new Control();
+   // control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+   // control.setDescripcion("Realizó un nuevo " +
+   // control.getTipoControl().getNombre()
+   // + " de una nueva documental "+archivo.getNombre());
+   // control.setUsuario(userLog);
+   // control.setFecha(new Date());
+   // control.setHora(new Date());
+   // controService.save(control);
+   // return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
+   // } catch (IOException e) {
+   // System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
+   // return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
+   // }
+   // }
+   @PostMapping("/GuardarRegistroArchivo")
+   public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest request, Model model,
+         @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
+         @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
+      System.out.println("METODO REGISTRAR ARCHIVO");
+      Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+      Usuario userLog = usuarioService.findOne(us.getId_usuario());
+      try {
+         byte[] contenido = archivoPdf.getBytes();
+         System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
 
-//      document.close();
-//      archivoService.save(archivo);
-//      Control control = new Control();
-//      control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
-//      control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
-//            + " de una nueva documental "+archivo.getNombre());
-//      control.setUsuario(userLog);
-//      control.setFecha(new Date());
-//      control.setHora(new Date());
-//      controService.save(control);
-//      return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
-//   } catch (IOException e) {
-//      System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
-//      return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
-//   }
-// }
-@PostMapping("/GuardarRegistroArchivo")
-public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest request, Model model,
-                                                     @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
-                                                     @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
-    System.out.println("METODO REGISTRAR ARCHIVO");
-    Usuario us = (Usuario) request.getSession().getAttribute("userLog");
-    Usuario userLog = usuarioService.findOne(us.getId_usuario());
-    try {
-        byte[] contenido = archivoPdf.getBytes();
-        System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
-
-        try {
+         try {
             byte[] encryptedBytes = utilidadService.encrypt(contenido);
             // Convertir los bytes encriptados a un String codificado en base64
             archivo.setContenido(encryptedBytes);
             System.out.println("Encriptacion Completa");
-        } catch (Exception e) {
+         } catch (Exception e) {
             System.out.println("Error en la encriptacion: " + e);
-        }
-        if (id_carpeta != null) {
+         }
+         if (id_carpeta != null) {
             Carpeta carpeta = carpetaService.findOne(id_carpeta);
             archivo.setCarpeta(carpeta);
-        }
+         }
 
-        PDDocument document = PDDocument.load(contenido);
-        archivo.setCantidadHojas(document.getNumberOfPages());
-        // archivo.setFechaEmision(fechaEmision);
-        archivo.setFechaRegistro(new Date());
-        archivo.setHoraRegistro(new Date());
-        archivo.setEstado("A");
-        String nombFile = archivoPdf.getOriginalFilename();
-        archivo.setExtension(getFileExtension(nombFile));
+         PDDocument document = PDDocument.load(contenido);
+         archivo.setCantidadHojas(document.getNumberOfPages());
+         // archivo.setFechaEmision(fechaEmision);
+         archivo.setFechaRegistro(new Date());
+         archivo.setHoraRegistro(new Date());
+         archivo.setEstado("A");
+         String nombFile = archivoPdf.getOriginalFilename();
+         archivo.setExtension(getFileExtension(nombFile));
 
-        // Guardar la primera página del PDF como imagen WebP
-        BufferedImage firstPageImage = renderFirstPageAsImage(document);
+         // Guardar la primera página del PDF como imagen WebP
+         BufferedImage firstPageImage = renderFirstPageAsImage(document);
 
-        // Recortar la imagen para guardar solo la mitad superior
-        BufferedImage upperHalfImage = cropUpperHalfImage(firstPageImage);
+         // Recortar la imagen para guardar solo la mitad superior
+         BufferedImage upperHalfImage = cropUpperHalfImage(firstPageImage);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(upperHalfImage, "webp", baos);
-        byte[] icono = baos.toByteArray();
-        archivo.setIcono(icono);
+         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+         ImageIO.write(upperHalfImage, "webp", baos);
+         byte[] icono = baos.toByteArray();
+         archivo.setIcono(icono);
 
-        document.close();
-        archivoService.save(archivo);
-        Control control = new Control();
-        control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
-        control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
-                + " de una nueva documental " + archivo.getNombre());
-        control.setUsuario(userLog);
-        control.setFecha(new Date());
-        control.setHora(new Date());
-        controService.save(control);
-        return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
-    } catch (IOException e) {
-        System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
-        return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
-    }
-}
+         document.close();
+         archivoService.save(archivo);
+         Control control = new Control();
+         control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+         control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+               + " de una nueva documental " + archivo.getNombre());
+         control.setUsuario(userLog);
+         control.setFecha(new Date());
+         control.setHora(new Date());
+         controService.save(control);
+         return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
+      } catch (IOException e) {
+         System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
+         return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
+      }
+   }
 
-private BufferedImage cropUpperHalfImage(BufferedImage image) {
-    int width = image.getWidth();
-    int height = image.getHeight();
+   private BufferedImage cropUpperHalfImage(BufferedImage image) {
+      int width = image.getWidth();
+      int height = image.getHeight();
 
-    // Recortar la imagen para guardar solo la mitad superior
-    BufferedImage upperHalfImage = image.getSubimage(0, 0, width, height / 2);
+      // Recortar la imagen para guardar solo la mitad superior
+      BufferedImage upperHalfImage = image.getSubimage(0, 0, width, height / 2);
 
-    return upperHalfImage;
-}
+      return upperHalfImage;
+   }
 
-private String getFileExtension(String filename) {
-    int lastDotIndex = filename.lastIndexOf(".");
-    if (lastDotIndex != -1) {
-        return filename.substring(lastDotIndex + 1);
-    }
-    return "";
-}
+   private String getFileExtension(String filename) {
+      int lastDotIndex = filename.lastIndexOf(".");
+      if (lastDotIndex != -1) {
+         return filename.substring(lastDotIndex + 1);
+      }
+      return "";
+   }
 
-// private BufferedImage renderFirstPageAsImage(PDDocument document) throws IOException {
-//     PDFRenderer renderer = new PDFRenderer(document);
-//     return renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
-// }
+   // private BufferedImage renderFirstPageAsImage(PDDocument document) throws
+   // IOException {
+   // PDFRenderer renderer = new PDFRenderer(document);
+   // return renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus
+   // necesidades
+   // }
 
    @GetMapping(value = "/ModArchivo/{id_archivo}")
    public String EditarArchivo(HttpServletRequest request, Model model,
@@ -423,7 +431,7 @@ private String getFileExtension(String filename) {
          Control control = new Control();
          control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
          control.setDescripcion("Realizó una nueva " + control.getTipoControl().getNombre()
-               + " de la nueva documental "+archivo.getNombre());
+               + " de la nueva documental " + archivo.getNombre());
          control.setUsuario(userLog);
          control.setFecha(new Date());
          control.setHora(new Date());
@@ -452,7 +460,7 @@ private String getFileExtension(String filename) {
       Control control = new Control();
       control.setTipoControl(tipoControService.findAllByTipoControl("Eliminó"));
       control.setDescripcion(control.getTipoControl().getNombre()
-               + " una unidad documental "+archivo.getNombre());
+            + " una unidad documental " + archivo.getNombre());
       control.setUsuario(userLog);
       control.setFecha(new Date());
       control.setHora(new Date());
@@ -487,123 +495,128 @@ private String getFileExtension(String filename) {
 
    // @GetMapping("/verIcoPdf/{id}")
    // public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
-   //    Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
+   // Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
 
-   //    if (archivoOptional.isPresent()) {
-   //       Archivo archivo = archivoOptional.get();
+   // if (archivoOptional.isPresent()) {
+   // Archivo archivo = archivoOptional.get();
 
-   //       try {
-   //          // String secretKey = "Lanza12310099812";
-   //          // Cargar el documento PDF
-   //          byte[] contenidoDescencryptado;
-   //          try {
-   //             contenidoDescencryptado = utilidadService.decrypt(archivo.getContenido());
-   //             archivo.setContenido(contenidoDescencryptado);
-   //          } catch (Exception e) {
-   //             // Manejo de excepción (por ejemplo, log)
-   //          }
-   //          PDDocument document = PDDocument.load(archivo.getContenido());
+   // try {
+   // // String secretKey = "Lanza12310099812";
+   // // Cargar el documento PDF
+   // byte[] contenidoDescencryptado;
+   // try {
+   // contenidoDescencryptado = utilidadService.decrypt(archivo.getContenido());
+   // archivo.setContenido(contenidoDescencryptado);
+   // } catch (Exception e) {
+   // // Manejo de excepción (por ejemplo, log)
+   // }
+   // PDDocument document = PDDocument.load(archivo.getContenido());
 
-   //          // Obtener el renderizador PDF
-   //          PDFRenderer renderer = new PDFRenderer(document);
+   // // Obtener el renderizador PDF
+   // PDFRenderer renderer = new PDFRenderer(document);
 
-   //          // Convertir la primera página a imagen con una resolución de 300 DPI
-   //          BufferedImage image = renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
+   // // Convertir la primera página a imagen con una resolución de 300 DPI
+   // BufferedImage image = renderer.renderImageWithDPI(0, 300); // Ajusta la
+   // resolución según tus necesidades
 
-   //          // Redimensionar la imagen a 300 píxeles de ancho (ajusta según tus necesidades)
-   //          int newWidth = 300;
-   //          int newHeight = (int) (image.getHeight() * ((double) newWidth / image.getWidth()));
+   // // Redimensionar la imagen a 300 píxeles de ancho (ajusta según tus
+   // necesidades)
+   // int newWidth = 300;
+   // int newHeight = (int) (image.getHeight() * ((double) newWidth /
+   // image.getWidth()));
 
-   //          BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-   //          Graphics2D g = resizedImage.createGraphics();
-   //          g.drawImage(image, 0, 0, newWidth, newHeight, null);
-   //          g.dispose();
+   // BufferedImage resizedImage = new BufferedImage(newWidth, newHeight,
+   // BufferedImage.TYPE_INT_ARGB);
+   // Graphics2D g = resizedImage.createGraphics();
+   // g.drawImage(image, 0, 0, newWidth, newHeight, null);
+   // g.dispose();
 
-   //          // Crear un flujo de bytes para la imagen redimensionada
-   //          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+   // // Crear un flujo de bytes para la imagen redimensionada
+   // ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-   //          // Guardar la imagen redimensionada en formato WebP
-   //          ImageIO.write(resizedImage, "webp", baos);
+   // // Guardar la imagen redimensionada en formato WebP
+   // ImageIO.write(resizedImage, "webp", baos);
 
-   //          baos.flush();
-   //          byte[] imageBytes = baos.toByteArray();
-   //          baos.close();
-   //          document.close();
+   // baos.flush();
+   // byte[] imageBytes = baos.toByteArray();
+   // baos.close();
+   // document.close();
 
-   //          // Configurar los encabezados para evitar el caché
-   //          HttpHeaders headers = new HttpHeaders();
-   //          headers.setCacheControl("no-cache, no-store, must-revalidate");
-   //          headers.setPragma("no-cache");
-   //          headers.setExpires(0);
+   // // Configurar los encabezados para evitar el caché
+   // HttpHeaders headers = new HttpHeaders();
+   // headers.setCacheControl("no-cache, no-store, must-revalidate");
+   // headers.setPragma("no-cache");
+   // headers.setExpires(0);
 
-   //          // Utilizar MediaTypeFactory para crear un tipo de medio personalizado para WebP
-   //          MediaType mediaType = MediaTypeFactory.getMediaType("image/webp")
-   //                .orElse(MediaType.APPLICATION_OCTET_STREAM);
+   // // Utilizar MediaTypeFactory para crear un tipo de medio personalizado para
+   // WebP
+   // MediaType mediaType = MediaTypeFactory.getMediaType("image/webp")
+   // .orElse(MediaType.APPLICATION_OCTET_STREAM);
 
-   //          return ResponseEntity.ok()
-   //                .headers(headers)
-   //                .contentType(mediaType) // Utiliza el tipo de medio personalizado para WebP
-   //                .contentLength(imageBytes.length)
-   //                .body(imageBytes);
-   //       } catch (IOException e) {
-   //          e.printStackTrace();
-   //          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-   //       }
-   //    } else {
-   //       return ResponseEntity.notFound().build();
-   //    }
+   // return ResponseEntity.ok()
+   // .headers(headers)
+   // .contentType(mediaType) // Utiliza el tipo de medio personalizado para WebP
+   // .contentLength(imageBytes.length)
+   // .body(imageBytes);
+   // } catch (IOException e) {
+   // e.printStackTrace();
+   // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+   // }
+   // } else {
+   // return ResponseEntity.notFound().build();
+   // }
    // }
    // @GetMapping("/verIcoPdf/{id}")
-   //  public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
-   //      Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
+   // public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
+   // Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
 
-   //      if (archivoOptional.isPresent()) {
-   //          Archivo archivo = archivoOptional.get();
+   // if (archivoOptional.isPresent()) {
+   // Archivo archivo = archivoOptional.get();
 
-   //          try {
-   //              byte[] contenidoDescencriptado;
-   //              try {
-   //                  contenidoDescencriptado = utilidadService.decrypt(archivo.getContenido());
-   //                  archivo.setContenido(contenidoDescencriptado);
-   //              } catch (Exception e) {
-   //                  // Manejo de excepción (por ejemplo, log)
-   //              }
+   // try {
+   // byte[] contenidoDescencriptado;
+   // try {
+   // contenidoDescencriptado = utilidadService.decrypt(archivo.getContenido());
+   // archivo.setContenido(contenidoDescencriptado);
+   // } catch (Exception e) {
+   // // Manejo de excepción (por ejemplo, log)
+   // }
 
-   //              PDDocument document = PDDocument.load(archivo.getContenido());
-   //              BufferedImage image = renderFirstPageAsImage(document);
+   // PDDocument document = PDDocument.load(archivo.getContenido());
+   // BufferedImage image = renderFirstPageAsImage(document);
 
-   //              ByteArrayOutputStream baos = new ByteArrayOutputStream();
-   //              ImageIO.write(image, "webp", baos);
-   //              byte[] imageBytes = baos.toByteArray();
-   //              baos.close();
-   //              document.close();
+   // ByteArrayOutputStream baos = new ByteArrayOutputStream();
+   // ImageIO.write(image, "webp", baos);
+   // byte[] imageBytes = baos.toByteArray();
+   // baos.close();
+   // document.close();
 
-   //              HttpHeaders headers = new HttpHeaders();
-   //              headers.setCacheControl("no-cache, no-store, must-revalidate");
-   //              headers.setPragma("no-cache");
-   //              headers.setExpires(0);
+   // HttpHeaders headers = new HttpHeaders();
+   // headers.setCacheControl("no-cache, no-store, must-revalidate");
+   // headers.setPragma("no-cache");
+   // headers.setExpires(0);
 
-   //              MediaType mediaType = MediaTypeFactory.getMediaType("image/webp")
-   //                      .orElse(MediaType.APPLICATION_OCTET_STREAM);
+   // MediaType mediaType = MediaTypeFactory.getMediaType("image/webp")
+   // .orElse(MediaType.APPLICATION_OCTET_STREAM);
 
-   //              return ResponseEntity.ok()
-   //                      .headers(headers)
-   //                      .contentType(mediaType)
-   //                      .contentLength(imageBytes.length)
-   //                      .body(imageBytes);
-   //          } catch (IOException e) {
-   //              e.printStackTrace();
-   //              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-   //          }
-   //      } else {
-   //          return ResponseEntity.notFound().build();
-   //      }
-   //  }
+   // return ResponseEntity.ok()
+   // .headers(headers)
+   // .contentType(mediaType)
+   // .contentLength(imageBytes.length)
+   // .body(imageBytes);
+   // } catch (IOException e) {
+   // e.printStackTrace();
+   // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+   // }
+   // } else {
+   // return ResponseEntity.notFound().build();
+   // }
+   // }
    @GetMapping("/verIcoPdf/{id}")
-    public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
-        Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
+   public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
+      Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
 
-        if (archivoOptional.isPresent()) {
+      if (archivoOptional.isPresent()) {
          Archivo archivo = archivoOptional.get();
 
          // Configurar los encabezados para evitar el caché
@@ -613,19 +626,19 @@ private String getFileExtension(String filename) {
          headers.setExpires(0);
 
          return ResponseEntity.ok()
-                 .headers(headers)
-                 .contentType(MediaType.IMAGE_PNG)
-                 .contentLength(archivo.getIcono().length)
-                 .body(archivo.getIcono());
-     } else {
+               .headers(headers)
+               .contentType(MediaType.IMAGE_PNG)
+               .contentLength(archivo.getIcono().length)
+               .body(archivo.getIcono());
+      } else {
          return ResponseEntity.notFound().build();
-     }
-    }
+      }
+   }
 
-    private BufferedImage renderFirstPageAsImage(PDDocument document) throws IOException {
-        PDFRenderer renderer = new PDFRenderer(document);
-        return renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
-    }
+   private BufferedImage renderFirstPageAsImage(PDDocument document) throws IOException {
+      PDFRenderer renderer = new PDFRenderer(document);
+      return renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
+   }
 
    @GetMapping("/CantArchivosCarpeta/{id_carpeta}")
    public String CantArchivosCarpeta(HttpServletRequest request, Model model,

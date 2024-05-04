@@ -28,13 +28,16 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- Preloader -->
+    <div class="modal fade" id="formularioRegistroModal" aria-labelledby="formularioRegistroModal" tabindex="-1" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="FormularioUser" style="overflow-y: auto;">
+        </div>
+      </div>
+    </div>
+
     
-
-    <div id="FormularioUser"></div>
     <div id="TablaUser"></div>
-
-
-
 
     <!-- jQuery 
     <script src="../../../../plugins/jquery/jquery.min.js"></script>-->
@@ -43,8 +46,7 @@
     <script th:inline="javascript">
       // Carga inicial del div
       cargarTabla();
-      cargarFormulario();
-
+      
       function cargarTabla() {
         $.ajax({
           type: 'POST',
@@ -60,8 +62,8 @@
           type: 'POST',
           url: "/NuevoUsuario",  // Ruta del metodo del controlador en Spring Boot
           success: function (response) {
-
-            $("#FormularioUser").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+            $("#FormularioUser").html(response);
+            $('#collapseFormulario')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         });
       }

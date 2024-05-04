@@ -31,7 +31,7 @@ public class ControlUsuarioController {
     if (request.getSession().getAttribute("userLog") != null) {
       return "/control/ventana";
     } else {
-      return "login";
+      return "expiracion";
     }
   }
 

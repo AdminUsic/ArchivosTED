@@ -5,7 +5,8 @@
                 <div class="tab-pane active documents documents-panel col-md-8">
                     <div class="document " style="background-color: rgb(227, 172, 62);" th:each="carp:${ListCarpetas}"
                         th:if="${carp.estado!='X'}">
-                        <div class="dropdown" >
+                        <div class="dropdown" 
+                        th:if="${#lists.contains(permisos.![nombre], 'editar_carpeta') or #lists.contains(permisos.![nombre], 'eliminar_carpeta')}">
                             <a class="btn file-close dropdown-toggle position-absolute top-0 end-0 m-2" type="button"
                                 data-toggle="dropdown">
                                 <i class='fas fa-ellipsis-v'></i>
@@ -13,16 +14,22 @@
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" type="button" data-mdb-toggle="modal"
                                     data-mdb-target="#FormModCarpModal"
-                                    th:attr="onclick='cargarModFormularioModal(\'' + ${carp.id_carpeta} + '\')'">Editar</a>
+                                    th:if="${#lists.contains(permisos.![nombre], 'editar_carpeta')}"
+                                    th:attr="onclick='cargarModFormularioModal(\'' + ${carp.id_carpeta} + '\')'">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    <small>Editar Carpeta</small></a>
                                 <a class="dropdown-item" type="button"
-                                    th:attr="onclick='EliminarRegistroIco(\'' + ${carp.id_carpeta} + '\')'">Eliminar</a>
+                                    th:if="${#lists.contains(permisos.![nombre], 'eliminar_carpeta')}"
+                                    th:attr="onclick='EliminarRegistroIco(\'' + ${carp.id_carpeta} + '\')'">
+                                    <i class="fas fa-trash"></i><small> Eliminar Carpeta</small></a>
                             </div>
                         </div>
                         <div class="document-body">
                             <i>
-                                <a type="button" data-mdb-toggle="modal" data-mdb-target="#carpetaModal" style="padding: 10px;" 
-                                    class="bg-white" th:attr="onclick='AbrirCarpeta(\'' + ${carp.id_carpeta} + '\')'">
-                                    <img src="../../static/logo/logoCabezera.png" class="img-fluid mb-2" 
+                                <a type="button" data-mdb-toggle="modal" data-mdb-target="#carpetaModal"
+                                    style="padding: 10px;" class="bg-white"
+                                    th:attr="onclick='AbrirCarpeta(\'' + ${carp.id_carpeta} + '\')'">
+                                    <img src="../../static/logo/logoCabezera.png" class="img-fluid mb-2"
                                         alt="Ver Archivo?" />
                                 </a>
                             </i>

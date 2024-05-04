@@ -1,73 +1,66 @@
-<div class="container-fluid">
+<div class="container-fluid" style="width: 100%; height: 100%;">
   <!-- /.card -->
   <!-- Horizontal Form -->
-  <div class="card card-info">
-    <div class="card-header">
-      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Usuario' : 'Registrar Usuario'"></h2>
-    </div>
-    <!-- /.card-header -->
-    <!-- form start -->
-    <form class="form-horizontal" id="FormularioRegistrarUser" method="POST"
-      th:action="${edit} ?@{/ModUsuarioG} : @{/RegistrarUsuario}" enctype="multipart/form-data">
-      <div class="card-body">
-        <div th:if="${edit=='true'}">
-          <input type="hidden" th:field="${usuario.sesion}">
-          <input type="hidden" th:field="${usuario.id_usuario}">
-        </div>
-        <div class="row">
-          <div th:class="${edit}? 'col-sm-6' : ''">
-            <!-- text input -->
-            <div class="form-group form-outline">
-              <input type="text" th:field="${usuario.nombre_user}" class="form-control"
-                placeholder="Introdusca un nombre" required>
-              <label class="form-label">Nombre Usuario</label>
-            </div>
-            <div class="form-group form-outline">
-              <input type="text" th:field="${usuario.contraseña}" class="form-control"
-                placeholder="Introdusca una contraseña" required>
-              <label class="form-label">Contraseña</label>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Asignar Permisos</label>
-              <select class="select-field-Multiple" style="width: 100%;" th:field="${usuario.permisos}" id="selectRol"
-                multiple>
-                <option th:each="permiso: ${permisos}" th:text="${permiso.nombre}" th:value="${permiso.id_permiso}"
-                  th:selected="${permiso == usuario.permisos}">
-                </option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Persona</label>
-              <select class="select-field" style="width: 100%;" th:field="${usuario.persona}" id="personaSelect">
-                <option th:value="${edit} ? ${usuario.persona.id_persona} : ''"
-                  th:text="${edit} ? ${usuario.persona.nombre} : 'Seleccionar'" selected></option>
-                <option th:each="persona: ${personas}"
-                  th:text="${persona.nombre}+' '+${persona.apellido}+' - '+${persona.ci}"
-                  th:value="${persona.id_persona}"
-                  th:if="${persona.usuario==null and persona.cargo != null and persona.unidad != null and persona.roles != null}">
-                </option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Adjuntar Foto</label>
-              <input type="file" class="custom-file-input" id="fotoFormU" name="foto" accept=".jpg,.jpeg,.png,.bmp">
-              <div id="alertaFotoPerfil"></div>
-            </div>
-          </div>
-          <div th:class="${edit}? 'col-sm-6' : ''">
-            <div id="contenedorElementosFoto"></div>
-          </div>
-        </div>
-      </div>
-      <!-- /.card-body -->
-      <div class="card-footer" style="background-color: white;">
-        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
-        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
-          class="btn btn-default float-right">Cancelar</a>
-      </div>
-      <!-- /.card-footer -->
-    </form>
+  <div class="modal-header ">
+    <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Usuario' : 'Registrar Usuario'"></h2>
+    <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal" id="cerrarVentanaFormulario">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
+  <form class="form-horizontal" id="FormularioRegistrarUser" method="POST"
+    th:action="${edit} ?@{/ModUsuarioG} : @{/RegistrarUsuario}" enctype="multipart/form-data">
+    <input type="hidden" th:field="${usuario.sesion}" th:if="${edit=='true'}">
+    <input type="hidden" th:field="${usuario.id_usuario}" th:if="${edit=='true'}">
+    <div class="modal-body">
+      <div class="row">
+        <div th:class="${edit}? 'col-sm-6' : ''">
+          <!-- text input -->
+          <div class="form-group form-outline">
+            <input type="text" th:field="${usuario.nombre_user}" class="form-control" placeholder="Introdusca un nombre"
+              required>
+            <label class="form-label">Nombre Usuario</label>
+          </div>
+          <div class="form-group form-outline">
+            <input type="text" th:field="${usuario.contraseña}" class="form-control"
+              placeholder="Introdusca una contraseña" required>
+            <label class="form-label">Contraseña</label>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Asignar Permisos</label>
+            <select class="select-field-Multiple" style="width: 100%;" th:field="${usuario.permisos}" id="selectRol"
+              multiple>
+              <option th:each="permiso: ${permisos}" th:text="${permiso.nombre}" th:value="${permiso.id_permiso}"
+                th:selected="${permiso == usuario.permisos}">
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Persona</label>
+            <select class="select-field" style="width: 100%;" th:field="${usuario.persona}" id="personaSelect">
+              <option th:value="${edit} ? ${usuario.persona.id_persona} : ''"
+                th:text="${edit} ? ${usuario.persona.nombre}+' '+${usuario.persona.apellido}+' - '+${usuario.persona.ci} : 'Seleccionar'" selected></option>
+              <option th:each="persona: ${personas}"
+                th:text="${persona.nombre}+' '+${persona.apellido}+' - '+${persona.ci}" th:value="${persona.id_persona}"
+                th:if="${persona.usuario==null and persona.cargo != null and persona.unidad != null and persona.roles != null}">
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Adjuntar Foto</label>
+            <input type="file" class="custom-file-input" id="fotoFormU" name="foto" accept=".jpg,.jpeg,.png,.bmp">
+            <div id="alertaFotoPerfil"></div>
+          </div>
+        </div>
+        <div th:class="${edit}? 'col-sm-6' : ''">
+          <div id="contenedorElementosFoto"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+      <a type="button" aria-label="Cerrar" data-mdb-toggle="modal" class="btn btn-default float-right">Cancelar</a>
+    </div>
+  </form>
   <!-- /.card -->
   <script>
     $(document).ready(function () {
@@ -76,7 +69,8 @@
       });
       $('.select-field-Multiple').select2({
         theme: 'bootstrap-5',
-        placeholder: 'Seleccione un o mas opciones'
+        placeholder: 'Seleccione un o mas opciones',
+        tags: true
       });
 
       // METODO AJAX PARA PROCESAR EL ENVIO
@@ -115,6 +109,7 @@
                 }
                 cargarFormulario();
                 cargarTabla();
+                $('#cerrarVentanaFormulario').click();
                 Swal.fire(
                   'Registrado!',
                   'Los datos del Registro se han Modificado Correctamente.',
@@ -124,6 +119,7 @@
               } else {
                 cargarFormulario();
                 cargarTabla();
+                $('#cerrarVentanaFormulario').click();
                 Swal.fire(
                   'Registrado!',
                   'Los datos se han Registrado Correctamente.',
@@ -218,3 +214,32 @@
     });
   </script>
 </div>
+<style>
+  .select2.select2-container .select2-selection--multiple .select2-selection__choice {
+    background-color: #FBA107;
+    border: 1px solid #494949;
+    color: #ffffff;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin: 4px 4px 0 0;
+    padding: 0 6px 0 22px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 16px;
+    position: relative;
+  }
+
+  .select2.select2-container .select2-selection--multiple .select2-selection__choice .select2-selection__choice__remove {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 22px;
+    width: 22px;
+    margin: 0;
+    text-align: center;
+    color: #ff331c;
+    font-weight: bold;
+    font-size: 16px;
+  }
+</style>

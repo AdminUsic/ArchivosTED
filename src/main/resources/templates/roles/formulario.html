@@ -1,51 +1,49 @@
 <div class="container-fluid">
   <!-- /.card -->
   <!-- Horizontal Form -->
-  <div class="card card-info">
-    <div class="card-header">
-      <h2 class="m-0 font-weight-bold card-title"
-        th:text="${edit}? 'Modificar Volumen/Tomo' : 'Registrar Volumen/Tomo'"></h2>
-    </div>
-    <!-- /.card-header -->
-    <!-- form start -->
-    <form class="form-horizontal" id="FormularioRegistrarRol" method="POST"
-      th:action="${edit} ?@{/ModRolG} : @{/GuardarRegistroRol}">
-      <div class="card-body">
-        <div th:if="${edit=='true'}">
-          <input type="hidden" th:field="${rol.id_rol}">
-          <input type="hidden" th:value="${edit}" id="editar">
-          <input type="hidden" id="numeroFila">
-        </div>
-        <!--<div id="numeroFila"></div>-->
-        <div class="row">
-          <div class="col-sm-6">
-            <!-- text input -->
-            <div class="form-group form-outline">
-              <input type="text" th:field="${rol.nombre}" class="form-control" required>
-              <label class="form-label">Rol</label>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <!-- text input -->
-            <label class="form-label">Menus Disponibles</label>
-            <select class="select-field-Multiple" style="width: 100%;" th:field="${rol.menus}" id="selectMenu" multiple>
-              <option th:each="menu: ${menus}" th:text="${menu.nombre}" th:value="${menu.id_menu}"
-                th:selected="${menu == rol.menus}">
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- /.card-body -->
-      <div class="card-footer" style="background-color: white;">
-        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"
-          id="submit"></button>
-        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cargarFormulario()"
-          class="btn btn-default float-right">Cancelar</a>
-      </div>
-      <!-- /.card-footer -->
-    </form>
+  <div class="modal-header ">
+    <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Rol' : 'Registrar Rol'"></h2>
+    <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal" id="cerrarVentanaFormulario">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
+  <!-- /.card-header -->
+  <!-- form start -->
+  <form class="form-horizontal" id="FormularioRegistrarRol" method="POST"
+    th:action="${edit} ?@{/ModRolG} : @{/GuardarRegistroRol}">
+    <div class="modal-body">
+      <div th:if="${edit=='true'}">
+        <input type="hidden" th:field="${rol.id_rol}">
+        <input type="hidden" th:value="${edit}" id="editar">
+        <input type="hidden" id="numeroFila">
+      </div>
+      <!--<div id="numeroFila"></div>-->
+      <div class="row">
+        <div class="col-sm-6">
+          <!-- text input -->
+          <div class="form-group form-outline">
+            <input type="text" th:field="${rol.nombre}" class="form-control" required>
+            <label class="form-label">Rol</label>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <!-- text input -->
+          <label class="form-label">Menus Disponibles</label>
+          <select class="select-field-Multiple" style="width: 100%;" th:field="${rol.menus}" id="selectMenu" multiple>
+            <option th:each="menu: ${menus}" th:text="${menu.nombre}" th:value="${menu.id_menu}"
+              th:selected="${menu == rol.menus}">
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- /.card-body -->
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+      <a type="button" aria-label="Cerrar" data-mdb-toggle="modal" class="btn btn-default float-right">Cancelar</a>
+    </div>
+    <!-- /.card-footer -->
+  </form>
 
 </div>
 <!-- /.card -->
@@ -86,6 +84,7 @@
             cargarTabla();
             var div = document.getElementById("dataTable");
             div.scrollIntoView({ behavior: 'smooth' });
+            $('#cerrarVentanaFormulario').click();
             Swal.fire(
               'Registrado!',
               mensaje + '.',

@@ -1,0 +1,18 @@
+<div class="error-page">
+  <h2 class="headline text-warning"> <img src="../static/iconos/temporary-512.webp" alt="" style="height:200px;"></h2>
+  <div class="error-content">
+    <h3><i class="fas fa-exclamation-triangle text-warning"></i> ¡Atención! Sesión cerrada por inactividad</h3>
+    <p>
+      La sesión se ha cerrado debido a inactividad. Por razones de seguridad, el sistema ha deshabilitado las funciones automáticamente. Para volver a utilizar el sistema, por favor inicie sesión nuevamente.
+    </p>
+    <button type="button" class="btn btn-warning" style="width: 100%;" onclick="iniciarNuevamente()">
+      <i class="fa-solid fa-rotate"></i>
+      <span>Iniciar Sesión</span>
+    </button>
+  </div>
+</div>
+<script>
+  function iniciarNuevamente() {
+    location.reload();
+  }
+</script>

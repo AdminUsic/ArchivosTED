@@ -1,8 +1,14 @@
 <section class="content">
     <div class="container-fluid">
         <div class="card card-info">
-            <div class="card-header py-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold card-title">Registros de Tipos de Archivos</h6>
+                <button type="button" class="btn btn-success ml-auto px-4 py-2" data-mdb-toggle="modal"
+                    data-mdb-target="#formularioRegistroModal" onclick="cargarFormulario();"
+                    th:if="${#lists.contains(permisos.![nombre], 'registrar_serieDocumental')}">
+                    <span class="mr-2">Registrar</span>
+                    <i class="fas fa-plus-circle"></i>
+                </button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -12,30 +18,45 @@
                                 <th style="width: 10px">#</th>
                                 <th>Serie Documental</th>
                                 <th>Sub Serie Documental</th>
-                                <th>Acciones</th>
+                                <th
+                                    th:if="${#lists.contains(permisos.![nombre], 'eliminar_serieDocumental') or #lists.contains(permisos.![nombre], 'editar_serieDocumental') or #lists.contains(permisos.![nombre], 'administrar_subSerieDocumental')}">
+                                    Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody">
-                            <tr th:each="serieD, rowStat:${seriesDocs}" th:if="${serieD.estado!='X' && serieD.seriePadre==null}">
+                            <tr th:each="serieD, rowStat:${seriesDocs}"
+                                th:if="${serieD.estado!='X' && serieD.seriePadre==null}">
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center" th:text="${serieD.nombre}"></td>
                                 <td class="text-center">
                                     <div class="list-group">
                                         <div th:if="${serieD.subSeries != null}">
                                             <div th:each="subserie: ${serieD.subSeries}">
-                                                <a class="list-group-item list-group-item-action" th:text="${subserie.nombre}"></a>
+                                                <a class="list-group-item list-group-item-action"
+                                                    th:text="${subserie.nombre}"></a>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center"
+                                    th:if="${#lists.contains(permisos.![nombre], 'eliminar_serieDocumental') or #lists.contains(permisos.![nombre], 'editar_serieDocumental') or #lists.contains(permisos.![nombre], 'administrar_subSerieDocumental')}">
                                     <div class="btn-group">
-                                        <a class="btn btn-success" type="button" data-toggle="modal" data-target="#modal_SubSerie" style="color: aliceblue;"
-                                            th:attr="onclick='cargarVentanaSubSeries(\'' + ${serieD.id_serie} + '\')'"><li class="fa-solid fa-plus"></li></a>
+                                        <a class="btn btn-success" type="button" data-toggle="modal"
+                                            data-target="#modal_SubSerie" style="color: aliceblue;"
+                                            th:attr="onclick='cargarVentanaSubSeries(\'' + ${serieD.id_serie} + '\')'">
+                                            <li class="fa-solid fa-plus"></li>
+                                        </a>
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"
-                                            th:attr="onclick='cargarModFormulario(\'' + ${serieD.id_serie} + '\')'"><li class="fas fa-pencil-alt"></li></a>
+                                            data-mdb-toggle="modal" data-mdb-target="#formularioRegistroModal"
+                                            th:attr="onclick='cargarModFormulario(\'' + ${serieD.id_serie} + '\')'"
+                                            th:if="${#lists.contains(permisos.![nombre], 'editar_serieDocumental')}">
+                                            <li class="fas fa-pencil-alt"></li>
+                                        </a>
                                         <a class="btn btn-danger" type="button" style="color: aliceblue;"
-                                            th:attr="onclick='EliminarRegistro(\'' + ${serieD.id_serie} + '\', \'' + ${serieD.nombre} + '\', \'' + ${serieD.subSeries.size} + '\')'"><li class="fa-solid fa-trash"></li></a>
+                                            th:if="${#lists.contains(permisos.![nombre], 'eliminar_serieDocumental')}"
+                                            th:attr="onclick='EliminarRegistro(\'' + ${serieD.id_serie} + '\', \'' + ${serieD.nombre} + '\', \'' + ${serieD.subSeries.size} + '\')'">
+                                            <li class="fa-solid fa-trash"></li>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -45,7 +66,9 @@
                                 <th style="width: 10px">#</th>
                                 <th>Serie Documental</th>
                                 <th>Sub Serie Documental</th>
-                                <th>Acciones</th>
+                                <th
+                                    th:if="${#lists.contains(permisos.![nombre], 'eliminar_serieDocumental') or #lists.contains(permisos.![nombre], 'editar_serieDocumental') or #lists.contains(permisos.![nombre], 'administrar_subSerieDocumental')}">
+                                    Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -61,3 +84,27 @@
         });
     </script>
 </section>
+<style>
+    /* Estilos CSS personalizados para el botón */
+    .btn-success {
+        background-color: #28a745;
+        /* Cambiar el color de fondo */
+        border-color: #28a745;
+        /* Cambiar el color del borde */
+        color: #fff;
+        /* Cambiar el color del texto */
+        transition: background-color 0.3s ease;
+        /* Agregar transición suave */
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        /* Cambiar el color de fondo al pasar el mouse */
+    }
+
+    /* Estilos para el icono de Font Awesome */
+    .btn-success .fas {
+        margin-left: 5px;
+        /* Ajustar el espacio entre el texto y el icono */
+    }
+</style>

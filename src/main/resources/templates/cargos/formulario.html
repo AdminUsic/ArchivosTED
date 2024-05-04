@@ -1,38 +1,34 @@
 <div class="container-fluid">
   <!-- /.card -->
   <!-- Horizontal Form -->
-  <div class="card card-info">
-    <div class="card-header">
-      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Cargo' : 'Registrar Cargo'"></h2>
-
-    </div>
-    <!-- /.card-header -->
-    <!-- form start -->
-    <form class="form-horizontal" id="FormularioRegistrarCargo" method="POST"
-      th:action="${edit} ?@{/ModCargoG} : @{/GuardarRegistroCargo}">
-      <div class="card-body">
-        <div th:if="${edit=='true'}">
-          <input type="hidden" th:field="${cargo.id_cargo}">
-        </div>
-        <div class="row">
-          <div class="col-sm-6">
-            <!-- text input -->
-            <div class="form-group form-outline">
-              <input type="text" th:field="${cargo.nombre}" class="form-control" placeholder="Nombre" required>
-              <label class="form-label">Nombre del Cargo</label>
-            </div>
+  <div class="modal-header ">
+    <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Cargo' : 'Registrar Cargo'"></h2>
+    <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal" id="cerrarVentanaFormulario">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <!-- form start -->
+  <form class="form-horizontal" id="FormularioRegistrarCargo" method="POST"
+    th:action="${edit} ?@{/ModCargoG} : @{/GuardarRegistroCargo}">
+    <div class="modal-body">
+      <div th:if="${edit=='true'}">
+        <input type="hidden" th:field="${cargo.id_cargo}">
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <!-- text input -->
+          <div class="form-group form-outline">
+            <input type="text" th:field="${cargo.nombre}" class="form-control" placeholder="Nombre" required>
+            <label class="form-label">Nombre del Cargo</label>
           </div>
         </div>
       </div>
-      <!-- /.card-body -->
-      <div class="card-footer" style="background-color: white;">
-        <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
-        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
-          class="btn btn-default float-right">Cancelar</a>
-      </div>
-      <!-- /.card-footer -->
-    </form>
-  </div>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
+      <a type="button" aria-label="Cerrar" data-mdb-toggle="modal" class="btn btn-default float-right">Cancelar</a>
+    </div>
+  </form>
   <!-- /.card -->
   <script>
     $(document).ready(function () {
@@ -56,6 +52,7 @@
                 'error'
               );
             } else if (mensaje === 'Se realizó el registro correctamente' || mensaje === 'Se guardaron los cambios correctamente') {
+              $('#cerrarVentanaFormulario').click();
               cargarFormulario();
               cargarTabla();
               var div = document.getElementById("dataTable");

@@ -13,17 +13,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.entity.Cargo;
+import com.example.demo.entity.Usuario;
 import com.example.demo.service.CargoService;
+import com.example.demo.service.UsuarioService;
 
 @Controller
 public class CargoController {
     @Autowired
     private CargoService cargoService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @GetMapping("/GARGOS")
     public String ventanaDocumentos(HttpServletRequest request, Model model) {
-
-        return "/cargos/registrar";
+        if (request.getSession().getAttribute("userLog") != null) {
+            return "/cargos/registrar";
+        } else {
+            return "expiracion";
+        }
     }
 
     @PostMapping(value = "/NuevoCargo")
@@ -35,6 +43,9 @@ public class CargoController {
     @PostMapping(value = "/RegistrosCargos")
     public String tablaRegistros(HttpServletRequest request, Model model) {
         model.addAttribute("cargos", cargoService.findAll());
+        Usuario user = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(user.getId_usuario());
+        model.addAttribute("permisos", userLog.getPermisos());
         return "/cargos/tablaRegistros";
     }
 

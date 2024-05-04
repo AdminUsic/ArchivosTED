@@ -35,14 +35,20 @@
   </div>
   <!-- Preloader -->
 
+  <div class="modal fade" id="formularioRegistroModal" aria-labelledby="formularioRegistroModal" tabindex="-1"
+    aria-hidden="true" data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" id="FormularioUser" style="overflow-y: auto;">
+      </div>
+    </div>
+  </div>
 
-  <div id="FormularioUser"></div>
   <div id="TablaUser"></div>
 
   <script th:inline="javascript">
     // Carga inicial del div
     cargarTabla();
-    cargarFormulario();
+    //cargarFormulario();
 
     function cargarTabla() {
       $.ajax({

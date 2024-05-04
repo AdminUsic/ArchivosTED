@@ -115,7 +115,12 @@ public class FormularioTransferController {
    public String FormTRANSFERENCIA(HttpServletRequest request, Model model) {
       // model.addAttribute("archivo", new Archivo());
       // model.addAttribute("listaArchivos", archivosData.findAll());
-      return "/FormularioTransferencias/registrar";
+
+      if (request.getSession().getAttribute("userLog") != null) {
+         return "/FormularioTransferencias/registrar";
+      } else {
+         return "expiracion";
+      }
    }
 
    @PostMapping(value = "/NuevoRegistroFormTRANSFERENCIA")
@@ -133,7 +138,8 @@ public class FormularioTransferController {
       Usuario usuario2 = usuarioService.findOne(usuario.getId_usuario());
       model.addAttribute("rolesUserLog", usuario2.getPersona().getRoles());
       model.addAttribute("FormulariosTransferencias", usuario2.getPersona().getFormularioTransferencias());
-      // model.addAttribute("usuariosArchivos", usuarioService.listaUsuarioPorNombreRol("ARCHIVOS"));
+      // model.addAttribute("usuariosArchivos",
+      // usuarioService.listaUsuarioPorNombreRol("ARCHIVOS"));
       Unidad unidad = unidadService.UnidadNombre("ARCHIVO Y BIBLIOTECA");
       model.addAttribute("usuariosArchivos", usuarioService.listaUsuarioPorUnidad(unidad.getId_unidad()));
       model.addAttribute("idUserLog", usuario2.getId_usuario());

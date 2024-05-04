@@ -1,8 +1,14 @@
 <section class="content">
     <div class="container-fluid">
         <div class="card card-info">
-            <div class="card-header py-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold card-title">Registros de Usuarios</h6>
+                <button type="button" class="btn btn-success ml-auto px-4 py-2" data-mdb-toggle="modal"
+                    data-mdb-target="#formularioRegistroModal" onclick="cargarFormulario();"
+                    th:if="${#lists.contains(permisos.![nombre], 'registrar_usuario')}">
+                    <span class="mr-2">Registrar</span>
+                    <i class="fa-solid fa-user-plus"></i>
+                </button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -15,30 +21,38 @@
                                 <th>C.I.</th>
                                 <th>Nombre de Usuario</th>
                                 <th>Contraseña</th>
-                                <th>Acciones</th>
+                                <th th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody">
                             <tr th:each="user, rowStat:${usuarios}" th:if="${user.estado!='X'}">
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center">
-                                    
-                                        <div class="image">
-                                            <img th:src="@{'/verFoto/' + ${user.id_usuario}}" 
-                                                class="img-circle elevation-1" alt="User Image" width="50px" height="50px">
-                                        </div>
-                                    
+
+                                    <div class="image">
+                                        <img th:src="@{'/verFoto/' + ${user.id_usuario}}" class="img-circle elevation-1"
+                                            alt="User Image" width="50px" height="50px">
+                                    </div>
+
                                 </td>
-                                <td class="text-center" th:text="${user.persona.nombre}+' '+${user.persona.apellido}"></td>
+                                <td class="text-center" th:text="${user.persona.nombre}+' '+${user.persona.apellido}">
+                                </td>
                                 <td class="text-center" th:text="${user.persona.ci}"></td>
                                 <td class="text-center" th:text="${user.nombre_user}"></td>
                                 <td class="text-center" th:text="${user['contraseña']}"></td>
-                                <td class="text-center">
+                                <td class="text-center" th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">
                                     <div class="btn-group">
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"
-                                            th:attr="onclick='cargarModFormulario(\'' + ${user.id_usuario} + '\')'"><li class="fas fa-pencil-alt "></li></a>
+                                            data-mdb-toggle="modal" data-mdb-target="#formularioRegistroModal"
+                                            th:if="${#lists.contains(permisos.![nombre], 'editar_usuario')}"
+                                            th:attr="onclick='cargarModFormulario(\'' + ${user.id_usuario} + '\')'">
+                                            <li class="fas fa-pencil-alt "></li>
+                                        </a>
                                         <a class="btn btn-danger" type="button" style="color: aliceblue;"
-                                            th:attr="onclick='EliminarRegistro(\'' + ${user.id_usuario} + '\', \'' + ${user.nombre_user} + '\', \'' + ${user.persona.nombre}+' '+${user.persona.apellido} + '\')'"><li class="fa-solid fa-trash "></li></a>
+                                            th:if="${#lists.contains(permisos.![nombre], 'eliminar_usuario')}"
+                                            th:attr="onclick='EliminarRegistro(\'' + ${user.id_usuario} + '\', \'' + ${user.nombre_user} + '\', \'' + ${user.persona.nombre}+' '+${user.persona.apellido} + '\')'">
+                                            <li class="fa-solid fa-trash "></li>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -51,7 +65,7 @@
                                 <th>C.I.</th>
                                 <th>Nombre de Usuario</th>
                                 <th>Contraseña</th>
-                                <th>Acciones</th>
+                                <th th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -67,3 +81,27 @@
         });
     </script>
 </section>
+<style>
+    /* Estilos CSS personalizados para el botón */
+    .btn-success {
+        background-color: #28a745;
+        /* Cambiar el color de fondo */
+        border-color: #28a745;
+        /* Cambiar el color del borde */
+        color: #fff;
+        /* Cambiar el color del texto */
+        transition: background-color 0.3s ease;
+        /* Agregar transición suave */
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        /* Cambiar el color de fondo al pasar el mouse */
+    }
+
+    /* Estilos para el icono de Font Awesome */
+    .btn-success .fas {
+        margin-left: 5px;
+        /* Ajustar el espacio entre el texto y el icono */
+    }
+</style>

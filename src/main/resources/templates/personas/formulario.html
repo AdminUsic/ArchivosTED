@@ -1,16 +1,17 @@
 <div class="container-fluid">
   <!-- /.card -->
   <!-- Horizontal Form -->
-  <div class="card card-info">
-    <div class="card-header">
-      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Usuario' : 'Registrar Usuario'"></h2>
-
+    <div class="modal-header ">
+      <h2 class="m-0 font-weight-bold card-title" th:text="${edit}? 'Modificar Persona' : 'Registrar Persona'"></h2>
+      <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal" id="cerrarVentanaFormulario">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
     <!-- /.card-header -->
     <!-- form start -->
     <form class="form-horizontal" id="FormularioRegistrarPerson" method="POST"
       th:action="${edit} ?@{/ModPersonaG} : @{/RegistrarPersona}">
-      <div class="card-body">
+      <div class="modal-body">
         <div th:if="${edit=='true'}">
           <input type="hidden" th:field="${persona.id_persona}">
         </div>
@@ -85,15 +86,13 @@
         </div>
       </div>
       <!-- /.card-body -->
-      <div class="card-footer" style="background-color: white;">
+      <div class="modal-footer">
         <button type="submit" class="btn btn-success" th:text="${edit}? 'Guardar Cambios' : 'Registrar'"></button>
-        <a th:each="modificar: ${edit}" th:if="${modificar != null}" type="button" onclick="cancelarMod()"
-          class="btn btn-default float-right">Cancelar</a>
+        <a type="button" aria-label="Cerrar" data-mdb-toggle="modal" class="btn btn-default float-right">Cancelar</a>
       </div>
       <!-- /.card-footer -->
     </form>
 
-  </div>
   <!-- /.card -->
 </div>
 <script>

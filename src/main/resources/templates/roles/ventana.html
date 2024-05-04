@@ -15,13 +15,19 @@
       </div><!-- /.container-fluid -->
     </div>
 
-    <div id="FormularioRol"></div>
+    <div class="modal fade" id="formularioRegistroModal" aria-labelledby="formularioRegistroModal" tabindex="-1" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="FormularioRol" style="overflow-y: auto;">
+        </div>
+      </div>
+    </div>
     <div id="TablaRol"></div>
 
     <script th:inline="javascript">
       // Carga inicial del div
       cargarTabla();
-      cargarFormulario();
+      //cargarFormulario();
 
       function cargarTabla() {
         $.ajax({

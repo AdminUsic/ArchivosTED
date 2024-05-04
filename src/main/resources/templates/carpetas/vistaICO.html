@@ -11,7 +11,8 @@
                         <ol class=" ">
                             <div class="btn-group float-sm-right">
                                 <a class="btn btn-success" type="button" data-mdb-toggle="modal"
-                                    data-mdb-target="#FormModCarpModal" onclick="cargarFormularioModal()">
+                                    data-mdb-target="#FormModCarpModal" onclick="cargarFormularioModal()"
+                                    th:if="${#lists.contains(permisos.![nombre], 'registrar_carpeta')}">
                                     <i class="fa-solid fa-folder-plus"></i> Nueva Carpeta
                                 </a>
                             </div>
