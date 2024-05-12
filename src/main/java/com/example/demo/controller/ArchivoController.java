@@ -118,12 +118,16 @@ public class ArchivoController {
 
    @PostMapping(value = "/NuevoRegistroArchivo")
    public String NuevoRegistroArchivo(HttpServletRequest request, Model model) {
-      model.addAttribute("archivo", new Archivo());
-      model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
-      model.addAttribute("carpetas", carpetaService.findAll());
-      model.addAttribute("personas", personaService.findAll());
-      model.addAttribute("seccionesDocumental", unidadService.findAll());
-      return "/archivos/formulario";
+      if (request.getSession().getAttribute("userLog") != null) {
+         model.addAttribute("archivo", new Archivo());
+         model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
+         model.addAttribute("carpetas", carpetaService.findAll());
+         model.addAttribute("personas", personaService.findAll());
+         model.addAttribute("seccionesDocumental", unidadService.findAll());
+         return "/archivos/formulario";
+      } else {
+         return "expiracion";
+      }
    }
 
    @PostMapping(value = "/RegistrosArchivos")
@@ -155,188 +159,61 @@ public class ArchivoController {
       return ResponseEntity.ok(subSecciones);
    }
 
-   // @PostMapping("/GuardarRegistroArchivo")
-   // public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest
-   // request, Model model,
-   // @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
-   // @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
-   // System.out.println("METODO REGISTRAR ARCHIVO");
-   // Usuario us = (Usuario) request.getSession().getAttribute("userLog");
-   // Usuario userLog = usuarioService.findOne(us.getId_usuario());
-   // try {
-   // byte[] contenido = archivoPdf.getBytes();
-   // System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
-
-   // try {
-   // byte[] encryptedBytes = utilidadService.encrypt(contenido);
-   // // Convertir los bytes encriptados a un String codificado en base64
-   // archivo.setContenido(encryptedBytes);
-   // System.out.println("Encriptacion Completa");
-   // } catch (Exception e) {
-   // System.out.println("Error en la encriptacion: " + e);
-   // }
-   // if (id_carpeta != null) {
-   // Carpeta carpeta = carpetaService.findOne(id_carpeta);
-   // archivo.setCarpeta(carpeta);
-   // }
-
-   // PDDocument document = PDDocument.load(contenido);
-   // archivo.setCantidadHojas(document.getNumberOfPages());
-   // // archivo.setFechaEmision(fechaEmision);
-   // archivo.setFechaRegistro(new Date());
-   // archivo.setHoraRegistro(new Date());
-   // archivo.setEstado("A");
-   // String nombFile = archivoPdf.getOriginalFilename();
-   // // String[] extension = nombFile.split(".");
-
-   // // archivo.setExtension(extension[extension.length - 1]);
-   // String[] extension = nombFile.split("\\.");
-   // archivo.setExtension(extension[extension.length - 1]);
-
-   // document.close();
-   // archivoService.save(archivo);
-   // Control control = new Control();
-   // control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
-   // control.setDescripcion("Realizó un nuevo " +
-   // control.getTipoControl().getNombre()
-   // + " de una nueva documental "+archivo.getNombre());
-   // control.setUsuario(userLog);
-   // control.setFecha(new Date());
-   // control.setHora(new Date());
-   // controService.save(control);
-   // return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
-   // } catch (IOException e) {
-   // System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
-   // return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
-   // }
-   // }
-   // @PostMapping("/GuardarRegistroArchivo")
-   // public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest
-   // request, Model model,
-   // @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
-   // @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
-   // System.out.println("METODO REGISTRAR ARCHIVO");
-   // Usuario us = (Usuario) request.getSession().getAttribute("userLog");
-   // Usuario userLog = usuarioService.findOne(us.getId_usuario());
-   // try {
-   // byte[] contenido = archivoPdf.getBytes();
-   // System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
-
-   // try {
-   // byte[] encryptedBytes = utilidadService.encrypt(contenido);
-   // // Convertir los bytes encriptados a un String codificado en base64
-   // archivo.setContenido(encryptedBytes);
-   // System.out.println("Encriptacion Completa");
-   // } catch (Exception e) {
-   // System.out.println("Error en la encriptacion: " + e);
-   // }
-   // if (id_carpeta != null) {
-   // Carpeta carpeta = carpetaService.findOne(id_carpeta);
-   // archivo.setCarpeta(carpeta);
-   // }
-
-   // PDDocument document = PDDocument.load(contenido);
-   // archivo.setCantidadHojas(document.getNumberOfPages());
-   // // archivo.setFechaEmision(fechaEmision);
-   // archivo.setFechaRegistro(new Date());
-   // archivo.setHoraRegistro(new Date());
-   // archivo.setEstado("A");
-   // String nombFile = archivoPdf.getOriginalFilename();
-   // archivo.setExtension(getFileExtension(nombFile));
-
-   // // Guardar la primera página del PDF como imagen WebP
-   // BufferedImage firstPageImage = renderFirstPageAsImage(document);
-   // ByteArrayOutputStream baos = new ByteArrayOutputStream();
-   // ImageIO.write(firstPageImage, "webp", baos);
-   // byte[] icono = baos.toByteArray();
-   // archivo.setIcono(icono);
-
-   // document.close();
-   // archivoService.save(archivo);
-   // Control control = new Control();
-   // control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
-   // control.setDescripcion("Realizó un nuevo " +
-   // control.getTipoControl().getNombre()
-   // + " de una nueva documental "+archivo.getNombre());
-   // control.setUsuario(userLog);
-   // control.setFecha(new Date());
-   // control.setHora(new Date());
-   // controService.save(control);
-   // return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
-   // } catch (IOException e) {
-   // System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
-   // return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
-   // }
-   // }
    @PostMapping("/GuardarRegistroArchivo")
    public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest request, Model model,
          @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
          @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
-      System.out.println("METODO REGISTRAR ARCHIVO");
-      Usuario us = (Usuario) request.getSession().getAttribute("userLog");
-      Usuario userLog = usuarioService.findOne(us.getId_usuario());
-      try {
-         byte[] contenido = archivoPdf.getBytes();
-         System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
-
+      if (request.getSession().getAttribute("userLog") != null) {
+         Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+         Usuario userLog = usuarioService.findOne(us.getId_usuario());
          try {
-            byte[] encryptedBytes = utilidadService.encrypt(contenido);
-            // Convertir los bytes encriptados a un String codificado en base64
-            archivo.setContenido(encryptedBytes);
-            System.out.println("Encriptacion Completa");
-         } catch (Exception e) {
-            System.out.println("Error en la encriptacion: " + e);
+            byte[] contenido = archivoPdf.getBytes();
+            System.out.println("Tamaño del archivo: " + contenido.length);
+
+            try {
+               byte[] encryptedBytes = utilidadService.encrypt(contenido);
+               archivo.setContenido(encryptedBytes);
+            } catch (Exception e) {
+               System.out.println("Error en la encriptacion: " + e);
+            }
+            if (id_carpeta != null) {
+               Carpeta carpeta = carpetaService.findOne(id_carpeta);
+               archivo.setCarpeta(carpeta);
+            }
+
+            PDDocument document = PDDocument.load(contenido);
+            archivo.setCantidadHojas(document.getNumberOfPages());
+            archivo.setFechaRegistro(new Date());
+            archivo.setHoraRegistro(new Date());
+            archivo.setEstado("A");
+            String nombFile = archivoPdf.getOriginalFilename();
+            archivo.setExtension(getFileExtension(nombFile));
+
+            try {
+               archivo.setIcono(utilidadService.extraerIconPdf(archivoPdf));
+            } catch (Exception e) {
+               // TODO Auto-generated catch block
+               e.printStackTrace();
+            }
+
+            document.close();
+            archivoService.save(archivo);
+            Control control = new Control();
+            control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+            control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+                  + " de una nueva documental " + archivo.getNombre());
+            control.setUsuario(userLog);
+            control.setFecha(new Date());
+            control.setHora(new Date());
+            controService.save(control);
+            return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
+         } catch (IOException e) {
+            System.out.println("ERROR REGISTRAR ARCHIVO: " + e.getMessage());
+            return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
          }
-         if (id_carpeta != null) {
-            Carpeta carpeta = carpetaService.findOne(id_carpeta);
-            archivo.setCarpeta(carpeta);
-         }
-
-         PDDocument document = PDDocument.load(contenido);
-         archivo.setCantidadHojas(document.getNumberOfPages());
-         // archivo.setFechaEmision(fechaEmision);
-         archivo.setFechaRegistro(new Date());
-         archivo.setHoraRegistro(new Date());
-         archivo.setEstado("A");
-         String nombFile = archivoPdf.getOriginalFilename();
-         archivo.setExtension(getFileExtension(nombFile));
-
-         // Guardar la primera página del PDF como imagen WebP
-         BufferedImage firstPageImage = renderFirstPageAsImage(document);
-
-         // Recortar la imagen para guardar solo la mitad superior
-         BufferedImage upperHalfImage = cropUpperHalfImage(firstPageImage);
-
-         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         ImageIO.write(upperHalfImage, "webp", baos);
-         byte[] icono = baos.toByteArray();
-         archivo.setIcono(icono);
-
-         document.close();
-         archivoService.save(archivo);
-         Control control = new Control();
-         control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
-         control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
-               + " de una nueva documental " + archivo.getNombre());
-         control.setUsuario(userLog);
-         control.setFecha(new Date());
-         control.setHora(new Date());
-         controService.save(control);
-         return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
-      } catch (IOException e) {
-         System.out.println("ERROR REGISTRAR ARCHIVO: " + e);
-         return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
+      } else {
+         return ResponseEntity.ok("Se ha cerrado la sesion por inactividad.");
       }
-   }
-
-   private BufferedImage cropUpperHalfImage(BufferedImage image) {
-      int width = image.getWidth();
-      int height = image.getHeight();
-
-      // Recortar la imagen para guardar solo la mitad superior
-      BufferedImage upperHalfImage = image.getSubimage(0, 0, width, height / 2);
-
-      return upperHalfImage;
    }
 
    private String getFileExtension(String filename) {
@@ -347,46 +224,48 @@ public class ArchivoController {
       return "";
    }
 
-   // private BufferedImage renderFirstPageAsImage(PDDocument document) throws
-   // IOException {
-   // PDFRenderer renderer = new PDFRenderer(document);
-   // return renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus
-   // necesidades
-   // }
-
    @GetMapping(value = "/ModArchivo/{id_archivo}")
    public String EditarArchivo(HttpServletRequest request, Model model,
          @PathVariable("id_archivo") Long id_archivo) {
-      System.out.println("EDITAR ARCHIVOS");
-      model.addAttribute("archivo", archivoService.findOne(id_archivo));
-      model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
-      model.addAttribute("carpetas", carpetaService.findAll());
-      model.addAttribute("personas", personaService.findAll());
-      model.addAttribute("seccionesDocumental", unidadService.findAll());
-      model.addAttribute("edit", "true");
-      return "/archivos/formulario";
+      if (request.getSession().getAttribute("userLog") != null) {
+         model.addAttribute("archivo", archivoService.findOne(id_archivo));
+         model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
+         model.addAttribute("carpetas", carpetaService.findAll());
+         model.addAttribute("personas", personaService.findAll());
+         model.addAttribute("seccionesDocumental", unidadService.findAll());
+         model.addAttribute("edit", "true");
+         return "/archivos/formulario";
+      } else {
+         return "expiracion";
+      }
    }
 
    @GetMapping(value = "/ModArchivoModal/{id_archivo}")
    public String EditarArchivoModal(HttpServletRequest request, Model model,
          @PathVariable("id_archivo") Long id_archivo) {
-      System.out.println("EDITAR ARCHIVOS");
-      model.addAttribute("archivo", archivoService.findOne(id_archivo));
-      model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
-      model.addAttribute("carpetas", carpetaService.findAll());
-      model.addAttribute("personas", personaService.findAll());
-      model.addAttribute("seccionesDocumental", unidadService.findAll());
-      model.addAttribute("edit", "true");
-      return "/archivos/formularioModal";
+      if (request.getSession().getAttribute("userLog") != null) {
+         model.addAttribute("archivo", archivoService.findOne(id_archivo));
+         model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
+         model.addAttribute("carpetas", carpetaService.findAll());
+         model.addAttribute("personas", personaService.findAll());
+         model.addAttribute("seccionesDocumental", unidadService.findAll());
+         model.addAttribute("edit", "true");
+         return "/archivos/formularioModal";
+      } else {
+         return "expiracion";
+      }
    }
 
    @GetMapping(value = "/ContenidoArchivo/{id_archivo}")
    public String ContenidoArchivo(HttpServletRequest request, Model model,
          @PathVariable("id_archivo") Long id_archivo) {
-      System.out.println("EDITAR ARCHIVOS");
-      model.addAttribute("archivo", archivoService.findOne(id_archivo));
-      model.addAttribute("edit", "true");
-      return "/archivos/archivo";
+      if (request.getSession().getAttribute("userLog") != null) {
+         model.addAttribute("archivo", archivoService.findOne(id_archivo));
+         model.addAttribute("edit", "true");
+         return "/archivos/archivo";
+      } else {
+         return "expiracion";
+      }
    }
 
    @PostMapping(value = "/ModArchivoG")
@@ -394,20 +273,21 @@ public class ArchivoController {
          @RequestParam(value = "PDF", required = false) MultipartFile archivoPdf, Archivo archivo,
          @RequestParam(value = "id_carpeta", required = false) Long id_carpeta,
          @RequestParam("id_archivo") Long id_archivo) {
-      System.out.println("METODO MODIFICAR ARCHIVO");
       Usuario us = (Usuario) request.getSession().getAttribute("userLog");
       Usuario userLog = usuarioService.findOne(us.getId_usuario());
       Archivo archivoAntes = archivoService.findOne(id_archivo);
       try {
          byte[] contenido = archivoPdf.getBytes();
-         System.out.println("Tamaño del arreglo de bytes: " + contenido.length);
+
          if (archivoPdf.isEmpty()) {
             archivo.setContenido(archivoAntes.getContenido());
             archivo.setCantidadHojas(archivoAntes.getCantidadHojas());
+            archivo.setIcono(archivoAntes.getIcono());
          } else if (!archivoPdf.isEmpty()) {
             try {
                // archivo.setContenido(encrypt(contenido, "Lanza12310099812"));
                archivo.setContenido(utilidadService.encrypt(contenido));
+               archivo.setIcono(utilidadService.extraerIconPdf(archivoPdf));
             } catch (Exception e) {
                System.out.println("ERROR EN LA ENCRIPTACION DEL ARCHIVO MODIFICADO: " + e);
             }
@@ -445,26 +325,26 @@ public class ArchivoController {
 
    @PostMapping(value = "/EliminarRegistroArchivo/{id_archivo}")
    @ResponseBody
-   public void EliminarRegistroArchivo(HttpServletRequest request, Model model,
+   public ResponseEntity<String> EliminarRegistroArchivo(HttpServletRequest request, Model model,
          @PathVariable("id_archivo") Long id_archivo) {
-      System.out.println("Eliminar ARCHIVOS");
-      Usuario us = (Usuario) request.getSession().getAttribute("userLog");
-      Usuario userLog = usuarioService.findOne(us.getId_usuario());
-      Archivo archivo = archivoService.findOne(id_archivo);
-      /*
-       * Archivo archivo = archivoService.findOne(id_archivo);
-       * archivo.setEstado("X");
-       * archivoService.save(archivo);
-       */
-      archivoService.delete(id_archivo);
-      Control control = new Control();
-      control.setTipoControl(tipoControService.findAllByTipoControl("Eliminó"));
-      control.setDescripcion(control.getTipoControl().getNombre()
-            + " una unidad documental " + archivo.getNombre());
-      control.setUsuario(userLog);
-      control.setFecha(new Date());
-      control.setHora(new Date());
-      controService.save(control);
+      if (request.getSession().getAttribute("userLog") != null) {
+         Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+         Usuario userLog = usuarioService.findOne(us.getId_usuario());
+         Archivo archivo = archivoService.findOne(id_archivo);
+
+         archivoService.delete(id_archivo);
+         Control control = new Control();
+         control.setTipoControl(tipoControService.findAllByTipoControl("Eliminó"));
+         control.setDescripcion(control.getTipoControl().getNombre()
+               + " una unidad documental " + archivo.getNombre());
+         control.setUsuario(userLog);
+         control.setFecha(new Date());
+         control.setHora(new Date());
+         controService.save(control);
+         return ResponseEntity.ok("elimina");
+      } else {
+         return ResponseEntity.ok("Se ha cerrado la sesion por inactividad.");
+      }
    }
 
    @GetMapping("/verPdf/{id}")
@@ -493,125 +373,6 @@ public class ArchivoController {
       }
    }
 
-   // @GetMapping("/verIcoPdf/{id}")
-   // public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
-   // Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
-
-   // if (archivoOptional.isPresent()) {
-   // Archivo archivo = archivoOptional.get();
-
-   // try {
-   // // String secretKey = "Lanza12310099812";
-   // // Cargar el documento PDF
-   // byte[] contenidoDescencryptado;
-   // try {
-   // contenidoDescencryptado = utilidadService.decrypt(archivo.getContenido());
-   // archivo.setContenido(contenidoDescencryptado);
-   // } catch (Exception e) {
-   // // Manejo de excepción (por ejemplo, log)
-   // }
-   // PDDocument document = PDDocument.load(archivo.getContenido());
-
-   // // Obtener el renderizador PDF
-   // PDFRenderer renderer = new PDFRenderer(document);
-
-   // // Convertir la primera página a imagen con una resolución de 300 DPI
-   // BufferedImage image = renderer.renderImageWithDPI(0, 300); // Ajusta la
-   // resolución según tus necesidades
-
-   // // Redimensionar la imagen a 300 píxeles de ancho (ajusta según tus
-   // necesidades)
-   // int newWidth = 300;
-   // int newHeight = (int) (image.getHeight() * ((double) newWidth /
-   // image.getWidth()));
-
-   // BufferedImage resizedImage = new BufferedImage(newWidth, newHeight,
-   // BufferedImage.TYPE_INT_ARGB);
-   // Graphics2D g = resizedImage.createGraphics();
-   // g.drawImage(image, 0, 0, newWidth, newHeight, null);
-   // g.dispose();
-
-   // // Crear un flujo de bytes para la imagen redimensionada
-   // ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-   // // Guardar la imagen redimensionada en formato WebP
-   // ImageIO.write(resizedImage, "webp", baos);
-
-   // baos.flush();
-   // byte[] imageBytes = baos.toByteArray();
-   // baos.close();
-   // document.close();
-
-   // // Configurar los encabezados para evitar el caché
-   // HttpHeaders headers = new HttpHeaders();
-   // headers.setCacheControl("no-cache, no-store, must-revalidate");
-   // headers.setPragma("no-cache");
-   // headers.setExpires(0);
-
-   // // Utilizar MediaTypeFactory para crear un tipo de medio personalizado para
-   // WebP
-   // MediaType mediaType = MediaTypeFactory.getMediaType("image/webp")
-   // .orElse(MediaType.APPLICATION_OCTET_STREAM);
-
-   // return ResponseEntity.ok()
-   // .headers(headers)
-   // .contentType(mediaType) // Utiliza el tipo de medio personalizado para WebP
-   // .contentLength(imageBytes.length)
-   // .body(imageBytes);
-   // } catch (IOException e) {
-   // e.printStackTrace();
-   // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-   // }
-   // } else {
-   // return ResponseEntity.notFound().build();
-   // }
-   // }
-   // @GetMapping("/verIcoPdf/{id}")
-   // public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
-   // Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
-
-   // if (archivoOptional.isPresent()) {
-   // Archivo archivo = archivoOptional.get();
-
-   // try {
-   // byte[] contenidoDescencriptado;
-   // try {
-   // contenidoDescencriptado = utilidadService.decrypt(archivo.getContenido());
-   // archivo.setContenido(contenidoDescencriptado);
-   // } catch (Exception e) {
-   // // Manejo de excepción (por ejemplo, log)
-   // }
-
-   // PDDocument document = PDDocument.load(archivo.getContenido());
-   // BufferedImage image = renderFirstPageAsImage(document);
-
-   // ByteArrayOutputStream baos = new ByteArrayOutputStream();
-   // ImageIO.write(image, "webp", baos);
-   // byte[] imageBytes = baos.toByteArray();
-   // baos.close();
-   // document.close();
-
-   // HttpHeaders headers = new HttpHeaders();
-   // headers.setCacheControl("no-cache, no-store, must-revalidate");
-   // headers.setPragma("no-cache");
-   // headers.setExpires(0);
-
-   // MediaType mediaType = MediaTypeFactory.getMediaType("image/webp")
-   // .orElse(MediaType.APPLICATION_OCTET_STREAM);
-
-   // return ResponseEntity.ok()
-   // .headers(headers)
-   // .contentType(mediaType)
-   // .contentLength(imageBytes.length)
-   // .body(imageBytes);
-   // } catch (IOException e) {
-   // e.printStackTrace();
-   // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-   // }
-   // } else {
-   // return ResponseEntity.notFound().build();
-   // }
-   // }
    @GetMapping("/verIcoPdf/{id}")
    public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
       Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
@@ -633,11 +394,6 @@ public class ArchivoController {
       } else {
          return ResponseEntity.notFound().build();
       }
-   }
-
-   private BufferedImage renderFirstPageAsImage(PDDocument document) throws IOException {
-      PDFRenderer renderer = new PDFRenderer(document);
-      return renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
    }
 
    @GetMapping("/CantArchivosCarpeta/{id_carpeta}")
@@ -756,46 +512,7 @@ public class ArchivoController {
       return "/busquedas/busquedas";
    }
 
-   /*
-    * @PostMapping("/buscarCarpeta")
-    * public String buscarCarpeta(HttpServletRequest request, Model model,
-    * 
-    * @RequestParam(value = "unidadCarpeta", required = false)Long unidadCarpeta,
-    * 
-    * @RequestParam(value = "volumenCarpeta", required = false)Long volumenCarpeta,
-    * 
-    * @RequestParam(value = "seriesDocsCarpeta", required = false)Long
-    * seriesDocsCarpeta,
-    * 
-    * @RequestParam(value = "gestion", required = false)int gestionCarpeta) {
-    * System.out.println("BUSQUEDAS DE CARPETA");
-    * 
-    * if (unidadCarpeta!=null) {
-    * // model.addAttribute("ListCarpetas",
-    * carpetaService.buscarPorUnidad(unidadCarpeta));
-    * model.addAttribute("ListCarpetas",
-    * unidadService.findOne(unidadCarpeta).getCarpetas());
-    * } else if (volumenCarpeta!=null) {
-    * model.addAttribute("ListCarpetas",
-    * volumenService.findOne(volumenCarpeta).getCarpetas());
-    * } else if (seriesDocsCarpeta!=null) {
-    * model.addAttribute("ListCarpetas",
-    * documentalService.findOne(seriesDocsCarpeta).getCarpetas());
-    * } else if (gestionCarpeta!=0 && volumenCarpeta!=null) {
-    * model.addAttribute("ListCarpetas",
-    * carpetaService.buscarPorUnidadGestion(unidadCarpeta, gestionCarpeta));
-    * //break;
-    * } else if (gestionCarpeta!=0) {
-    * model.addAttribute("ListCarpetas",
-    * carpetaService.buscarPorGestion(gestionCarpeta));
-    * }
-    * 
-    * return "/busquedas/registrosCarpeta";
-    * }
-    */
-
    void siglas(List<Carpeta> listaCarpetas) {
-      // List<Carpeta> listaCarpetas = new ArrayList<>();
       for (int i = 0; i < listaCarpetas.size(); i++) {
 
          String[] palabras = listaCarpetas.get(i).getUnidad().getNombre().split(" ");
@@ -815,7 +532,6 @@ public class ArchivoController {
          }
          listaCarpetas.get(i).getUnidad().setSigla(primerasLetras.toString());
       }
-      // model.addAttribute("ListCarpetas", listaCarpetas);
    }
 
    @PostMapping(value = "/AbrirCarpetaEncontrada/{id_carpeta}")

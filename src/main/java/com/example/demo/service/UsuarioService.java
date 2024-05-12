@@ -24,4 +24,6 @@ public interface UsuarioService {
 
     public List<Usuario> listaUsuarioPorNombreRol(String nombreRol);
 
+    public Usuario getUsuarioActivo(Long idPersona);
+
 }

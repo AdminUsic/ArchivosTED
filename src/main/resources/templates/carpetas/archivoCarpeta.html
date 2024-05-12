@@ -28,7 +28,7 @@
                                         <div class="btn-group">
                                             <a class="btn btn-success" type="button" id="botonAgregarArchivo"
                                                 th:attr="onclick='AñadirArchivo(\'' + ${carpeta.id_carpeta} + '\')'"
-                                                th:if="${#lists.contains(permisos.![nombre], 'agregar_archivo')}">
+                                                th:if="${#lists.contains(permisos.![nombre], 'registrar_archivo')}">
                                                 Agregar Archivo <li class="fa-solid fa-file-circle-plus"></li>
                                             </a>
                                         </div>
@@ -65,9 +65,9 @@
                                                             <li th:each="listArchivos: ${subSeries.archivos}"
                                                                 th:if="${listArchivos.carpeta.id_carpeta == carpeta.id_carpeta}">
                                                                 <div class="dropdown ">
-                                                                    <a class="dropdown-toggle seleccionarArchivo" style="width: 100%;"
-                                                                        data-mdb-toggle="dropdown" aria-expanded="false"
-                                                                        type="button">
+                                                                    <a class="dropdown-toggle seleccionarArchivo"
+                                                                        style="width: 100%;" data-mdb-toggle="dropdown"
+                                                                        aria-expanded="false" type="button">
                                                                         <i class="fa fa-file"></i>
                                                                         <small
                                                                             th:text="'    '+${listArchivos.nombre}"></small>
@@ -85,11 +85,13 @@
                                                                         <a class="dropdown-item" type="button"
                                                                             th:attr="onclick='ModificarArchivo(\'' + ${listArchivos.id_archivo} + '\')'"
                                                                             th:if="${#lists.contains(permisos.![nombre], 'editar_archivo')}">
-                                                                            <i class="fas fa-pencil-alt"></i><small>Editar Archivo</small></a>
+                                                                            <i class="fas fa-pencil-alt"></i><small>Editar
+                                                                                Archivo</small></a>
                                                                         <a class="dropdown-item" type="button"
                                                                             th:attr="onclick='EliminarArchivoIco(\'' + ${listArchivos.id_archivo} + '\', \'' + ${listArchivos.carpeta.id_carpeta} + '\', \'' + ${listArchivos.nombre} + '\')'"
                                                                             th:if="${#lists.contains(permisos.![nombre], 'eliminar_archivo')}">
-                                                                            <i class="fas fa-trash"></i><small> Eliminar Archivo</small></a>
+                                                                            <i class="fas fa-trash"></i><small> Eliminar
+                                                                                Archivo</small></a>
                                                                     </ul>
                                                                 </div>
                                                             </li>
@@ -104,26 +106,29 @@
                                             th:if="${carpeta.archivos.size > 0}">
                                             <h5 th:class="'filterTitulo '+${subSeries.nombre} "
                                                 th:text="${subSeries.nombre}"></h5>
-                                            
+
                                             <div th:class="'document document.success filterDiv '+${subSeries.nombre}"
-                                                style="background-color: #6e7072; padding: 1px;" th:each="arch:${subSeries.archivos}"
+                                                style="background-color: #6e7072; padding: 1px;"
+                                                th:each="arch:${subSeries.archivos}"
                                                 th:if="${arch.estado!='X'} and ${arch.carpeta.id_carpeta == carpeta.id_carpeta}">
                                                 <div class="position-absolute top-0 end-0 m-2 d-flex justify-content-end"
-                                                th:if="${#lists.contains(permisos.![nombre], 'editar_archivo') or #lists.contains(permisos.![nombre], 'eliminar_archivo')}">
+                                                    th:if="${#lists.contains(permisos.![nombre], 'editar_archivo') or #lists.contains(permisos.![nombre], 'eliminar_archivo')}">
                                                     <div class="btn-group">
-                                                        <a class="btn btn-sm btn-info file-close" style="color: white;" type="button"
-                                                        th:attr="onclick='ModificarArchivo(\'' + ${arch.id_archivo} + '\')'"
-                                                        th:if="${#lists.contains(permisos.![nombre], 'editar_archivo')}">
+                                                        <a class="btn btn-sm btn-info file-close" style="color: white;"
+                                                            type="button"
+                                                            th:attr="onclick='ModificarArchivo(\'' + ${arch.id_archivo} + '\')'"
+                                                            th:if="${#lists.contains(permisos.![nombre], 'editar_archivo')}">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </a>
-                                                        <a class="btn btn-sm btn-danger file-close" style="color: white;" type="button"
-                                                        th:attr="onclick='EliminarArchivoIco(\'' + ${arch.id_archivo} + '\',\'' + ${arch.carpeta.id_carpeta} + '\', \'' + ${arch.nombre} + '\')'"
-                                                        th:if="${#lists.contains(permisos.![nombre], 'eliminar_archivo')}">
+                                                        <a class="btn btn-sm btn-danger file-close"
+                                                            style="color: white;" type="button"
+                                                            th:attr="onclick='EliminarArchivoIco(\'' + ${arch.id_archivo} + '\',\'' + ${arch.carpeta.id_carpeta} + '\', \'' + ${arch.nombre} + '\')'"
+                                                            th:if="${#lists.contains(permisos.![nombre], 'eliminar_archivo')}">
                                                             <i class="fas fa-trash"></i>
                                                         </a>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="document-body">
                                                     <i>
                                                         <a type="button" data-mdb-dismiss="modal"
@@ -311,13 +316,21 @@
                         type: 'POST',
                         url: "/EliminarRegistroArchivo/" + id,
                         success: function (response) {
-                            AbrirCarpeta(id_carpeta);
-                            cargarRegistroIco();
-                            Swal.fire(
-                                'Eliminado!',
-                                'Este registro se ha eliminado con éxito.',
-                                'success'
-                            );
+                            if (response == 'elimina') {
+                                AbrirCarpeta(id_carpeta);
+                                cargarRegistroIco();
+                                Swal.fire(
+                                    'Eliminado!',
+                                    'Este registro se ha eliminado con éxito.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Imposible continuar!',
+                                    response,
+                                    'error'
+                                );
+                            }
                         }, error: function (xhr, status, error) {
                             console.log(error);
                         }

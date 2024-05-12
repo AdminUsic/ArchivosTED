@@ -11,14 +11,14 @@ import com.example.demo.entity.Usuario;
 
 public interface DaoUsuarioData extends JpaRepository<Usuario, Long> {
 
-    @Query(value = "select u from Usuario u where u.persona.ci = ?1")
+    @Query(value = "select u from Usuario u where u.persona.ci = ?1 and u.estado != 'X'")
     public Usuario credenciales(String ci);
 
     @Modifying
     @Query(value = "delete from usuario where id_usuario = ?1", nativeQuery = true)
     public void eliminar(Long id);
 
-    @Query(value = "select u from Usuario u where u.persona.unidad.id_unidad = ?1")
+    @Query(value = "select u from Usuario u where u.persona.unidad.id_unidad = ?1 AND u.estado != 'X'")
     public List<Usuario> listaUsuarioPorUnidad(Long idUnidad);
 
     @Query(value = """
@@ -26,9 +26,10 @@ public interface DaoUsuarioData extends JpaRepository<Usuario, Long> {
             inner join persona p ON p.id_persona = u.id_persona
             inner join rol_persona rp ON rp.id_persona = u.id_persona
             inner join rol r on r.id_rol = rp.id_rol
-            where r.nombre = :nombreRol;
+            where r.nombre = :nombreRol AND u.estado != 'X';
             """, nativeQuery = true)
-public List<Usuario> listaUsuarioPorNombreRol(@Param("nombreRol") String nombreRol);
+    public List<Usuario> listaUsuarioPorNombreRol(@Param("nombreRol") String nombreRol);
 
-
+    @Query(value = "select u from Usuario u where u.persona.id_persona = ?1 and u.estado != 'X'")
+    public Usuario getUsuarioActivo(Long idPersona);
 }

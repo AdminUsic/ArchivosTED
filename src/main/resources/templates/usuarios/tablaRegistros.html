@@ -21,26 +21,51 @@
                                 <th>C.I.</th>
                                 <th>Nombre de Usuario</th>
                                 <th>Contraseña</th>
-                                <th th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">Acciones</th>
+                                <th>Permisos</th>
+                                <th
+                                    th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">
+                                    Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody">
                             <tr th:each="user, rowStat:${usuarios}" th:if="${user.estado!='X'}">
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center">
-
                                     <div class="image">
                                         <img th:src="@{'/verFoto/' + ${user.id_usuario}}" class="img-circle elevation-1"
                                             alt="User Image" width="50px" height="50px">
                                     </div>
-
                                 </td>
                                 <td class="text-center" th:text="${user.persona.nombre}+' '+${user.persona.apellido}">
                                 </td>
                                 <td class="text-center" th:text="${user.persona.ci}"></td>
                                 <td class="text-center" th:text="${user.nombre_user}"></td>
                                 <td class="text-center" th:text="${user['contraseña']}"></td>
-                                <td class="text-center" th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">
+                                <td class="text-center">
+                                    <div class="btn-group dropleft" th:if="${user.permisos.size() > 0}">
+                                        <button type="button" class="btn btn-outline-success dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                            <span style="text-transform: none;">Ver Permisos</span>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right"  style="max-height: 200px; overflow-y: auto;">
+                                            <li class="dropdown-item-title text-bold text-center">
+                                                Permisos Asignados
+                                            </li>
+                                            <div class="dropdown-divider"></div>
+                                            <li class="dropdown-item" th:each="permiso: ${user.permisos}"
+                                                th:text="${permiso.nombre}"></li>
+                                        </div>
+                                    </div>
+                                    
+                                    <ul class="list-group list-group-light list-group-small"
+                                        th:if="${user.permisos.size() == 0}">
+                                        <li class="list-group-item">
+                                            No tiene Permisos
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="text-center"
+                                    th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">
                                     <div class="btn-group">
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"
                                             data-mdb-toggle="modal" data-mdb-target="#formularioRegistroModal"
@@ -65,7 +90,10 @@
                                 <th>C.I.</th>
                                 <th>Nombre de Usuario</th>
                                 <th>Contraseña</th>
-                                <th th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">Acciones</th>
+                                <th>Permisos</th>
+                                <th
+                                    th:if="${#lists.contains(permisos.![nombre], 'editar_usuario') or #lists.contains(permisos.![nombre], 'eliminar_usuario')}">
+                                    Acciones</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -81,27 +109,3 @@
         });
     </script>
 </section>
-<style>
-    /* Estilos CSS personalizados para el botón */
-    .btn-success {
-        background-color: #28a745;
-        /* Cambiar el color de fondo */
-        border-color: #28a745;
-        /* Cambiar el color del borde */
-        color: #fff;
-        /* Cambiar el color del texto */
-        transition: background-color 0.3s ease;
-        /* Agregar transición suave */
-    }
-
-    .btn-success:hover {
-        background-color: #218838;
-        /* Cambiar el color de fondo al pasar el mouse */
-    }
-
-    /* Estilos para el icono de Font Awesome */
-    .btn-success .fas {
-        margin-left: 5px;
-        /* Ajustar el espacio entre el texto y el icono */
-    }
-</style>

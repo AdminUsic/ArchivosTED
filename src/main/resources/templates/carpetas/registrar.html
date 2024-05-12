@@ -161,17 +161,6 @@
         });
       }
 
-      /*  function ContenidoArchivo(id) {
-          $.ajax({
-            type: 'GET',
-            url: '/ContenidoArchivo/' + id,  // Ruta del metodo del controlador en Spring Boot
-            success: function (response) {
-              $("#ContenidoArchivo").html(response);  // Actualiza el contenido del div con la respuesta del servidor
-              //$('#pdfContainer').html('<embed src="/verPdf/' + id + '" type="application/pdf" width="100%" height="800px" />');
-            }
-          });
-        }*/
-
       function AñadirArchivo(id) {
         $.ajax({
           type: 'POST',

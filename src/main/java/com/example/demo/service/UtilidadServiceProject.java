@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface UtilidadServiceProject {
 
   String decrypt(String encryptedText) throws Exception;
@@ -15,5 +17,7 @@ public interface UtilidadServiceProject {
   byte[] decrypt(byte[] encryptedData) throws Exception;
 
   byte[] encrypt(byte[] data) throws Exception;
+
+  byte[] extraerIconPdf(MultipartFile file) throws Exception;
 
 }

@@ -66,4 +66,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         return daoUsuarioData.listaUsuarioPorNombreRol(nombreRol);
     }
 
+    @Override
+    public Usuario getUsuarioActivo(Long idPersona) {
+        return daoUsuarioData.getUsuarioActivo(idPersona);
+    }
+
 }

@@ -59,9 +59,7 @@ public class PersonaController {
 
     @GetMapping(value = "/PERSONA")
     public String ventanaPersona(HttpServletRequest request, Model model) {
-        System.out.println("PATALLA PERSONA");
-        Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
-        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+
         if (request.getSession().getAttribute("userLog") != null) {
             return "/personas/registrar";
         } else {
@@ -139,7 +137,6 @@ public class PersonaController {
     @GetMapping(value = "/ModPersona/{id_persona}")
     public String EditarPersona(HttpServletRequest request, Model model,
             @PathVariable("id_persona") Long id_persona) {
-        System.out.println("EDITAR PERSONAS");
         model.addAttribute("persona", personaService.findOne(id_persona));
         model.addAttribute("cargos", cargoService.findAll());
         model.addAttribute("roles", rolService.findAll());
@@ -148,48 +145,6 @@ public class PersonaController {
         return "/personas/formulario";
     }
 
-    // @PostMapping(value = "/ModPersonaG")
-    // @ResponseBody
-    // public ResponseEntity<String> ModUsuarioG(HttpServletRequest request, @Validated Persona persona, Model model) {
-    //     Persona persona2 = personaService.findOne(persona.getId_persona());
-    //     Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
-    //     Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
-    //     List<Persona> listapers = personaService.findAll();
-    //     System.out.println("el limite de la lista es: " + listapers.size());
-    //     for (int i = 0; i < listapers.size(); i++) {
-    //         if (listapers.get(i).getCi() == persona2.getCi()) {
-    //             listapers.remove(i);
-    //             break;
-    //         }
-    //     }
-    //     System.out.println("el nuevo limite de la lista es: " + listapers.size());
-    //     int cont = 0;
-    //     for (int i = 0; i < listapers.size(); i++) {
-    //         if (listapers.get(i).getCi().equals(persona.getCi())) {
-    //             cont++;
-    //             break;
-    //         }
-    //     }
-    //     System.out.println("la variable cont: " + cont);
-    //     if (cont == 0) {
-    //         persona.setFechaRegistro(persona2.getFechaRegistro());
-    //         persona.setHoraRegistro(persona2.getHoraRegistro());
-
-    //         persona.setEstado("A");
-    //         personaService.save(persona);
-    //         Control control = new Control();
-    //         control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
-    //         control.setDescripcion("Realizó una " + control.getTipoControl().getNombre()
-    //                 + " de un registro de Persona");
-    //                 control.setUsuario(userLog);
-    //                 control.setFecha(new Date());
-    //         control.setHora(new Date());
-    //         controService.save(control);
-    //         return ResponseEntity.ok("Se modificó el registro correctamente");
-    //     } else {
-    //         return ResponseEntity.ok("Ya existe un registro con este C.I.");
-    //     }
-    // }
     @PostMapping(value = "/ModPersonaG")
     @ResponseBody
     public ResponseEntity<String> ModUsuarioG(HttpServletRequest request, @Validated Persona persona, Model model) {
@@ -221,19 +176,23 @@ public class PersonaController {
     @ResponseBody
     public void EliminarPersona(HttpServletRequest request, Model model,
             @PathVariable("id_persona") Long id_persona) {
-        System.out.println("Eliminar PERSONA ID: " + id_persona);
+                
         Usuario us = (Usuario) request.getSession().getAttribute("userLog");
         Usuario userLog = usuarioService.findOne(us.getId_usuario());
         Persona persona = personaService.findOne(id_persona);
 
-        if (persona.getUsuario() == null) {
-            personaService.eliminar(id_persona);
+        if (usuarioService.getUsuarioActivo(id_persona) == null) {
+            //personaService.eliminar(id_persona);
+            persona.setEstado("X");
+            personaService.save(persona);
         } else {
-            Usuario usuario = persona.getUsuario();
-            // usuarioService.delete(usuario.getId_usuario());
-            // personaService.delete(id_persona);
-            usuarioService.eliminar(usuario.getId_usuario());
-            personaService.eliminar(id_persona);
+            Usuario usuario = usuarioService.getUsuarioActivo(id_persona);
+            usuario.setEstado("X");
+            usuarioService.save(usuario);
+            persona.setEstado("X");
+            personaService.save(persona);
+            // usuarioService.eliminar(usuario.getId_usuario());
+            // personaService.eliminar(id_persona);
         }
         Control control = new Control();
         control.setTipoControl(tipoControService.findAllByTipoControl("Eliminó"));
@@ -243,7 +202,6 @@ public class PersonaController {
         control.setFecha(new Date());
         control.setHora(new Date());
         controService.save(control);
-        System.out.println("SE ELIMINO LA PERSONA ID: " + id_persona);
     }
 
     @PostMapping("/RegistrarPersonaA")
@@ -282,8 +240,6 @@ public class PersonaController {
     public ResponseEntity<String[]> DatoPersona(@RequestParam(value = "ciPerson") String ci) {
 
         Persona persona = personaService.personaCi(ci);
-        // System.out.println("EL CI DE LA NUEVA PERSONA ES:
-        // "+usuario.getPersona().getCi());
         String[] pers = new String[2];
         pers[0] = String.valueOf(persona.getId_persona());
         pers[1] = persona.getNombre() + " " + persona.getApellido();

@@ -19,14 +19,14 @@
       </div>
       <!--<div id="numeroFila"></div>-->
       <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
           <!-- text input -->
           <div class="form-group form-outline">
-            <input type="text" th:field="${rol.nombre}" class="form-control" required>
+            <input type="text" th:field="${rol.nombre}" class="form-control" placeholder="Escribe el nombre de un rol" required>
             <label class="form-label">Rol</label>
           </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-12">
           <!-- text input -->
           <label class="form-label">Menus Disponibles</label>
           <select class="select-field-Multiple" style="width: 100%;" th:field="${rol.menus}" id="selectMenu" multiple>

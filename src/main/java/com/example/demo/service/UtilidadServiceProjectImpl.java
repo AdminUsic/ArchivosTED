@@ -1,5 +1,8 @@
 package com.example.demo.service;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -7,8 +10,12 @@ import java.util.Date;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UtilidadServiceProjectImpl implements UtilidadServiceProject {
@@ -162,6 +169,38 @@ public class UtilidadServiceProjectImpl implements UtilidadServiceProject {
     SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
     cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
     return cipher.doFinal(data);
+  }
+
+  @Override
+  public byte[] extraerIconPdf(MultipartFile file) throws Exception {
+    byte[] contenido = file.getBytes();
+    PDDocument document = PDDocument.load(contenido);
+
+    // Guardar la primera página del PDF como imagen WebP
+    BufferedImage firstPageImage = renderFirstPageAsImage(document);
+
+    // Recortar la imagen para guardar solo la mitad superior
+    BufferedImage upperHalfImage = cropUpperHalfImage(firstPageImage);
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageIO.write(upperHalfImage, "webp", baos);
+    byte[] icono = baos.toByteArray();
+    return icono;
+  }
+
+  private BufferedImage cropUpperHalfImage(BufferedImage image) {
+    int width = image.getWidth();
+    int height = image.getHeight();
+
+    // Recortar la imagen para guardar solo la mitad superior
+    BufferedImage upperHalfImage = image.getSubimage(0, 0, width, height / 2);
+
+    return upperHalfImage;
+  }
+
+  private BufferedImage renderFirstPageAsImage(PDDocument document) throws IOException {
+    PDFRenderer renderer = new PDFRenderer(document);
+    return renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
   }
 
 }

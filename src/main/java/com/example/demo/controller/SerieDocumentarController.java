@@ -32,8 +32,6 @@ public class SerieDocumentarController {
 
     @GetMapping("/SERIEDOC")
     public String ventanaDocumentos(HttpServletRequest request, Model model) {
-        // model.addAttribute("archivo", new Archivo());
-        // model.addAttribute("listaArchivos", archivosData.findAll());
         if (request.getSession().getAttribute("userLog") != null) {
             return "/seriesDocs/registrar";
         } else {

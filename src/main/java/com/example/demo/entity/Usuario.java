@@ -60,7 +60,11 @@ public class Usuario implements Serializable {
         estado = estado.toUpperCase();
     }
 
-    @OneToOne(fetch = FetchType.EAGER)
+    // @OneToOne(fetch = FetchType.EAGER)
+    // @JoinColumn(name = "id_persona")
+    // private Persona persona;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_persona")
     private Persona persona;
 

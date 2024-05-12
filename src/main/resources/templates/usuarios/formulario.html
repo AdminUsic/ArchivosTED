@@ -38,10 +38,11 @@
             <label class="form-label">Persona</label>
             <select class="select-field" style="width: 100%;" th:field="${usuario.persona}" id="personaSelect">
               <option th:value="${edit} ? ${usuario.persona.id_persona} : ''"
-                th:text="${edit} ? ${usuario.persona.nombre}+' '+${usuario.persona.apellido}+' - '+${usuario.persona.ci} : 'Seleccionar'" selected></option>
+                th:text="${edit} ? ${usuario.persona.nombre}+' '+${usuario.persona.apellido}+' - '+${usuario.persona.ci} : 'Seleccionar'"
+                selected></option>
               <option th:each="persona: ${personas}"
                 th:text="${persona.nombre}+' '+${persona.apellido}+' - '+${persona.ci}" th:value="${persona.id_persona}"
-                th:if="${persona.usuario==null and persona.cargo != null and persona.unidad != null and persona.roles != null}">
+                th:if="${#lists.contains(persona.usuarios.![estado], 'X') and persona.cargo != null and persona.unidad != null and persona.roles != null and persona.estado != 'X'}">
               </option>
             </select>
           </div>
@@ -91,44 +92,48 @@
             processData: false,  // No procesar los datos
             //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
             success: function (response) {
-              if (action == "/ModUsuarioG") {
-                try {
-                  const imagenPerfil = document.getElementById('fotoImg');
-                  // Obtén la referencia a la imagen
-                  // Genera un parámetro único (timestamp) para evitar el caché
-                  const timestamp = new Date().getTime();
+              if (response == 'Se realizó el registro correctamente' || response == 'Se guardaron los cambios correctamente') {
+                if (action == "/ModUsuarioG") {
+                  try {
+                    const imagenPerfil = document.getElementById('fotoImg');
+                    // Obtén la referencia a la imagen
+                    // Genera un parámetro único (timestamp) para evitar el caché
+                    const timestamp = new Date().getTime();
 
-                  // Modifica la URL de la imagen para agregar el parámetro único
-                  const nuevaURL = imagenPerfil.getAttribute('src') + '?' + timestamp;
+                    // Modifica la URL de la imagen para agregar el parámetro único
+                    const nuevaURL = imagenPerfil.getAttribute('src') + '?' + timestamp;
 
-                  // Actualiza la imagen cambiando la URL
-                  imagenPerfil.setAttribute('src', nuevaURL);
-                  contenedorfoto.innerHTML = '';
-                } catch (error) {
-                  alert("Error al borrar cache: " + error);
+                    // Actualiza la imagen cambiando la URL
+                    imagenPerfil.setAttribute('src', nuevaURL);
+                    contenedorfoto.innerHTML = '';
+                  } catch (error) {
+                    alert("Error al borrar cache: " + error);
+                  }
+                  cargarFormulario();
+                  cargarTabla();
+                  $('#cerrarVentanaFormulario').click();
+                  Swal.fire(
+                    'Registrado!',
+                    'Los datos del Registro se han Modificado Correctamente.',
+                    'success'
+                  );
+                } else {
+                  cargarFormulario();
+                  cargarTabla();
+                  $('#cerrarVentanaFormulario').click();
+                  Swal.fire(
+                    'Registrado!',
+                    'Los datos se han Registrado Correctamente.',
+                    'success'
+                  );
                 }
-                cargarFormulario();
-                cargarTabla();
-                $('#cerrarVentanaFormulario').click();
-                Swal.fire(
-                  'Registrado!',
-                  'Los datos del Registro se han Modificado Correctamente.',
-                  'success'
-                );
-                //toastr.success('Los datos del Registro se han Modificado Correctamente');
               } else {
-                cargarFormulario();
-                cargarTabla();
-                $('#cerrarVentanaFormulario').click();
                 Swal.fire(
-                  'Registrado!',
-                  'Los datos se han Registrado Correctamente.',
-                  'success'
-                );
-                //toastr.success('Los datos se han Registrado Correctamente');
+                    'Imposible continuar!',
+                    response,
+                    'success'
+                  );
               }
-              var div = document.getElementById("dataTable");
-              div.scrollIntoView({ behavior: 'smooth' });
             },
             error: function (xhr, status, error) {
               Swal.fire(

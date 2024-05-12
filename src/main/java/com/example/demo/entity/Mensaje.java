@@ -36,6 +36,8 @@ public class Mensaje implements Serializable {
 
     private String tipoMensaje;
 
+    private String estado;
+
     // private String fechaRegistro;
 
     // private String horaRegistro;

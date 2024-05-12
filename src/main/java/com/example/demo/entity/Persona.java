@@ -68,11 +68,6 @@ public class Persona implements Serializable {
     @JsonBackReference
     private Unidad unidad;
 
-    // @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-    // @ManyToOne(fetch = FetchType.EAGER)
-    // @JoinColumn(name = "id_rol")
-    // private Rol rol;
-
     @PrePersist
     @PreUpdate
     public void beforeSaveOrUpdate() {
@@ -89,10 +84,13 @@ public class Persona implements Serializable {
     inverseJoinColumns = @JoinColumn(name = "id_rol"))
     private Set<Rol> roles;
 
-    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Usuario usuario;
+    // @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // private Usuario usuario;
 
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FormularioTransferencia> formularioTransferencias;
+
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Usuario> usuarios;
 
 }

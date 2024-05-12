@@ -623,7 +623,7 @@
       </div>
       <hr class="mb-2">
       <!--offcanvas-start-->
-      <div th:each="userChats: ${userChats}">
+      <div th:each="userChats: ${userChats}" th:if="${userChats.estado != 'X'}">
         <!--<a class="btn btn-block btn-outline-secondary btn-lg dropdown-toggle" type="button" data-mdb-toggle="offcanvas"
           th:attr="data-mdb-target='#offcanvasScrolling' + ${userChats.id_usuario}" aria-controls="offcanvasScrolling"
           th:attr="onclick='borrarNotificaciones(\'' + ${userChats.id_usuario} + '\')'">-->
@@ -1526,6 +1526,31 @@
         /* Agregar una transición suave para el cambio de color */
         transition: color 0.3s ease;
         border-radius: 4px;
+    }
+
+
+    /*ESTILOS DEL BOTON DE AGREGAR*/
+        /* Estilos CSS personalizados para el botón */
+        .btn-success {
+        background-color: #28a745;
+        /* Cambiar el color de fondo */
+        border-color: #28a745;
+        /* Cambiar el color del borde */
+        color: #fff;
+        /* Cambiar el color del texto */
+        transition: background-color 0.3s ease;
+        /* Agregar transición suave */
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        /* Cambiar el color de fondo al pasar el mouse */
+    }
+
+    /* Estilos para el icono de Font Awesome */
+    .btn-success .fas {
+        margin-left: 5px;
+        /* Ajustar el espacio entre el texto y el icono */
     }
 </style>
   <script>
