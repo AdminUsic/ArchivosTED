@@ -37,7 +37,7 @@ public class Unidad implements Serializable{
     @Transient
     private String sigla;
 
-    @OneToMany(mappedBy = "unidad", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "unidad", fetch = FetchType.EAGER)
     @JsonManagedReference // Marca esta parte de la relación como "gestionada"
     private List<Persona> personas;
 

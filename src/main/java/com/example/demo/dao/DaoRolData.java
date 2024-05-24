@@ -11,9 +11,9 @@ public interface DaoRolData extends JpaRepository<Rol, Long> {
             "LIMIT 1;", nativeQuery = true)
     public Rol UltimoRegistro();
 
-    @Query("SELECT r FROM Rol r WHERE r.nombre = ?1")
+    @Query("SELECT r FROM Rol r WHERE r.nombre = ?1 and r.estado != 'X'")
     public Rol rolByNombre(String nombre);
 
-    @Query("SELECT r FROM Rol r WHERE r.nombre != ?1 and r.nombre = ?2")
+    @Query("SELECT r FROM Rol r WHERE r.nombre != ?1 and r.nombre = ?2 and r.estado != 'X'")
     public Rol rolByNombreMod(String nombreActual, String nombre);
 }

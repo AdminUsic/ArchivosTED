@@ -118,9 +118,7 @@
             if (mensaje != 'Ya existe un registro con este C.I.') {
               cargarFormulario();
               cargarTabla();
-              var div = document.getElementById("dataTable");
-              div.scrollIntoView({ behavior: 'smooth' });
-              //toastr.success(mensaje);
+              $('#cerrarVentanaFormulario').click();
               Swal.fire(
                 'Registrado!',
                 mensaje + '.',
@@ -170,32 +168,3 @@
     placeholder: 'Seleccione un o mas opciones'
   });
 </script>
-<style>
-  .select2.select2-container .select2-selection--multiple .select2-selection__choice {
-    background-color: #FBA107;
-    border: 1px solid #494949;
-    color: #ffffff;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    margin: 4px 4px 0 0;
-    padding: 0 6px 0 22px;
-    height: 24px;
-    line-height: 24px;
-    font-size: 16px;
-    position: relative;
-  }
-
-  .select2.select2-container .select2-selection--multiple .select2-selection__choice .select2-selection__choice__remove {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 22px;
-    width: 22px;
-    margin: 0;
-    text-align: center;
-    color: #ff331c;
-    font-weight: bold;
-    font-size: 16px;
-  }
-</style>

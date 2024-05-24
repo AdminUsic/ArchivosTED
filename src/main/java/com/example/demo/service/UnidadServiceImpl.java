@@ -32,7 +32,10 @@ public class UnidadServiceImpl implements UnidadService{
 
     @Override
     public void delete(Long id) {
-        daoUnidadData.deleteById(id);
+        //daoUnidadData.deleteById(id);
+        Unidad unidad = daoUnidadData.findById(id).orElse(null);
+        unidad.setEstado("X");
+        daoUnidadData.save(unidad);
     }
 
     @Override

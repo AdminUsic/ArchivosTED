@@ -470,33 +470,32 @@
               </li>
             </th:block> -->
             <!-- LISTA TODAS LAS OPCIONES DEL ROL ELEGIDO -->
-            
-              <li class="nav-item" th:each="menu: ${listaMenu}"
-                th:if="${menu.menuPadre == null && menu.subMenus.size > 0}">
-                <a type="button" class="nav-link" th:id="${menu.idText}">
-                  <i th:class="${'nav-icon '+ menu.icono}"></i>
-                  <p>
-                    <th:text th:text="${menu.nombre}"></th:text>
-                    <i class="fas fa-angle-left right"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview" th:each="rol :${userLog.persona.roles}">
-                  <li class="nav-item" th:each="subMenu: ${menu.subMenus}"
-                    th:if="${#lists.contains(subMenu.roles, rol)}">
-                    <a type="button" th:id="${subMenu.idText}" class="nav-link">
-                      <i th:class="${'nav-icon '+ subMenu.icono}"></i>
-                      <p id="pPersona" th:text="${subMenu.nombre}"></p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item" th:each="menu: ${listaMenu}"
-                th:if="${menu.menuPadre == null && menu.subMenus.size == 0}">
-                <a type="button" class="nav-link" th:id="${menu.idText}" href="#">
-                  <i th:class="${'nav-icon '+ menu.icono}"></i>
-                  <p th:text="${menu.nombre}"></p>
-                </a>
-              </li>
+
+            <li class="nav-item" th:each="menu: ${listaMenu}"
+              th:if="${menu.menuPadre == null && menu.subMenus.size > 0}">
+              <a type="button" class="nav-link" th:id="${menu.idText}">
+                <i th:class="${'nav-icon '+ menu.icono}"></i>
+                <p>
+                  <th:text th:text="${menu.nombre}"></th:text>
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" th:each="rol :${userLog.persona.roles}">
+                <li class="nav-item" th:each="subMenu: ${menu.subMenus}" th:if="${#lists.contains(subMenu.roles, rol)}">
+                  <a type="button" th:id="${subMenu.idText}" class="nav-link">
+                    <i th:class="${'nav-icon '+ subMenu.icono}"></i>
+                    <p id="pPersona" th:text="${subMenu.nombre}"></p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item" th:each="menu: ${listaMenu}"
+              th:if="${menu.menuPadre == null && menu.subMenus.size == 0}">
+              <a type="button" class="nav-link" th:id="${menu.idText}" href="#">
+                <i th:class="${'nav-icon '+ menu.icono}"></i>
+                <p th:text="${menu.nombre}"></p>
+              </a>
+            </li>
           </ul>
         </nav>
       </div>
@@ -1428,8 +1427,8 @@
           success: function (response) {
             //location.reload();
             if (response == "continua") {
-              window.location.href = '/ArchivosTED';  
-            }else{
+              window.location.href = '/ArchivosTED';
+            } else {
               location.reload();
             }
           },
@@ -1507,52 +1506,81 @@
   </style>
   <style>
     .botonPerfi:hover {
-        /* Cambiar el color de fondo al pasar el ratón por encima */
-        background-color: #f7f7f7e8;
-        /* Cambia este color según tus preferencias */
-        color: #474747;
-        /* Agregar una transición suave para un efecto más atractivo */
-        transition: background-color 0.3s ease;
-        /* Agregar sombra para un efecto de elevación */
-        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
-        /* Ajusta según tus preferencias */
-        border-radius: 4px;
+      /* Cambiar el color de fondo al pasar el ratón por encima */
+      background-color: #f7f7f7e8;
+      /* Cambia este color según tus preferencias */
+      color: #474747;
+      /* Agregar una transición suave para un efecto más atractivo */
+      transition: background-color 0.3s ease;
+      /* Agregar sombra para un efecto de elevación */
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+      /* Ajusta según tus preferencias */
+      border-radius: 4px;
     }
 
     /* Cambiar el color del texto cuando el botón está en hover */
     .botonPerfi:hover i {
-        color: #ffffff;
-        /* Cambia este color según tus preferencias */
-        /* Agregar una transición suave para el cambio de color */
-        transition: color 0.3s ease;
-        border-radius: 4px;
+      color: #ffffff;
+      /* Cambia este color según tus preferencias */
+      /* Agregar una transición suave para el cambio de color */
+      transition: color 0.3s ease;
+      border-radius: 4px;
     }
 
 
     /*ESTILOS DEL BOTON DE AGREGAR*/
-        /* Estilos CSS personalizados para el botón */
-        .btn-success {
-        background-color: #28a745;
-        /* Cambiar el color de fondo */
-        border-color: #28a745;
-        /* Cambiar el color del borde */
-        color: #fff;
-        /* Cambiar el color del texto */
-        transition: background-color 0.3s ease;
-        /* Agregar transición suave */
+    /* Estilos CSS personalizados para el botón */
+    .btn-success {
+      background-color: #28a745;
+      /* Cambiar el color de fondo */
+      border-color: #28a745;
+      /* Cambiar el color del borde */
+      color: #fff;
+      /* Cambiar el color del texto */
+      transition: background-color 0.3s ease;
+      /* Agregar transición suave */
     }
 
     .btn-success:hover {
-        background-color: #218838;
-        /* Cambiar el color de fondo al pasar el mouse */
+      background-color: #218838;
+      /* Cambiar el color de fondo al pasar el mouse */
     }
 
     /* Estilos para el icono de Font Awesome */
     .btn-success .fas {
-        margin-left: 5px;
-        /* Ajustar el espacio entre el texto y el icono */
+      margin-left: 5px;
+      /* Ajustar el espacio entre el texto y el icono */
     }
-</style>
+  </style>
+  <style>
+    .select2.select2-container .select2-selection--multiple .select2-selection__choice {
+      background-color: #FBA107;
+      border: 1px solid #494949;
+      color: #ffffff;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      margin: 4px 4px 0 0;
+      padding: 0 6px 0 22px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 16px;
+      position: relative;
+    }
+
+    .select2.select2-container .select2-selection--multiple .select2-selection__choice .select2-selection__choice__remove {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 22px;
+      width: 22px;
+      margin: 0;
+      text-align: center;
+      color: #ff331c;
+      font-weight: bold;
+      font-size: 16px;
+    }
+  </style>
   <script>
     toastr.options = {
       "closeButton": true

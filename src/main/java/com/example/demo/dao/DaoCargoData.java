@@ -8,10 +8,10 @@ import org.springframework.data.repository.query.Param;
 import com.example.demo.entity.Cargo;
 
 public interface DaoCargoData extends JpaRepository<Cargo, Long> {
-    @Query("SELECT c FROM Cargo c WHERE c.nombre = :nombre")
+    @Query("SELECT c FROM Cargo c WHERE c.nombre = :nombre and c.estado !='X'")
     public Cargo cargoByNombre(@Param("nombre") String nombre);
 
-    @Query("SELECT c FROM Cargo c WHERE c.nombre != :nombreActual and c.nombre = :nombreNuevo")
+    @Query("SELECT c FROM Cargo c WHERE c.nombre != :nombreActual and c.nombre = :nombreNuevo and c.estado !='X'")
     public Cargo cargoByNombreMod(@Param("nombreActual") String nombreActual, @Param("nombreNuevo") String nombreNuevo);
 
 }

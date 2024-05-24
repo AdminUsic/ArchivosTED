@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import com.example.demo.entity.SerieDocumental;
 
 public interface DaoSerieDocumentalData extends JpaRepository<SerieDocumental, Long>{
-    @Query(value = "select u from SerieDocumental u where u.nombre = ?1")
+    @Query(value = "select s from SerieDocumental s where s.nombre = ?1 and s.estado != 'X'")
     public SerieDocumental serieDocumentalNombre(String nombre);
 
-    @Query(value = "select u from SerieDocumental u where u.nombre != ?1 and u.nombre = ?2")
+    @Query(value = "select s from SerieDocumental s where s.nombre != ?1 and s.nombre = ?2 and s.estado != 'X'")
     public SerieDocumental serieDocumentalModNombre(String nombreActual, String nombre);
 }

@@ -180,12 +180,6 @@ public class UnidadController {
     @ResponseBody
     public void EliminarRegistroUnidad(HttpServletRequest request, Model model,
             @PathVariable("id_unidad") Long id_unidad) {
-        System.out.println("Eliminar UNIDAD");
-        // Unidad unidad = unidadService.findOne(id_unidad);
-        /*
-         * unidad.setEstado("X");
-         * unidadService.save(unidad);
-         */
         if (!unidadService.findOne(id_unidad).getSubUnidades().isEmpty()) {
             for (Unidad unidad : unidadService.findOne(id_unidad).getSubUnidades()) {
                 unidadService.delete(unidad.getId_unidad());

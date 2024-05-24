@@ -32,8 +32,14 @@
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center" th:text="${person.ci}"></td>
                                 <td class="text-center" th:text="${person.nombre}+' '+${person.apellido}"></td>
-                                <td class="text-center" th:text="${person.cargo.nombre}"></td>
-                                <td class="text-center" th:text="${person.unidad.nombre}"></td>
+                                <td class="text-center" style="font-size: 16px;">
+                                    <span class="badge bg-danger" th:if="${person.cargo.estado == 'X'}" th:text="${person.cargo.nombre}+'(Eliminado)'"></span>
+                                    <span class="badge bg-light text-dark" th:if="${person.cargo.estado != 'X'}" th:text="${person.cargo.nombre}"></span>
+                                </td>
+                                <td class="text-center" style="font-size: 16px;">
+                                    <span class="badge bg-danger" th:if="${person.unidad.estado == 'X'}" th:text="${person.unidad.nombre}+'(Eliminado)'"></span>
+                                    <span class="badge bg-light text-dark" th:if="${person.unidad.estado != 'X'}" th:text="${person.unidad.nombre}"></span>
+                                </td>
                                 <td class="text-center">
                                     <ul class="list-group list-group-light list-group-small">
                                         <li class="list-group-item" th:each="rol: ${person.roles}"
