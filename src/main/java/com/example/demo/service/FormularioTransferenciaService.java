@@ -14,4 +14,6 @@ public interface FormularioTransferenciaService {
 
 	public void delete(Long id);
 
+	List<FormularioTransferencia> listaFormularioTransferenciaByIdUsuario(Long id_persona);
+
 }

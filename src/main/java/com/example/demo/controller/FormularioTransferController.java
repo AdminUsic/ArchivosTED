@@ -134,9 +134,7 @@ public class FormularioTransferController {
       Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
       Usuario usuario2 = usuarioService.findOne(usuario.getId_usuario());
       model.addAttribute("rolesUserLog", usuario2.getPersona().getRoles());
-      model.addAttribute("FormulariosTransferencias", usuario2.getPersona().getFormularioTransferencias());
-      // model.addAttribute("usuariosArchivos",
-      // usuarioService.listaUsuarioPorNombreRol("ARCHIVOS"));
+      model.addAttribute("FormulariosTransferencias", formularioTransferenciaService.listaFormularioTransferenciaByIdUsuario(usuario2.getPersona().getId_persona()));
       Unidad unidad = unidadService.UnidadNombre("ARCHIVO Y BIBLIOTECA");
       model.addAttribute("usuariosArchivos", usuarioService.listaUsuarioPorUnidad(unidad.getId_unidad()));
       model.addAttribute("idUserLog", usuario2.getId_usuario());
@@ -150,11 +148,11 @@ public class FormularioTransferController {
       Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
       Usuario u = usuarioService.findOne(usuario.getId_usuario());
 
-      System.out.println("METODO REGISTRAR FormTRANSFERENCIA");
       formularioTransferencia.setFechaRegistro(new Date());
       formularioTransferencia.setHoraRegistro(new Date());
       formularioTransferencia.setEstado("A");
       formularioTransferencia.setCantCajas(0);
+      formularioTransferencia.setUnidad(u.getPersona().getUnidad());
       formularioTransferencia.setPersona(u.getPersona());
       formularioTransferenciaService.save(formularioTransferencia);
       Control control = new Control();
@@ -194,6 +192,7 @@ public class FormularioTransferController {
       formularioTransferencia.setHoraRegistro(formularioTransferencia2.getHoraRegistro());
       formularioTransferencia.setPersona(formularioTransferencia2.getPersona());
       formularioTransferencia.setEstado("A");
+      formularioTransferencia.setUnidad(formularioTransferencia2.getUnidad());
       formularioTransferenciaService.save(formularioTransferencia);
       Control control = new Control();
       control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
@@ -210,7 +209,7 @@ public class FormularioTransferController {
    @ResponseBody
    public void EliminarRegistroFormTRANSFERENCIA(HttpServletRequest request, Model model,
          @PathVariable("id_formularioTransferencia") Long id_formularioTransferencia) {
-      System.out.println("Eliminar VOLUMEN");
+      
       Usuario us = (Usuario) request.getSession().getAttribute("userLog");
       Usuario userLog = usuarioService.findOne(us.getId_usuario());
       FormularioTransferencia formularioTransferencia = formularioTransferenciaService
@@ -254,12 +253,12 @@ public class FormularioTransferController {
 
    @PostMapping("/GuardarSubRegistro")
    @ResponseBody
-   public void GuardarSubRegistro(HttpServletRequest request, Model model, Caja caja,
+   public void GuardarSubRegistro(HttpServletRequest request, Model model, @Validated Caja caja,
          @RequestParam(value = "id_formTransferencia", required = false) Long id_formTransferencia,
          @RequestParam(value = "gestion") String gestion) {
       // System.out.println("METODO REGISTRAR SERIE DOCUMENTAL");
-
-      caja.setFormularioTransferencia(formularioTransferenciaService.findOne(id_formTransferencia));
+      FormularioTransferencia formularioTransferencia = formularioTransferenciaService.findOne(id_formTransferencia);
+      caja.setFormularioTransferencia(formularioTransferencia);
       caja.setGestion(Integer.parseInt(gestion));
       caja.setEstado("A");
       cajaService.save(caja);
@@ -285,7 +284,6 @@ public class FormularioTransferController {
             aux = c;
          }
       }
-      FormularioTransferencia formularioTransferencia = caja.getFormularioTransferencia();
       formularioTransferencia.setCantCajas(contarCajas);
       formularioTransferenciaService.save(formularioTransferencia);
 

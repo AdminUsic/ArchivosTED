@@ -21,38 +21,24 @@
               <input type="hidden" th:field="${FormularioTransferencia.id_formularioTransferencia}">
             </div>
             <div class="row">
-              <div class="col-sm-3" style="margin-top: 28px;">
+              <div class="col-sm-6" style="margin-top: 28px;">
                 <div class="form-group form-outline">
                   <input type="number" th:field="${FormularioTransferencia.cantDocumentos}" class="form-control"
                     placeholder="Introdusca la cantidad" min="0" required>
                   <label class="form-label">Cantidad de Documentos</label>
                 </div>
               </div>
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 <div class="form-group">
                   <label class="form-label">Fecha de Extrema:</label>
                   <input type="text" class="form-control datepickerformFT" name="fechaExtrema" id="fechaExtrema"
                     placeholder="Seleccione una fecha" th:field="${FormularioTransferencia.fechaExtrema}" required />
                 </div>
               </div>
-              <div class="col-sm-6">
+              <!-- <div class="col-sm-6">
                 <div class="form-group">
                   <label class="form-label">Unidad/Seccion</label>
-                  <!--<select class="select-field" style="width: 100%;" th:field="${FormularioTransferencia.unidad}"
-                        id="selectSeccion">
-                        <optgroup th:label="${edit} ? ${FormularioTransferencia.unidad.unidadPadre.nombre} : ''">
-                          <option th:value="${edit} ? ${FormularioTransferencia.unidad.id_unidad} : ''"
-                            th:text="${edit} ? ${FormularioTransferencia.unidad.nombre} : 'Seleccionar'" selected>
-                          </option>
-                        </optgroup>
-
-                        <optgroup th:each="unidP: ${unidades}" th:label="${unidP.nombre}"
-                          th:if="${unidP.unidadPadre == null}">
-                          <option th:each="unid: ${unidP.subUnidades}" th:text="${unid.nombre}"
-                            th:value="${unid.id_unidad}">
-                        </optgroup>
-                        </option>
-                      </select>-->
+                  
                   <select class="select-field" style="width: 100%;" th:field="${FormularioTransferencia.unidad}"
                     id="selectSeccion">
                     <option th:value="${edit} ? ${FormularioTransferencia.unidad.id_unidad} : ''"
@@ -62,7 +48,7 @@
                     </option>
                   </select>
                 </div>
-              </div>
+              </div> -->
             </div>
             <!-- /.card-body -->
             <div class="card-footer" style="background-color: white;">
@@ -87,10 +73,7 @@
         var action = form.action;
         //alert("la action es: " + action);
         var formData = $(this).serialize();
-        var selectSeccion = document.getElementById("selectSeccion").value;
-
-        if (selectSeccion != "") {
-          $.ajax({
+        $.ajax({
             type: 'POST',
             url: $(this).attr('action'),
             data: formData,
@@ -129,9 +112,6 @@
               // Manejo de errores
             }
           });
-        } else if (selectSeccion == "") {
-          toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
-        }
 
       });
     });
