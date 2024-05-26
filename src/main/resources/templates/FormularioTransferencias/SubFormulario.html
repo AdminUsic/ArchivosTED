@@ -140,9 +140,16 @@
 
                     },
                     error: function (xhr, status, error) {
-                        toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
-                        console.error(error);
+                        //toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+                        console.error("1:" +error);
+                        console.error("2:" +status);
+                        console.error("3:" +xhr);
                         // Manejo de errores
+                        Swal.fire(
+                                'Error!',
+                                "1: "+error +" |2: "+status+" |3: "+xhr,
+                                'error'
+                            );
                     }
                 });
             });
