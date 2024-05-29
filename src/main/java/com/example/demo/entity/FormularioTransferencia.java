@@ -59,6 +59,11 @@ public class FormularioTransferencia implements Serializable {
     @JoinColumn(name = "id_unidad")
     private Unidad unidad;
 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_cargo")
+    private Cargo cargo;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_persona")
     private Persona persona;

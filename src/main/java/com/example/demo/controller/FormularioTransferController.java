@@ -134,7 +134,8 @@ public class FormularioTransferController {
       Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
       Usuario usuario2 = usuarioService.findOne(usuario.getId_usuario());
       model.addAttribute("rolesUserLog", usuario2.getPersona().getRoles());
-      model.addAttribute("FormulariosTransferencias", formularioTransferenciaService.listaFormularioTransferenciaByIdUsuario(usuario2.getPersona().getId_persona()));
+      model.addAttribute("FormulariosTransferencias", formularioTransferenciaService
+            .listaFormularioTransferenciaByIdUsuario(usuario2.getPersona().getId_persona()));
       Unidad unidad = unidadService.UnidadNombre("ARCHIVO Y BIBLIOTECA");
       model.addAttribute("usuariosArchivos", usuarioService.listaUsuarioPorUnidad(unidad.getId_unidad()));
       model.addAttribute("idUserLog", usuario2.getId_usuario());
@@ -153,6 +154,7 @@ public class FormularioTransferController {
       formularioTransferencia.setEstado("A");
       formularioTransferencia.setCantCajas(0);
       formularioTransferencia.setUnidad(u.getPersona().getUnidad());
+      formularioTransferencia.setCargo(u.getPersona().getCargo());
       formularioTransferencia.setPersona(u.getPersona());
       formularioTransferenciaService.save(formularioTransferencia);
       Control control = new Control();
@@ -193,6 +195,7 @@ public class FormularioTransferController {
       formularioTransferencia.setPersona(formularioTransferencia2.getPersona());
       formularioTransferencia.setEstado("A");
       formularioTransferencia.setUnidad(formularioTransferencia2.getUnidad());
+      formularioTransferencia.setCargo(formularioTransferencia2.getCargo());
       formularioTransferenciaService.save(formularioTransferencia);
       Control control = new Control();
       control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
@@ -209,7 +212,7 @@ public class FormularioTransferController {
    @ResponseBody
    public void EliminarRegistroFormTRANSFERENCIA(HttpServletRequest request, Model model,
          @PathVariable("id_formularioTransferencia") Long id_formularioTransferencia) {
-      
+
       Usuario us = (Usuario) request.getSession().getAttribute("userLog");
       Usuario userLog = usuarioService.findOne(us.getId_usuario());
       FormularioTransferencia formularioTransferencia = formularioTransferenciaService
@@ -487,25 +490,14 @@ public class FormularioTransferController {
 
          PdfPCell cell1 = new PdfPCell(new Phrase("SECCIÓN DOCUMENTAL:", fontNegrilla));
          canvas2.setLineDash(2, 2);
-
          PdfPCell cell2 = new PdfPCell(new Phrase(formularioTransferencia.getUnidad().getNombre(), fontSimple));
          canvas2.setLineDash(2, 2);
-
          PdfPCell cell3 = new PdfPCell(new Phrase("SUB SECCIÓN DOCUMENTAL:", fontNegrilla));
-
-         PdfPCell cell4 = new PdfPCell(
-               new Phrase(formularioTransferencia.getUnidad().getUnidadPadre().getNombre(), fontSimple));
-
+         PdfPCell cell4 = new PdfPCell(new Phrase(formularioTransferencia.getCargo().getNombre(), fontSimple));
          PdfPCell cell5 = new PdfPCell(new Phrase("CANTIDAD DE CAJAS:", fontNegrilla));
-
-         PdfPCell cell6 = new PdfPCell(
-               new Phrase(String.valueOf(formularioTransferencia.getCantCajas()), fontSimple));
-
+         PdfPCell cell6 = new PdfPCell(new Phrase(String.valueOf(formularioTransferencia.getCantCajas()), fontSimple));
          PdfPCell cell7 = new PdfPCell(new Phrase("CANTIDAD DE DOCUMENTOS:", fontNegrilla));
-
-         PdfPCell cell8 = new PdfPCell(
-               new Phrase(String.valueOf(formularioTransferencia.getCantDocumentos()), fontSimple));
-
+         PdfPCell cell8 = new PdfPCell(new Phrase(String.valueOf(formularioTransferencia.getCantDocumentos()), fontSimple));
          PdfPCell cell9 = new PdfPCell(new Phrase("FECHAS EXTREMAS:", fontNegrilla));
 
          // PdfPCell cell10 = new PdfPCell(new
