@@ -10,55 +10,22 @@
                         <thead class="table-dark">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Cant. de Cajas</th>
                                 <th>Cant- Documento</th>
-                                <th>Unidad/Seccion</th>
+                                <th>Sección Documental</th>
+                                <th>Sub Sección Documental</th>
                                 <th>fechaExtrema</th>
-                                <!-- <th>Tabla</th> -->
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody">
                             <tr th:each="fromT, rowStat:${FormulariosTransferencias}" th:if="${fromT.estado!='X'}">
                                 <td th:text="${rowStat.count}"></td>
-                                <td class="text-center" th:text="${fromT.cantCajas}"></td>
                                 <td class="text-center" th:text="${fromT.cantDocumentos}"></td>
                                 <td class="text-center" th:text="${fromT.unidad.nombre}"></td>
-                                <td class="text-center" th:text="${#dates.format(fromT.fechaExtrema, 'dd/MM/yy')}"></td>
-                                <!-- <td class="text-center">
-                                    <div class="list-group">
-                                        <div th:if="${fromT.cajas != null}">
-                                            <div th:each="caj: ${fromT.cajas}">
-                                                <a class="list-group-item list-group-item-action"
-                                                    th:text="${caj.NroCaja}+'|'+${caj.tituloDoc}"></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td> -->
+                                <td class="text-center" th:text="${fromT.cargo.nombre}"></td>
+                                <td class="text-center" th:text="${#dates.format(fromT.fechaExtrema, 'dd/MM/yyyy')}"></td>
                                 <td class="text-center">
                                     <div class="btn-group">
-                                        <!-- <div th:if="!${#lists.contains(rolesUserLog.![nombre], 'ARCHIVOS')}"
-                                            class="btn-group dropend">
-                                            <a type="button" class="btn btn-default dropdown-toggle"
-                                                data-mdb-toggle="dropdown" aria-expanded="false">
-                                                <i class="fa-solid fa-envelope-open-text"></i>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li class="dropdown-item font-weight-bold">Enviar formulario a:</li>
-                                                <li>
-                                                    <hr class="dropdown-divider" />
-                                                </li>
-                                                <th:block th:each="user: ${usuariosArchivos}">
-                                                    <form method="get"
-                                                        th:onsubmit="'enviarMensaje2(event, ' + ${user.id_usuario} + ', ' + ${idUserLog} + ', ' + ${fromT.id_formularioTransferencia})">
-                                                        <input type="hidden" th:id="'formTr-' + ${user.id_usuario}"
-                                                            th:value="${fromT.id_formularioTransferencia}" />
-                                                        <input type="submit" class="dropdown-item"
-                                                            th:value="${user.persona.nombre} + ' ' + ${user.persona.apellido} + ' - ' + ${user.persona.ci}" />
-                                                    </form>
-                                                </th:block>
-                                            </ul>
-                                        </div> -->
                                         <a class="btn btn-success" type="button" data-toggle="modal"
                                             style="color: aliceblue;" data-target="#modal_SubSerie"
                                             th:attr="onclick='cargarVentanaSub(\'' + ${fromT.id_formularioTransferencia} + '\')'">
@@ -85,11 +52,10 @@
                         <tfoot class="table-secondary">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Cant. de Cajas</th>
                                 <th>Cant- Documento</th>
-                                <th>Unidad/Seccion</th>
+                                <th>Sección Documental</th>
+                                <th>Sub Sección Documental</th>
                                 <th>fechaExtrema</th>
-                                <!-- <th></th> -->
                                 <th>Acciones</th>
                             </tr>
                         </tfoot>

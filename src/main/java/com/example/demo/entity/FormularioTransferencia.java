@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -35,19 +36,20 @@ public class FormularioTransferencia implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_formularioTransferencia;
 
-    private int cantCajas;
     private int cantDocumentos;
-    //private String fechaExtrema;
     private String estado;
 
     @Column
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "dd-MM-yy")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date fechaExtrema;
+
+    @Transient
+    private String fechaExtremaFormat;
 
     @Column
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "dd-MM-yy")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date fechaRegistro;
 
     @Column

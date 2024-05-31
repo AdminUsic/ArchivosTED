@@ -16,44 +16,40 @@
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="form-group form-outline">
-                            <input type="number" th:field="${caja.NroCaja}" class="form-control"
+                            <input type="number" th:field="${caja.nro}" class="form-control"
                                 placeholder="Introdusca un numero" min="0" required />
-                            <label class="form-label">Nro. de Caja</label>
+                            <label class="form-label">Nro:</label>
                         </div>
                     </div>
                     <div class="col-sm-5">
                         <div class="form-group form-outline">
-                            <input type="text" th:field="${caja.notas}" class="form-control"
-                                placeholder="Introdusca una nota" required />
-                            <label class="form-label">Notas</label>
+                            <textarea type="text" th:field="${caja.notas}" class="form-control"
+                                placeholder="Introdusca una nota" required></textarea>
+                            <label class="form-label">Notas:</label>
                         </div>
                     </div>
                     <div class="col-sm-5">
                         <div class="form-group form-outline">
                             <input type="text" th:field="${caja.tituloDoc}" class="form-control"
                                 placeholder="Introdusca un titulo" required />
-                            <label class="form-label">Titulo del Documento</label>
+                            <label class="form-label">Titulo del Documento:</label>
                         </div>
                     </div>
                     <div class="row col-sm-6">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="tipoArchivo">Tomo/Volumen</label>
+                                <label for="tipoArchivo">Tomo/Volumen:</label>
                                 <select class="select-fieldSubForm" style="width: 100%;" th:field="${caja.volumen}"
                                     id="selectVolumen">
-                                    <option th:value="${edit} ? ${caja.volumen.id_volumen} : ''"
-                                        th:text="${caja.volumen != null} ? ${caja.volumen.nombre} : 'Seleccionar'"
-                                        selected>
-                                    </option>
                                     <option th:each="vol: ${volumenes}" th:text="${vol.nombre}"
-                                        th:value="${vol.id_volumen}">
+                                        th:value="${vol.id_volumen}" th:selected="${vol == caja.volumen}">
                                     </option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Año</label>
+                                <label>Año:</label>
                                 <select class="select-fieldSubForm2" style="width: 100%;" id="años" name="gestion">
                                     <option th:text="${edit} ? ${caja.gestion} : 'Seleccionar'"
                                         th:value="${edit} ? ${caja.gestion} : ''" th:selected="${edit}"></option>
@@ -64,7 +60,7 @@
 
                     <div class="row col-sm-6">
                         <div class="form-group">
-                            <label for="tipoArchivo">Cubierta</label><br>
+                            <label for="tipoArchivo">Cubierta:</label><br>
                             <div class="input-group" style="width: 100%;">
                                 <select class="select-fieldSubForm2" style="width: 90%;" th:field="${caja.cubierta}"
                                     id="selectCubierta">
@@ -141,15 +137,15 @@
                     },
                     error: function (xhr, status, error) {
                         //toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
-                        console.error("1:" +error);
-                        console.error("2:" +status);
-                        console.error("3:" +xhr);
+                        console.error("1:" + error);
+                        console.error("2:" + status);
+                        console.error("3:" + xhr);
                         // Manejo de errores
                         Swal.fire(
-                                'Error!',
-                                "1: "+error +" |2: "+status+" |3: "+xhr,
-                                'error'
-                            );
+                            'Error!',
+                            "1: " + error + " |2: " + status + " |3: " + xhr,
+                            'error'
+                        );
                     }
                 });
             });

@@ -33,5 +33,10 @@ public class VolumenServiceImlp implements VolumenService{
     public void delete(Long id) {
         daoVolumenData.deleteById(id);
     }
+
+    @Override
+    public List<Volumen> listaDeVolumenes() {
+        return daoVolumenData.listaDeVolumenes();
+    }
     
 }

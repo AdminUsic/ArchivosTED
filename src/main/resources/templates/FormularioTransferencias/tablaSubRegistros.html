@@ -19,7 +19,7 @@
                         <tbody id="tbodySUB">
                             <tr th:each="caja, rowStat:${cajas}">
                                 <td th:text="${rowStat.count}"></td>
-                                <td class="text-center" th:text="${caja.NroCaja}"></td>
+                                <td class="text-center" th:text="${caja.nro}"></td>
                                 <td class="text-center" th:text="${caja.tituloDoc}"></td>
                                 <td class="text-center" th:text="${caja.gestion}"></td>
                                 <td class="text-center" th:text="${caja.volumen.nombre}"></td>

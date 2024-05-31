@@ -42,7 +42,7 @@ public class VolumenController {
 
     @PostMapping(value = "/RegistrosVolumenes")
     public String RegistrosVolumenes(HttpServletRequest request, Model model) {
-        model.addAttribute("volumenes", volumenService.findAll());
+        model.addAttribute("volumenes", volumenService.listaDeVolumenes());
               Usuario user = (Usuario) request.getSession().getAttribute("userLog");
         Usuario userLog = usuarioService.findOne(user.getId_usuario());
         model.addAttribute("permisos", userLog.getPermisos());

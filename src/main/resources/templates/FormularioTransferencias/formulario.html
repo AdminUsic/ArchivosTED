@@ -32,7 +32,7 @@
                 <div class="form-group">
                   <label class="form-label">Fecha de Extrema:</label>
                   <input type="text" class="form-control datepickerformFT" name="fechaExtrema" id="fechaExtrema"
-                    placeholder="Seleccione una fecha" th:field="${FormularioTransferencia.fechaExtrema}" required />
+                    placeholder="Seleccione una fecha" th:field="${FormularioTransferencia.fechaExtremaFormat}" required />
                 </div>
               </div>
               <!-- <div class="col-sm-6">
@@ -83,8 +83,6 @@
               if (mensaje == 'Se realizó el registro correctamente') {
                 cargarFormulario();
                 cargarTabla();
-                //extraerColunma();
-
                 Swal.fire(
                   'Registrado!',
                   mensaje + '.',
@@ -102,7 +100,11 @@
                 cargarTabla();
                 var div = document.getElementById("dataTable");
                 div.scrollIntoView({ behavior: 'smooth' });
-                toastr.success(mensaje);
+                Swal.fire(
+                  'Modificado!',
+                  mensaje + '.',
+                  'success'
+                );
               }
 
             },

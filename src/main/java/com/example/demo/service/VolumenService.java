@@ -12,4 +12,6 @@ public interface VolumenService{
     public Volumen findOne(Long id);
 
     public void delete(Long id);
+
+    public List<Volumen> listaDeVolumenes();
 }
