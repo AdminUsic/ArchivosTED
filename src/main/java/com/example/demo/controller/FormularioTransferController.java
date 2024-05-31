@@ -230,7 +230,8 @@ public class FormularioTransferController {
       Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
       Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
 
-      FormularioTransferencia formularioRegistrado = formularioTransferenciaService.findOne(formularioTransferencia.getId_formularioTransferencia());
+      FormularioTransferencia formularioRegistrado = formularioTransferenciaService
+            .findOne(formularioTransferencia.getId_formularioTransferencia());
 
       // Obtén la fecha en formato DD/MM/YYYY
       String fechaStr = formularioTransferencia.getFechaExtremaFormat();
@@ -396,14 +397,14 @@ public class FormularioTransferController {
       Paragraph emptyParagraph = new Paragraph();
 
       Path projectPath = Paths.get("").toAbsolutePath();
-         String imagen = projectPath + "/src/main/resources/static/logo/logoCabezera.png";
-         String fuenteCalibriRegular = projectPath
-               + "/src/main/resources/static/fuenteLetra/Calibri Regular.ttf";
-         String fuenteCalibriBold = projectPath + "/src/main/resources/static/fuenteLetra/Calibri Bold.ttf";
-         Font fontSimple = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
-         Font fontNegrilla = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
-         Font fontSimple9 = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
-         Font fontNegrilla9 = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
+      String imagen = projectPath + "/src/main/resources/static/logo/logoCabezera.png";
+      String fuenteCalibriRegular = projectPath
+            + "/src/main/resources/static/fuenteLetra/Calibri Regular.ttf";
+      String fuenteCalibriBold = projectPath + "/src/main/resources/static/fuenteLetra/Calibri Bold.ttf";
+      Font fontSimple = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
+      Font fontNegrilla = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
+      Font fontSimple9 = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
+      Font fontNegrilla9 = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
 
       try {
          PdfWriter writer = PdfWriter.getInstance(document, outputStream);
@@ -577,44 +578,46 @@ public class FormularioTransferController {
 
          List<Caja> cajas = formularioTransferencia.getCajas();
          for (Caja caja : cajas) {
-            PdfPCell titleCell = new PdfPCell(new Phrase(String.valueOf(caja.getNro()), fontSimple));
-            titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            titleCell.setNoWrap(true);
-            tablaArchivos.addCell(titleCell);
+            if (!caja.getEstado().equals("X")) {
+               PdfPCell titleCell = new PdfPCell(new Phrase(String.valueOf(caja.getNro()), fontSimple));
+               titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+               titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+               titleCell.setNoWrap(true);
+               tablaArchivos.addCell(titleCell);
 
-            PdfPCell titleCell1 = new PdfPCell(new Phrase("N/A", fontSimple));
-            titleCell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            titleCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-            titleCell1.setNoWrap(true);
-            tablaArchivos.addCell(titleCell1);
+               PdfPCell titleCell1 = new PdfPCell(new Phrase("N/A", fontSimple));
+               titleCell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+               titleCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+               titleCell1.setNoWrap(true);
+               tablaArchivos.addCell(titleCell1);
 
-            PdfPCell titleCell2 = new PdfPCell(new Phrase(caja.getTituloDoc(), fontSimple));
-            titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tablaArchivos.addCell(titleCell2);
+               PdfPCell titleCell2 = new PdfPCell(new Phrase(caja.getTituloDoc(), fontSimple));
+               titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+               titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+               tablaArchivos.addCell(titleCell2);
 
-            PdfPCell titleCell3 = new PdfPCell(new Phrase(String.valueOf(caja.getGestion()), fontSimple));
-            titleCell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            titleCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
-            titleCell3.setNoWrap(true);
-            tablaArchivos.addCell(titleCell3);
+               PdfPCell titleCell3 = new PdfPCell(new Phrase(String.valueOf(caja.getGestion()), fontSimple));
+               titleCell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+               titleCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
+               titleCell3.setNoWrap(true);
+               tablaArchivos.addCell(titleCell3);
 
-            PdfPCell titleCell4 = new PdfPCell(new Phrase(caja.getVolumen().getNombre(), fontSimple));
-            titleCell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            titleCell4.setHorizontalAlignment(Element.ALIGN_CENTER);
-            titleCell4.setNoWrap(true);
-            tablaArchivos.addCell(titleCell4);
+               PdfPCell titleCell4 = new PdfPCell(new Phrase(caja.getVolumen().getNombre(), fontSimple));
+               titleCell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
+               titleCell4.setHorizontalAlignment(Element.ALIGN_CENTER);
+               titleCell4.setNoWrap(true);
+               tablaArchivos.addCell(titleCell4);
 
-            PdfPCell titleCell5 = new PdfPCell(new Phrase(caja.getCubierta().getNombre(), fontSimple));
-            titleCell5.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            titleCell5.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tablaArchivos.addCell(titleCell5);
+               PdfPCell titleCell5 = new PdfPCell(new Phrase(caja.getCubierta().getNombre(), fontSimple));
+               titleCell5.setVerticalAlignment(Element.ALIGN_MIDDLE);
+               titleCell5.setHorizontalAlignment(Element.ALIGN_CENTER);
+               tablaArchivos.addCell(titleCell5);
 
-            PdfPCell titleCell6 = new PdfPCell(new Phrase(caja.getNotas(), fontSimple));
-            titleCell6.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            titleCell6.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tablaArchivos.addCell(titleCell6);
+               PdfPCell titleCell6 = new PdfPCell(new Phrase(caja.getNotas(), fontSimple));
+               titleCell6.setVerticalAlignment(Element.ALIGN_MIDDLE);
+               titleCell6.setHorizontalAlignment(Element.ALIGN_CENTER);
+               tablaArchivos.addCell(titleCell6);
+            }
          }
 
          document.add(tablaArchivos);
@@ -655,15 +658,15 @@ public class FormularioTransferController {
    private void configureCell(PdfPCell cell) {
       // Define el color verde personalizado
       BaseColor colorVerdePersonalizado = new BaseColor(223, 255, 185); // Valores RGB correspondientes a #DAF7A6
-  
+
       // Aplica el color personalizado a la celda
       cell.setBackgroundColor(colorVerdePersonalizado);
-  
+
       // Otras configuraciones de celda
       cell.setHorizontalAlignment(Element.ALIGN_CENTER);
       cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
       // Otras configuraciones de celda
-  }
+   }
 
    private PdfPCell createCell(String content, Font font) {
       PdfPCell cell = new PdfPCell(new Phrase(content, font));
@@ -674,7 +677,7 @@ public class FormularioTransferController {
    @GetMapping("/verIcoPdfFormulario/{id}")
    public ResponseEntity<byte[]> verIcoPdfFormulario(@PathVariable Long id) throws IOException, DocumentException {
 
-      //byte[] bytes = generarPdf(id);
+      // byte[] bytes = generarPdf(id);
       byte[] bytes = null;
 
       try {
