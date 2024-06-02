@@ -1,21 +1,13 @@
 package com.example.demo.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +16,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.expression.ParseException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,21 +29,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.demo.Encabezado;
-import com.example.demo.entity.Archivo;
 import com.example.demo.entity.Caja;
 import com.example.demo.entity.Control;
 import com.example.demo.entity.Cubierta;
 import com.example.demo.entity.FormularioTransferencia;
 import com.example.demo.entity.Persona;
-import com.example.demo.entity.SerieDocumental;
 import com.example.demo.entity.Unidad;
 import com.example.demo.entity.Usuario;
-import com.example.demo.entity.Volumen;
 import com.example.demo.service.CajaService;
 import com.example.demo.service.ControlService;
 import com.example.demo.service.CubiertaService;
-import com.example.demo.service.HeaderTableEvent;
 import com.example.demo.service.PersonaService;
 import com.example.demo.service.TipoControService;
 import com.example.demo.service.FormularioTransferenciaService;
@@ -60,28 +46,7 @@ import com.example.demo.service.UnidadService;
 import com.example.demo.service.UsuarioService;
 import com.example.demo.service.UtilidadServiceProject;
 import com.example.demo.service.VolumenService;
-import com.example.demo.service.personaServiceImpl;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfDocument;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPCellEvent;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.lowagie.text.Cell;
-import com.lowagie.text.HeaderFooter;
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -416,340 +381,28 @@ public class FormularioTransferController {
       }
    }
 
-   public byte[] generarPdf(Long id) throws IOException, DocumentException {
+   @GetMapping("/verIcoPdfFormulario/{id}")
+   public ResponseEntity<byte[]> verIcoPdfFormulario(@PathVariable Long id) throws IOException, DocumentException, JRException, SQLException {
 
-      FormularioTransferencia formularioTransferencia = formularioTransferenciaService.findOne(id);
-
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-      Document document = new Document(PageSize.LETTER, 30f, 20f, 50f, 40f);
-      Paragraph emptyParagraph = new Paragraph();
+      String nombreArchivo = "FormularioTransferenciaReport.jrxml";
 
       Path projectPath = Paths.get("").toAbsolutePath();
-      String imagen = projectPath + "/src/main/resources/static/logo/logoCabezera.png";
-      String fuenteCalibriRegular = projectPath
-            + "/src/main/resources/static/fuenteLetra/Calibri Regular.ttf";
-      String fuenteCalibriBold = projectPath + "/src/main/resources/static/fuenteLetra/Calibri Bold.ttf";
-      Font fontSimple = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
-      Font fontNegrilla = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
-      Font fontSimple9 = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
-      Font fontNegrilla9 = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
+      Path imagePath = Paths.get(projectPath.toString(), "src", "main", "resources", "static", "logo",
+            "logoCabezera.png");
+      String imagen = imagePath.toString();
+      //System.out.println(imagen);
+      Map<String, Object> parametros = new HashMap<>();
+      parametros.put("idFormulario", id);
+      parametros.put("rutaImg", imagen);
+      parametros.put("lugarFechaTexto", "Cobija, "+utilidadService.fechaActualTexto());
 
+      ByteArrayOutputStream stream;
       try {
-         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-         Encabezado encabezado = new Encabezado();
-         // Asociamos el encabezado con el escritor
-         writer.setPageEvent(encabezado);
-         document.open();
-         // System.out.println("Número total de páginas: " + totalPages);
-
-         // PdfPTable headerTable = new PdfPTable(4);
-         // headerTable.setWidthPercentage(95);
-
-         // float[] columntable = { 2.5f, 4f, 1f, 1f };
-         // headerTable.setWidths(columntable);
-
-         // Image image = Image.getInstance(imagen);
-         // PdfPCell celda1 = new PdfPCell(image, true);
-         // celda1.setRowspan(4);
-         // celda1.setPaddingTop(8);
-         // celda1.setPaddingBottom(8);
-         // celda1.setPaddingLeft(25);
-         // celda1.setPaddingRight(25);
-         // headerTable.addCell(celda1);
-
-         // PdfPCell celda2 = new PdfPCell(
-         // new Phrase("FORMULARIO DE TRANSFERENCIA DE DOCUMENTOS AL ARCHIVO CENTRAL",
-         // fontNegrilla));
-         // celda2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-         // celda2.setHorizontalAlignment(Element.ALIGN_CENTER);
-         // celda2.setRowspan(4);
-         // headerTable.addCell(celda2);
-
-         // // Celda 6 ocupando la mitad de una columna
-         // PdfPCell celda6 = new PdfPCell(new Phrase("FORMATO", fontNegrilla9));
-         // celda6.setColspan(2); // Ocupará dos de las cuatro columnas
-         // celda6.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
-         // centro
-         // celda6.setHorizontalAlignment(Element.ALIGN_CENTER);
-         // headerTable.addCell(celda6);
-
-         // // Celda 6 ocupando la mitad de una columna
-         // PdfPCell celda4 = new PdfPCell(new Phrase("FOR-ACH-GDC-01", fontNegrilla9));
-         // celda4.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
-         // centro
-         // celda4.setHorizontalAlignment(Element.ALIGN_CENTER);
-         // celda4.setColspan(2); // Ocupará dos de las cuatro columnas
-         // headerTable.addCell(celda4);
-
-         // // Nueva celda para ocupar la otra mitad de la columna
-         // PdfPCell celda7 = new PdfPCell(new Phrase("Fecha de Aprobaci\u00F3n:
-         // 12/05/2023", fontSimple9));
-         // celda7.setColspan(2); // Ocupará dos de las cuatro columnas
-         // celda7.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
-         // centro
-         // celda7.setHorizontalAlignment(Element.ALIGN_CENTER);
-         // headerTable.addCell(celda7);
-
-         // PdfPCell celda8 = new PdfPCell(new Phrase("Versi\u00F3n: 03", fontSimple9));
-         // celda8.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
-         // centro
-         // celda8.setHorizontalAlignment(Element.ALIGN_CENTER);
-         // headerTable.addCell(celda8);
-         // PdfPCell celda9 = new PdfPCell();
-         // Phrase footer = new Phrase(String.format("Pag. 1 de %d", totalPages),
-         // fontSimple9);
-         // celda9.setPhrase(footer);
-         // celda9.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
-         // centro
-         // celda9.setHorizontalAlignment(Element.ALIGN_CENTER);
-         // headerTable.addCell(celda9);
-         // document.add(headerTable);
-
-         // emptyParagraph.add(" ");
-         // document.add(emptyParagraph);
-
-         // Tabla 2: Dividida en 2 columnas, 5 filas
-         PdfPTable tablaSegunda = new PdfPTable(2);
-         tablaSegunda.setWidthPercentage(95);
-
-         float[] columnWidths2 = { 3.5f, 6f };
-         tablaSegunda.setWidths(columnWidths2);
-
-         PdfContentByte canvas2 = writer.getDirectContent();
-         canvas2.saveState();
-         canvas2.setLineDash(2, 2);
-
-         PdfPCell cell1 = new PdfPCell(new Phrase("SECCIÓN DOCUMENTAL:", fontNegrilla));
-         canvas2.setLineDash(2, 2);
-         PdfPCell cell2 = new PdfPCell(new Phrase(formularioTransferencia.getUnidad().getNombre(), fontSimple));
-         canvas2.setLineDash(2, 2);
-         PdfPCell cell3 = new PdfPCell(new Phrase("SUB SECCIÓN DOCUMENTAL:", fontNegrilla));
-         PdfPCell cell4 = new PdfPCell(new Phrase(formularioTransferencia.getCargo().getNombre(), fontSimple));
-         PdfPCell cell5 = new PdfPCell(new Phrase("CANTIDAD DE CAJAS:", fontNegrilla));
-         PdfPCell cell6 = new PdfPCell(new Phrase("N/A", fontSimple));
-         PdfPCell cell7 = new PdfPCell(new Phrase("CANTIDAD DE DOCUMENTOS:", fontNegrilla));
-         PdfPCell cell8 = new PdfPCell(
-               new Phrase(String.valueOf(formularioTransferencia.getCantDocumentos()), fontSimple));
-         PdfPCell cell9 = new PdfPCell(new Phrase("FECHAS EXTREMAS:", fontNegrilla));
-
-         // PdfPCell cell10 = new PdfPCell(new
-         // Phrase(formularioTransferencia.getFechaExtrema(), fontSimple));
-         PdfPCell cell10 = new PdfPCell(
-               new Phrase(String.valueOf(formularioTransferencia.getGestion()), fontSimple));
-
-         // Agregar las celdas a la tabla
-         tablaSegunda.addCell(cell1);
-         tablaSegunda.addCell(cell2);
-         tablaSegunda.addCell(cell3);
-         tablaSegunda.addCell(cell4);
-         tablaSegunda.addCell(cell5);
-         tablaSegunda.addCell(cell6);
-         tablaSegunda.addCell(cell7);
-         tablaSegunda.addCell(cell8);
-         tablaSegunda.addCell(cell9);
-         tablaSegunda.addCell(cell10);
-
-         document.add(tablaSegunda);
-         canvas2.restoreState();
-         emptyParagraph.add(" ");
-         document.add(emptyParagraph);
-
-         // TABLA 3
-         PdfPTable tablaArchivos = new PdfPTable(8);
-         tablaArchivos.setWidthPercentage(95);
-
-         float[] columnWidths = { 0.6f, 1.1f, 3f, 0.8f, 1.5f, 1.5f, 1.1f, 2.4f };
-         tablaArchivos.setWidths(columnWidths);
-
-         // Crear celda con el color específico para la primera fila 223, 255, 185
-         PdfPCell greenCell = new PdfPCell(new Phrase("NRO.", fontNegrilla));
-         greenCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
-         greenCell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         greenCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell.setPaddingBottom(12);
-         greenCell.setPaddingTop(10);
-         greenCell.setNoWrap(true);
-         tablaArchivos.addCell(greenCell);
-
-         PdfPCell greenCell2 = new PdfPCell(new Phrase("N° DE CAJA", fontNegrilla));
-         greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell2.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
-         greenCell2.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-         tablaArchivos.addCell(greenCell2);
-
-         PdfPCell greenCell3 = new PdfPCell(new Phrase("TITULO DOCUMENTAL", fontNegrilla));
-         greenCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell3.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
-         greenCell3.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         greenCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
-         tablaArchivos.addCell(greenCell3);
-
-         PdfPCell greenCell4 = new PdfPCell(new Phrase("AÑO", fontNegrilla));
-         greenCell4.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell4.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
-         greenCell4.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         greenCell4.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell4.setNoWrap(true);
-         tablaArchivos.addCell(greenCell4);
-
-         PdfPCell greenCell5 = new PdfPCell(new Phrase("TOMO VOLUMEN", fontNegrilla));
-         greenCell5.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell5.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
-         greenCell5.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         greenCell5.setHorizontalAlignment(Element.ALIGN_CENTER);
-         tablaArchivos.addCell(greenCell5);
-
-         PdfPCell greenCell6 = new PdfPCell(new Phrase("CUBIERTA", fontNegrilla));
-         greenCell6.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell6.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
-         greenCell6.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         greenCell6.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell6.setNoWrap(true);
-         tablaArchivos.addCell(greenCell6);
-
-         PdfPCell greenCell7 = new PdfPCell(new Phrase("N° DE FOJAS", fontNegrilla));
-         greenCell7.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell7.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
-         greenCell7.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         greenCell7.setHorizontalAlignment(Element.ALIGN_CENTER);
-         tablaArchivos.addCell(greenCell7);
-
-         PdfPCell greenCell8 = new PdfPCell(new Phrase("NOTAS", fontNegrilla));
-         greenCell8.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell8.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
-         greenCell8.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         greenCell8.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell8.setNoWrap(true);
-         tablaArchivos.addCell(greenCell8);
-
-         List<Caja> cajas = formularioTransferencia.getCajas();
-         int c = 0;
-         for (Caja caja : cajas) {
-            if (!caja.getEstado().equals("X")) {
-               c++;
-               for (int index = 0; index < 15; index++) {
-                  PdfPCell titleCell = new PdfPCell(new Phrase(String.valueOf(c), fontSimple));
-                  titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                  titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                  titleCell.setNoWrap(true);
-                  tablaArchivos.addCell(titleCell);
-
-                  PdfPCell titleCell1 = new PdfPCell(new Phrase("N/A", fontSimple));
-                  titleCell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                  titleCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-                  titleCell1.setNoWrap(true);
-                  tablaArchivos.addCell(titleCell1);
-
-                  PdfPCell titleCell2 = new PdfPCell(new Phrase(caja.getTituloDoc(), fontSimple));
-                  titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                  titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                  tablaArchivos.addCell(titleCell2);
-
-                  PdfPCell titleCell3 = new PdfPCell(new Phrase(String.valueOf(caja.getGestion()), fontSimple));
-                  titleCell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                  titleCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
-                  titleCell3.setNoWrap(true);
-                  tablaArchivos.addCell(titleCell3);
-
-                  PdfPCell titleCell4 = new PdfPCell(new Phrase(caja.getVolumen().getNombre(), fontSimple));
-                  titleCell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                  titleCell4.setHorizontalAlignment(Element.ALIGN_CENTER);
-                  titleCell4.setNoWrap(true);
-                  tablaArchivos.addCell(titleCell4);
-
-                  PdfPCell titleCell5 = new PdfPCell(new Phrase(caja.getCubierta().getNombre(), fontSimple));
-                  titleCell5.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                  titleCell5.setHorizontalAlignment(Element.ALIGN_CENTER);
-                  tablaArchivos.addCell(titleCell5);
-
-                  PdfPCell titleCell6 = new PdfPCell(new Phrase(String.valueOf(caja.getFojas()), fontSimple));
-                  titleCell6.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                  titleCell6.setHorizontalAlignment(Element.ALIGN_CENTER);
-                  tablaArchivos.addCell(titleCell6);
-
-                  PdfPCell titleCell7 = new PdfPCell(new Phrase(caja.getNotas(), fontSimple));
-                  titleCell7.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                  titleCell7.setHorizontalAlignment(Element.ALIGN_CENTER);
-                  tablaArchivos.addCell(titleCell7);
-               }
-
-            }
-         }
-
-         document.add(tablaArchivos);
-
-         emptyParagraph.add(" ");
-         document.add(emptyParagraph);
-
-         emptyParagraph.add(" ");
-         Paragraph paragraph = new Paragraph(
-               "Pando, " + utilidadService.fechaActualTexto(), fontSimple);
-         paragraph.setAlignment(Paragraph.ALIGN_CENTER);
-         document.add(paragraph);
-
-         emptyParagraph.add(" ");
-         document.add(emptyParagraph);
-         emptyParagraph.add(" ");
-         document.add(emptyParagraph);
-         emptyParagraph.add(" ");
-         document.add(emptyParagraph);
-
-         Paragraph paragraph2 = new Paragraph("    ", fontSimple);
-         paragraph2.setAlignment(Paragraph.ALIGN_CENTER);
-         document.add(paragraph2);
-         Paragraph textFinal = new Paragraph("Entregué Conforme                              Recibí Conforme",
-               fontSimple);
-         textFinal.setAlignment(Paragraph.ALIGN_CENTER);
-         document.add(textFinal);
-
-         // Cerrar el documento
-         document.close();
-      } catch (DocumentException e) {
-         e.printStackTrace();
-      }
-
-      return outputStream.toByteArray();
-   }
-
-   private void configureCell(PdfPCell cell) {
-      // Define el color verde personalizado
-      BaseColor colorVerdePersonalizado = new BaseColor(223, 255, 185); // Valores RGB correspondientes a #DAF7A6
-
-      // Aplica el color personalizado a la celda
-      cell.setBackgroundColor(colorVerdePersonalizado);
-
-      // Otras configuraciones de celda
-      cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-      cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-      // Otras configuraciones de celda
-   }
-
-   private PdfPCell createCell(String content, Font font) {
-      PdfPCell cell = new PdfPCell(new Phrase(content, font));
-      configureCell(cell);
-      return cell;
-   }
-
-   @GetMapping("/verIcoPdfFormulario/{id}")
-   public ResponseEntity<byte[]> verIcoPdfFormulario(@PathVariable Long id) throws IOException, DocumentException {
-
-      // byte[] bytes = generarPdf(id);
-      byte[] bytes = null;
-
-      try {
-
+         stream = utilidadService.compilarAndExportarReporte(nombreArchivo, parametros);
+         byte[] bytes = stream.toByteArray();
          PDDocument document = PDDocument.load(bytes);
-
-         // Obtener el renderizador PDF
          PDFRenderer renderer = new PDFRenderer(document);
-
-         // Convertir la primera página a imagen
-         BufferedImage image = renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
-
-         // Crear un flujo de bytes para la imagen
+         BufferedImage image = renderer.renderImageWithDPI(0, 300);
          ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
          // Guardar la imagen en formato JPG
@@ -771,7 +424,7 @@ public class FormularioTransferController {
                .contentType(MediaType.IMAGE_JPEG)
                .contentLength(imageBytes.length)
                .body(imageBytes);
-      } catch (IOException e) {
+      } catch (IOException | JRException e ) {
          System.out.println("ERROR: " + e.getMessage());
          e.printStackTrace();
          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
