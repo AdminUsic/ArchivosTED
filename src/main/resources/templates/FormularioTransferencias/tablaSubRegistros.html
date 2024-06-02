@@ -7,11 +7,11 @@
                         <thead class="table-dark">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro. Caja</th>
                                 <th>Titulo del Documento</th>
                                 <th>Año</th>
                                 <th>Tomo/Volumen</th>
                                 <th>Cubierta</th>
+                                <th>Nro. Foja</th>
                                 <th>Notas</th>
                                 <th>Acciones</th>
                             </tr>
@@ -19,11 +19,11 @@
                         <tbody id="tbodySUB">
                             <tr th:each="caja, rowStat:${cajas}">
                                 <td th:text="${rowStat.count}"></td>
-                                <td class="text-center" th:text="${caja.nro}"></td>
                                 <td class="text-center" th:text="${caja.tituloDoc}"></td>
                                 <td class="text-center" th:text="${caja.gestion}"></td>
                                 <td class="text-center" th:text="${caja.volumen.nombre}"></td>
                                 <td class="text-center" th:text="${caja.cubierta.nombre}"></td>
+                                <td class="text-center" th:text="${caja.fojas}"></td>
                                 <td class="text-center" th:text="${caja.notas}"></td>
                                 <td class="text-center">
                                     <div class="btn-group">
@@ -42,11 +42,11 @@
                         <tfoot class="table-secondary">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro. Caja</th>
                                 <th>Titulo del Documento</th>
                                 <th>Año</th>
                                 <th>Tomo/Volumen</th>
                                 <th>Cubierta</th>
+                                <th>Nro. Foja</th>
                                 <th>Notas</th>
                                 <th>Acciones</th>
                             </tr>

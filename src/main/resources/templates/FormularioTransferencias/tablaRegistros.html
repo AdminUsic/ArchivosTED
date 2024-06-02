@@ -23,7 +23,8 @@
                                 <td class="text-center" th:text="${fromT.cantDocumentos}"></td>
                                 <td class="text-center" th:text="${fromT.unidad.nombre}"></td>
                                 <td class="text-center" th:text="${fromT.cargo.nombre}"></td>
-                                <td class="text-center" th:text="${#dates.format(fromT.fechaExtrema, 'dd/MM/yyyy')}"></td>
+                                <td class="text-center" th:text="${fromT.gestion}"></td>
+                                <!-- <td class="text-center" th:text="${#dates.format(fromT.fechaExtrema, 'dd/MM/yyyy')}"></td> -->
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <a class="btn btn-success" type="button" data-toggle="modal"

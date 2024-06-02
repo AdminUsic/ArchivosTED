@@ -2,9 +2,26 @@ package com.example.demo.service;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
 import java.util.Base64;
 import java.util.Date;
 
@@ -12,16 +29,28 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
+// import org.apache.pdfbox.pdmodel.PDDocument;
+// import org.apache.pdfbox.rendering.PDFRenderer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Service
 public class UtilidadServiceProjectImpl implements UtilidadServiceProject {
 
   String secretKey = "Lanza12310099812"; // La clave debe tener 16, 24 o 32 caracteres para AES-128, AES-192 o
   // AES-256 respectivamente
+
+  @Autowired
+  private DataSource dataSource; // Inyectar el DataSource de Spring
 
   @Override
   public String decrypt(String encryptedText) throws Exception {
@@ -201,6 +230,68 @@ public class UtilidadServiceProjectImpl implements UtilidadServiceProject {
   private BufferedImage renderFirstPageAsImage(PDDocument document) throws IOException {
     PDFRenderer renderer = new PDFRenderer(document);
     return renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
+  }
+
+  @Override
+  public byte[] generarReporte(String rutaJasper, Map<String, Object> parametros) {
+    Connection conexionBD = null;
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+    try {
+      // Obtener una conexión a la base de datos
+      conexionBD = dataSource.getConnection();
+
+      // Llenar el informe con datos y obtener los bytes
+      JasperPrint jasperPrint = JasperFillManager.fillReport(rutaJasper, parametros, conexionBD);
+      net.sf.jasperreports.engine.JasperExportManager.exportReportToPdfStream(jasperPrint, byteArrayOutputStream);
+
+      return byteArrayOutputStream.toByteArray();
+    } catch (SQLException | JRException e) {
+      System.out.println("ERROR: " + e.getMessage());
+      e.printStackTrace();
+      // Manejar errores aquí
+      return null;
+    } finally {
+      // Cerrar la conexión a la base de datos en el bloque finally para garantizar su
+      // cierre
+      if (conexionBD != null) {
+        try {
+          conexionBD.close();
+        } catch (SQLException e) {
+          System.out.println("ERROR: " + e.getMessage());
+          e.printStackTrace();
+          // Manejar errores aquí
+        }
+      }
+    }
+  }
+
+  @Override
+  public ByteArrayOutputStream compilarAndExportarReporte(String nombreArchivo, Map<String, Object> params)
+      throws IOException, JRException, SQLException {
+    Connection con = null;
+
+    // return stream;
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+    Path rootPath = Paths.get("").toAbsolutePath();
+    Path directorio = Paths.get(rootPath.toString(), "reportes", nombreArchivo);
+    String ruta = directorio.toString();
+
+    try (InputStream reportStream = new FileInputStream(ruta)) {
+      con = dataSource.getConnection();
+
+      JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+
+      JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, con);
+      JasperExportManager.exportReportToPdfStream(jasperPrint, stream);
+    } catch (IOException | JRException | SQLException e) {
+      System.out.println("ERROR: " + e.getMessage());
+      e.printStackTrace();
+    }
+    con.close();
+    return stream;
+
   }
 
 }

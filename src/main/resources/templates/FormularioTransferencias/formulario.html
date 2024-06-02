@@ -31,8 +31,12 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label class="form-label">Fecha de Extrema:</label>
-                  <input type="text" class="form-control datepickerformFT" name="fechaExtrema" id="fechaExtrema"
-                    placeholder="Seleccione una fecha" th:field="${FormularioTransferencia.fechaExtremaFormat}" required />
+                  <!-- <input type="text" class="form-control datepickerformFT" name="fechaExtrema" id="fechaExtrema"
+                    placeholder="Seleccione una fecha" th:field="${FormularioTransferencia.fechaExtremaFormat}" required /> -->
+                  <select class="select-field" style="width: 100%;" id="años2" name="gestion">
+                    <option th:text="${edit}? ${FormularioTransferencia.gestion} : 'Seleccionar'"
+                      th:value="${edit}? ${FormularioTransferencia.gestion} : ''"></option>
+                  </select>
                 </div>
               </div>
               <!-- <div class="col-sm-6">
@@ -74,46 +78,46 @@
         //alert("la action es: " + action);
         var formData = $(this).serialize();
         $.ajax({
-            type: 'POST',
-            url: $(this).attr('action'),
-            data: formData,
-            contentType: 'application/x-www-form-urlencoded',
-            success: function (response) {
-              var mensaje = response;
-              if (mensaje == 'Se realizó el registro correctamente') {
-                cargarFormulario();
-                cargarTabla();
-                Swal.fire(
-                  'Registrado!',
-                  mensaje + '.',
-                  'success'
-                );
-                var div = document.getElementById("dataTable");
-                div.scrollIntoView({ behavior: 'smooth' });
-                //toastr.success(mensaje);
-              } else {
-                toastr.info(mensaje);
-              }
-
-              if (mensaje == "Se Modificó el registro correctamente") {
-                cargarFormulario();
-                cargarTabla();
-                var div = document.getElementById("dataTable");
-                div.scrollIntoView({ behavior: 'smooth' });
-                Swal.fire(
-                  'Modificado!',
-                  mensaje + '.',
-                  'success'
-                );
-              }
-
-            },
-            error: function (xhr, status, error) {
-              toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error);
-              console.error(error);
-              // Manejo de errores
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: formData,
+          contentType: 'application/x-www-form-urlencoded',
+          success: function (response) {
+            var mensaje = response;
+            if (mensaje == 'Se realizó el registro correctamente') {
+              cargarFormulario();
+              cargarTabla();
+              Swal.fire(
+                'Registrado!',
+                mensaje + '.',
+                'success'
+              );
+              var div = document.getElementById("dataTable");
+              div.scrollIntoView({ behavior: 'smooth' });
+              //toastr.success(mensaje);
+            } else {
+              toastr.info(mensaje);
             }
-          });
+
+            if (mensaje == "Se Modificó el registro correctamente") {
+              cargarFormulario();
+              cargarTabla();
+              var div = document.getElementById("dataTable");
+              div.scrollIntoView({ behavior: 'smooth' });
+              Swal.fire(
+                'Modificado!',
+                mensaje + '.',
+                'success'
+              );
+            }
+
+          },
+          error: function (xhr, status, error) {
+            toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error);
+            console.error(error);
+            // Manejo de errores
+          }
+        });
 
       });
     });
@@ -156,15 +160,30 @@
   </script>
   <script>
     $('.select-field').select2({
-      theme: 'bootstrap-5'
+      theme: 'bootstrap-5',
+      placeholder: 'Selecciona una gestion'
     });
   </script>
   <script>
-    $(function () {
-      $('input.datepickerformFT').datepicker({
-        format: "DD/MM/YYYY",
-        minDate: "1900-01-01"
-      });
-    });
+    // $(function () {
+    //   $('input.datepickerformFT').datepicker({
+    //     format: "DD/MM/YYYY",
+    //     minDate: "1900-01-01"
+    //   });
+    // });
+    var startYear = 1900;
+    var endYear = new Date().getFullYear();
+    //var endYear = 2100;
+    // Obtén una referencia al elemento select
+    var select = document.getElementById("años2");
+    // Agrega el nuevo elemento option al select
+    for (var year = endYear; year >= startYear; year--) {
+      // Crea un nuevo elemento option
+      var option = document.createElement("option");
+      option.text = year;
+      option.value = year;
+
+      select.add(option);
+    }
   </script>
 </div>

@@ -37,15 +37,16 @@ public class FormularioTransferencia implements Serializable {
     private Long id_formularioTransferencia;
 
     private int cantDocumentos;
+    private int gestion;
     private String estado;
 
-    @Column
-    @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date fechaExtrema;
+    // @Column
+    // @Temporal(TemporalType.DATE)
+    // @JsonFormat(pattern = "dd-MM-yyyy")
+    // private Date fechaExtrema;
 
-    @Transient
-    private String fechaExtremaFormat;
+    // @Transient
+    // private String fechaExtremaFormat;
 
     @Column
     @Temporal(TemporalType.DATE)

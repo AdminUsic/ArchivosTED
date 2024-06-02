@@ -27,7 +27,6 @@ public class Caja implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_caja;
     
-    private int nro;
     private String tituloDoc;
     private int gestion;
 
@@ -45,6 +44,8 @@ public class Caja implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_formularioTransferencia")
     private FormularioTransferencia formularioTransferencia;
+
+    private int fojas;
 
     private String notas;
 

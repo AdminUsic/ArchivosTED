@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
@@ -35,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.demo.Encabezado;
 import com.example.demo.entity.Archivo;
 import com.example.demo.entity.Caja;
 import com.example.demo.entity.Control;
@@ -70,6 +74,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfDocument;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPCellEvent;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -77,6 +82,9 @@ import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.lowagie.text.Cell;
 import com.lowagie.text.HeaderFooter;
+
+import net.sf.jasperreports.engine.JRException;
+
 import java.awt.image.BufferedImage;
 
 @Controller
@@ -150,29 +158,29 @@ public class FormularioTransferController {
       Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
       Usuario u = usuarioService.findOne(usuario.getId_usuario());
 
-      // Obtén la fecha en formato DD/MM/YYYY
-      String fechaStr = formularioTransferencia.getFechaExtremaFormat();
+      // // Obtén la fecha en formato DD/MM/YYYY
+      // String fechaStr = formularioTransferencia.getFechaExtremaFormat();
 
-      // Define el formato de entrada y salida
-      SimpleDateFormat sdfInput = new SimpleDateFormat("dd/MM/yyyy");
-      SimpleDateFormat sdfOutput = new SimpleDateFormat("yy-MM-dd");
+      // // Define el formato de entrada y salida
+      // SimpleDateFormat sdfInput = new SimpleDateFormat("dd/MM/yyyy");
+      // SimpleDateFormat sdfOutput = new SimpleDateFormat("yy-MM-dd");
 
-      try {
-         // Parsea la fecha en formato DD/MM/YYYY
-         Date fechaParseada = sdfInput.parse(fechaStr);
+      // try {
+      // // Parsea la fecha en formato DD/MM/YYYY
+      // Date fechaParseada = sdfInput.parse(fechaStr);
 
-         // Formatea la fecha al formato yy-MM-dd
-         String fechaFormateadaStr = sdfOutput.format(fechaParseada);
+      // // Formatea la fecha al formato yy-MM-dd
+      // String fechaFormateadaStr = sdfOutput.format(fechaParseada);
 
-         // Parsea la fecha formateada al tipo Date
-         Date fechaFormateada = sdfOutput.parse(fechaFormateadaStr);
+      // // Parsea la fecha formateada al tipo Date
+      // Date fechaFormateada = sdfOutput.parse(fechaFormateadaStr);
 
-         // Asigna la fecha formateada al atributo FechaExtrema
-         formularioTransferencia.setFechaExtrema(fechaFormateada);
-      } catch (ParseException e) {
-         // Manejar la excepción de parseo de fecha aquí
-         e.printStackTrace();
-      }
+      // // Asigna la fecha formateada al atributo FechaExtrema
+      // formularioTransferencia.setFechaExtrema(fechaFormateada);
+      // } catch (ParseException e) {
+      // // Manejar la excepción de parseo de fecha aquí
+      // e.printStackTrace();
+      // }
 
       formularioTransferencia.setFechaRegistro(new Date());
       formularioTransferencia.setHoraRegistro(new Date());
@@ -199,22 +207,22 @@ public class FormularioTransferController {
       FormularioTransferencia formularioTransferencia = formularioTransferenciaService
             .findOne(id_formularioTransferencia);
       // Define el formato de entrada y salida
-      SimpleDateFormat sdfInput = new SimpleDateFormat("yy-MM-dd");
-      SimpleDateFormat sdfOutput = new SimpleDateFormat("dd/MM/yyyy");
+      // SimpleDateFormat sdfInput = new SimpleDateFormat("yy-MM-dd");
+      // SimpleDateFormat sdfOutput = new SimpleDateFormat("dd/MM/yyyy");
 
-      try {
-         // Parsea la fecha en formato yy-MM-dd
-         String fechaStr = sdfInput.format(formularioTransferencia.getFechaExtrema());
+      // try {
+      // // Parsea la fecha en formato yy-MM-dd
+      // String fechaStr = sdfInput.format(formularioTransferencia.getFechaExtrema());
 
-         // Formatea la fecha al formato DD/MM/YYYY
-         Date fechaFormateada = sdfInput.parse(fechaStr);
+      // // Formatea la fecha al formato DD/MM/YYYY
+      // Date fechaFormateada = sdfInput.parse(fechaStr);
 
-         // Convierte la fecha formateada a una cadena en formato DD/MM/YYYY
-         formularioTransferencia.setFechaExtremaFormat(sdfOutput.format(fechaFormateada));
-      } catch (ParseException e) {
-         // Manejar la excepción de parseo de fecha aquí
-         e.printStackTrace();
-      }
+      // // Convierte la fecha formateada a una cadena en formato DD/MM/YYYY
+      // formularioTransferencia.setFechaExtremaFormat(sdfOutput.format(fechaFormateada));
+      // } catch (ParseException e) {
+      // // Manejar la excepción de parseo de fecha aquí
+      // e.printStackTrace();
+      // }
 
       model.addAttribute("FormularioTransferencia", formularioTransferencia);
       model.addAttribute("edit", "true");
@@ -233,29 +241,30 @@ public class FormularioTransferController {
       FormularioTransferencia formularioRegistrado = formularioTransferenciaService
             .findOne(formularioTransferencia.getId_formularioTransferencia());
 
-      // Obtén la fecha en formato DD/MM/YYYY
-      String fechaStr = formularioTransferencia.getFechaExtremaFormat();
+      // // Obtén la fecha en formato DD/MM/YYYY
+      // String fechaStr = formularioTransferencia.getFechaExtremaFormat();
 
-      // Define el formato de entrada y salida
-      SimpleDateFormat sdfInput = new SimpleDateFormat("dd/MM/yyyy");
-      SimpleDateFormat sdfOutput = new SimpleDateFormat("yy-MM-dd");
+      // // Define el formato de entrada y salida
+      // SimpleDateFormat sdfInput = new SimpleDateFormat("dd/MM/yyyy");
+      // SimpleDateFormat sdfOutput = new SimpleDateFormat("yy-MM-dd");
 
-      try {
-         // Parsea la fecha en formato DD/MM/YYYY
-         Date fechaParseada = sdfInput.parse(fechaStr);
+      // try {
+      // // Parsea la fecha en formato DD/MM/YYYY
+      // Date fechaParseada = sdfInput.parse(fechaStr);
 
-         // Formatea la fecha al formato yy-MM-dd
-         String fechaFormateadaStr = sdfOutput.format(fechaParseada);
+      // // Formatea la fecha al formato yy-MM-dd
+      // String fechaFormateadaStr = sdfOutput.format(fechaParseada);
 
-         // Parsea la fecha formateada al tipo Date
-         Date fechaFormateada = sdfOutput.parse(fechaFormateadaStr);
+      // // Parsea la fecha formateada al tipo Date
+      // Date fechaFormateada = sdfOutput.parse(fechaFormateadaStr);
 
-         // Asigna la fecha formateada al atributo FechaExtrema
-         formularioRegistrado.setFechaExtrema(fechaFormateada);
-      } catch (ParseException e) {
-         // Manejar la excepción de parseo de fecha aquí
-         e.printStackTrace();
-      }
+      // // Asigna la fecha formateada al atributo FechaExtrema
+      // formularioRegistrado.setFechaExtrema(fechaFormateada);
+      // } catch (ParseException e) {
+      // // Manejar la excepción de parseo de fecha aquí
+      // e.printStackTrace();
+      // }
+      formularioRegistrado.setGestion(formularioTransferencia.getGestion());
       formularioRegistrado.setCantDocumentos(formularioTransferencia.getCantDocumentos());
       formularioTransferenciaService.save(formularioRegistrado);
 
@@ -374,17 +383,37 @@ public class FormularioTransferController {
 
    @GetMapping("/GenerarReporte/{id_formularioTransferencia}")
    public ResponseEntity<ByteArrayResource> verPdf(Model model, HttpServletRequest request,
-         @PathVariable("id_formularioTransferencia") Long id_formularioTransferencia)
-         throws DocumentException, MalformedURLException, IOException {
-      byte[] bytes = generarPdf(id_formularioTransferencia);
+         @PathVariable("id_formularioTransferencia") Long id_formularioTransferencia) throws SQLException {
+      // byte[] bytes = generarPdf(id_formularioTransferencia);
+      String nombreArchivo = "FormularioTransferenciaReport.jrxml";
 
-      ByteArrayResource resource = new ByteArrayResource(bytes);
+      Path projectPath = Paths.get("").toAbsolutePath();
+      Path imagePath = Paths.get(projectPath.toString(), "src", "main", "resources", "static", "logo",
+            "logoCabezera.png");
+      String imagen = imagePath.toString();
+      //System.out.println(imagen);
+      Map<String, Object> parametros = new HashMap<>();
+      parametros.put("idFormulario", id_formularioTransferencia);
+      parametros.put("rutaImg", imagen);
+      parametros.put("lugarFechaTexto", "Cobija, "+utilidadService.fechaActualTexto());
 
-      return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + "Reporte de lista de Archivos.pdf")
-            .contentType(MediaType.APPLICATION_PDF)
-            .contentLength(bytes.length)
-            .body(resource);
+      ByteArrayOutputStream stream;
+      try {
+         stream = utilidadService.compilarAndExportarReporte(nombreArchivo, parametros);
+         byte[] bytes = stream.toByteArray();
+         ByteArrayResource resource = new ByteArrayResource(bytes);
+
+         return ResponseEntity.ok()
+               .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + "Formulario de Transferencia.pdf")
+               .contentType(MediaType.APPLICATION_PDF)
+               .contentLength(bytes.length)
+               .body(resource);
+      } catch (IOException | JRException e) {
+         // Manejo de excepciones comunes
+         System.out.println("ERROR: " + e.getMessage());
+         e.printStackTrace();
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Devolver un estado de error
+      }
    }
 
    public byte[] generarPdf(Long id) throws IOException, DocumentException {
@@ -408,63 +437,77 @@ public class FormularioTransferController {
 
       try {
          PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+         Encabezado encabezado = new Encabezado();
+         // Asociamos el encabezado con el escritor
+         writer.setPageEvent(encabezado);
          document.open();
+         // System.out.println("Número total de páginas: " + totalPages);
 
-         PdfPTable headerTable = new PdfPTable(4);
-         headerTable.setWidthPercentage(95);
+         // PdfPTable headerTable = new PdfPTable(4);
+         // headerTable.setWidthPercentage(95);
 
-         float[] columntable = { 2.5f, 4f, 1f, 1f };
-         headerTable.setWidths(columntable);
+         // float[] columntable = { 2.5f, 4f, 1f, 1f };
+         // headerTable.setWidths(columntable);
 
-         Image image = Image.getInstance(imagen);
-         PdfPCell celda1 = new PdfPCell(image, true);
-         celda1.setRowspan(4);
-         celda1.setPaddingTop(8);
-         celda1.setPaddingBottom(8);
-         celda1.setPaddingLeft(25);
-         celda1.setPaddingRight(25);
-         headerTable.addCell(celda1);
+         // Image image = Image.getInstance(imagen);
+         // PdfPCell celda1 = new PdfPCell(image, true);
+         // celda1.setRowspan(4);
+         // celda1.setPaddingTop(8);
+         // celda1.setPaddingBottom(8);
+         // celda1.setPaddingLeft(25);
+         // celda1.setPaddingRight(25);
+         // headerTable.addCell(celda1);
 
-         PdfPCell celda2 = new PdfPCell(
-               new Phrase("FORMULARIO DE TRANSFERENCIA DE DOCUMENTOS AL ARCHIVO CENTRAL", fontNegrilla));
-         celda2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-         celda2.setHorizontalAlignment(Element.ALIGN_CENTER);
-         celda2.setRowspan(4);
-         headerTable.addCell(celda2);
+         // PdfPCell celda2 = new PdfPCell(
+         // new Phrase("FORMULARIO DE TRANSFERENCIA DE DOCUMENTOS AL ARCHIVO CENTRAL",
+         // fontNegrilla));
+         // celda2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+         // celda2.setHorizontalAlignment(Element.ALIGN_CENTER);
+         // celda2.setRowspan(4);
+         // headerTable.addCell(celda2);
 
-         // Celda 6 ocupando la mitad de una columna
-         PdfPCell celda6 = new PdfPCell(new Phrase("FORMATO", fontNegrilla9));
-         celda6.setColspan(2); // Ocupará dos de las cuatro columnas
-         celda6.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         celda6.setHorizontalAlignment(Element.ALIGN_CENTER);
-         headerTable.addCell(celda6);
+         // // Celda 6 ocupando la mitad de una columna
+         // PdfPCell celda6 = new PdfPCell(new Phrase("FORMATO", fontNegrilla9));
+         // celda6.setColspan(2); // Ocupará dos de las cuatro columnas
+         // celda6.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
+         // centro
+         // celda6.setHorizontalAlignment(Element.ALIGN_CENTER);
+         // headerTable.addCell(celda6);
 
-         // Celda 6 ocupando la mitad de una columna
-         PdfPCell celda4 = new PdfPCell(new Phrase("FOR-ACH-GDC-01", fontNegrilla9));
-         celda4.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         celda4.setHorizontalAlignment(Element.ALIGN_CENTER);
-         celda4.setColspan(2); // Ocupará dos de las cuatro columnas
-         headerTable.addCell(celda4);
+         // // Celda 6 ocupando la mitad de una columna
+         // PdfPCell celda4 = new PdfPCell(new Phrase("FOR-ACH-GDC-01", fontNegrilla9));
+         // celda4.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
+         // centro
+         // celda4.setHorizontalAlignment(Element.ALIGN_CENTER);
+         // celda4.setColspan(2); // Ocupará dos de las cuatro columnas
+         // headerTable.addCell(celda4);
 
-         // Nueva celda para ocupar la otra mitad de la columna
-         PdfPCell celda7 = new PdfPCell(new Phrase("Fecha de Aprobaci\u00F3n: 12/05/2023", fontSimple9));
-         celda7.setColspan(2); // Ocupará dos de las cuatro columnas
-         celda7.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         celda7.setHorizontalAlignment(Element.ALIGN_CENTER);
-         headerTable.addCell(celda7);
+         // // Nueva celda para ocupar la otra mitad de la columna
+         // PdfPCell celda7 = new PdfPCell(new Phrase("Fecha de Aprobaci\u00F3n:
+         // 12/05/2023", fontSimple9));
+         // celda7.setColspan(2); // Ocupará dos de las cuatro columnas
+         // celda7.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
+         // centro
+         // celda7.setHorizontalAlignment(Element.ALIGN_CENTER);
+         // headerTable.addCell(celda7);
 
-         PdfPCell celda8 = new PdfPCell(new Phrase("Versi\u00F3n: 03", fontSimple9));
-         celda8.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         celda8.setHorizontalAlignment(Element.ALIGN_CENTER);
-         headerTable.addCell(celda8);
-         PdfPCell celda9 = new PdfPCell(new Phrase("P\u00E1g.: 1 de 1", fontSimple9));
-         celda9.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-         celda9.setHorizontalAlignment(Element.ALIGN_CENTER);
-         headerTable.addCell(celda9);
+         // PdfPCell celda8 = new PdfPCell(new Phrase("Versi\u00F3n: 03", fontSimple9));
+         // celda8.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
+         // centro
+         // celda8.setHorizontalAlignment(Element.ALIGN_CENTER);
+         // headerTable.addCell(celda8);
+         // PdfPCell celda9 = new PdfPCell();
+         // Phrase footer = new Phrase(String.format("Pag. 1 de %d", totalPages),
+         // fontSimple9);
+         // celda9.setPhrase(footer);
+         // celda9.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al
+         // centro
+         // celda9.setHorizontalAlignment(Element.ALIGN_CENTER);
+         // headerTable.addCell(celda9);
+         // document.add(headerTable);
 
-         document.add(headerTable);
-         emptyParagraph.add(" ");
-         document.add(emptyParagraph);
+         // emptyParagraph.add(" ");
+         // document.add(emptyParagraph);
 
          // Tabla 2: Dividida en 2 columnas, 5 filas
          PdfPTable tablaSegunda = new PdfPTable(2);
@@ -493,7 +536,7 @@ public class FormularioTransferController {
          // PdfPCell cell10 = new PdfPCell(new
          // Phrase(formularioTransferencia.getFechaExtrema(), fontSimple));
          PdfPCell cell10 = new PdfPCell(
-               new Phrase(utilidadService.fechaTexto(formularioTransferencia.getFechaExtrema()), fontSimple));
+               new Phrase(String.valueOf(formularioTransferencia.getGestion()), fontSimple));
 
          // Agregar las celdas a la tabla
          tablaSegunda.addCell(cell1);
@@ -513,10 +556,10 @@ public class FormularioTransferController {
          document.add(emptyParagraph);
 
          // TABLA 3
-         PdfPTable tablaArchivos = new PdfPTable(7);
+         PdfPTable tablaArchivos = new PdfPTable(8);
          tablaArchivos.setWidthPercentage(95);
 
-         float[] columnWidths = { 0.6f, 1.1f, 3f, 0.8f, 1.5f, 1.5f, 2.4f };
+         float[] columnWidths = { 0.6f, 1.1f, 3f, 0.8f, 1.5f, 1.5f, 1.1f, 2.4f };
          tablaArchivos.setWidths(columnWidths);
 
          // Crear celda con el color específico para la primera fila 223, 255, 185
@@ -535,7 +578,6 @@ public class FormularioTransferController {
          greenCell2.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
          greenCell2.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
          greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell2.setNoWrap(true);
          tablaArchivos.addCell(greenCell2);
 
          PdfPCell greenCell3 = new PdfPCell(new Phrase("TITULO DOCUMENTAL", fontNegrilla));
@@ -568,55 +610,72 @@ public class FormularioTransferController {
          greenCell6.setNoWrap(true);
          tablaArchivos.addCell(greenCell6);
 
-         PdfPCell greenCell7 = new PdfPCell(new Phrase("NOTAS", fontNegrilla));
+         PdfPCell greenCell7 = new PdfPCell(new Phrase("N° DE FOJAS", fontNegrilla));
          greenCell7.setHorizontalAlignment(Element.ALIGN_CENTER);
          greenCell7.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
          greenCell7.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
          greenCell7.setHorizontalAlignment(Element.ALIGN_CENTER);
-         greenCell7.setNoWrap(true);
          tablaArchivos.addCell(greenCell7);
 
+         PdfPCell greenCell8 = new PdfPCell(new Phrase("NOTAS", fontNegrilla));
+         greenCell8.setHorizontalAlignment(Element.ALIGN_CENTER);
+         greenCell8.setBackgroundColor(new BaseColor(223, 255, 185)); // HEX #659308
+         greenCell8.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
+         greenCell8.setHorizontalAlignment(Element.ALIGN_CENTER);
+         greenCell8.setNoWrap(true);
+         tablaArchivos.addCell(greenCell8);
+
          List<Caja> cajas = formularioTransferencia.getCajas();
+         int c = 0;
          for (Caja caja : cajas) {
             if (!caja.getEstado().equals("X")) {
-               PdfPCell titleCell = new PdfPCell(new Phrase(String.valueOf(caja.getNro()), fontSimple));
-               titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-               titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-               titleCell.setNoWrap(true);
-               tablaArchivos.addCell(titleCell);
+               c++;
+               for (int index = 0; index < 15; index++) {
+                  PdfPCell titleCell = new PdfPCell(new Phrase(String.valueOf(c), fontSimple));
+                  titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                  titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                  titleCell.setNoWrap(true);
+                  tablaArchivos.addCell(titleCell);
 
-               PdfPCell titleCell1 = new PdfPCell(new Phrase("N/A", fontSimple));
-               titleCell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-               titleCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-               titleCell1.setNoWrap(true);
-               tablaArchivos.addCell(titleCell1);
+                  PdfPCell titleCell1 = new PdfPCell(new Phrase("N/A", fontSimple));
+                  titleCell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                  titleCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                  titleCell1.setNoWrap(true);
+                  tablaArchivos.addCell(titleCell1);
 
-               PdfPCell titleCell2 = new PdfPCell(new Phrase(caja.getTituloDoc(), fontSimple));
-               titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-               titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-               tablaArchivos.addCell(titleCell2);
+                  PdfPCell titleCell2 = new PdfPCell(new Phrase(caja.getTituloDoc(), fontSimple));
+                  titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                  titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                  tablaArchivos.addCell(titleCell2);
 
-               PdfPCell titleCell3 = new PdfPCell(new Phrase(String.valueOf(caja.getGestion()), fontSimple));
-               titleCell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
-               titleCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
-               titleCell3.setNoWrap(true);
-               tablaArchivos.addCell(titleCell3);
+                  PdfPCell titleCell3 = new PdfPCell(new Phrase(String.valueOf(caja.getGestion()), fontSimple));
+                  titleCell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                  titleCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
+                  titleCell3.setNoWrap(true);
+                  tablaArchivos.addCell(titleCell3);
 
-               PdfPCell titleCell4 = new PdfPCell(new Phrase(caja.getVolumen().getNombre(), fontSimple));
-               titleCell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
-               titleCell4.setHorizontalAlignment(Element.ALIGN_CENTER);
-               titleCell4.setNoWrap(true);
-               tablaArchivos.addCell(titleCell4);
+                  PdfPCell titleCell4 = new PdfPCell(new Phrase(caja.getVolumen().getNombre(), fontSimple));
+                  titleCell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                  titleCell4.setHorizontalAlignment(Element.ALIGN_CENTER);
+                  titleCell4.setNoWrap(true);
+                  tablaArchivos.addCell(titleCell4);
 
-               PdfPCell titleCell5 = new PdfPCell(new Phrase(caja.getCubierta().getNombre(), fontSimple));
-               titleCell5.setVerticalAlignment(Element.ALIGN_MIDDLE);
-               titleCell5.setHorizontalAlignment(Element.ALIGN_CENTER);
-               tablaArchivos.addCell(titleCell5);
+                  PdfPCell titleCell5 = new PdfPCell(new Phrase(caja.getCubierta().getNombre(), fontSimple));
+                  titleCell5.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                  titleCell5.setHorizontalAlignment(Element.ALIGN_CENTER);
+                  tablaArchivos.addCell(titleCell5);
 
-               PdfPCell titleCell6 = new PdfPCell(new Phrase(caja.getNotas(), fontSimple));
-               titleCell6.setVerticalAlignment(Element.ALIGN_MIDDLE);
-               titleCell6.setHorizontalAlignment(Element.ALIGN_CENTER);
-               tablaArchivos.addCell(titleCell6);
+                  PdfPCell titleCell6 = new PdfPCell(new Phrase(String.valueOf(caja.getFojas()), fontSimple));
+                  titleCell6.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                  titleCell6.setHorizontalAlignment(Element.ALIGN_CENTER);
+                  tablaArchivos.addCell(titleCell6);
+
+                  PdfPCell titleCell7 = new PdfPCell(new Phrase(caja.getNotas(), fontSimple));
+                  titleCell7.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                  titleCell7.setHorizontalAlignment(Element.ALIGN_CENTER);
+                  tablaArchivos.addCell(titleCell7);
+               }
+
             }
          }
 
@@ -713,6 +772,7 @@ public class FormularioTransferController {
                .contentLength(imageBytes.length)
                .body(imageBytes);
       } catch (IOException e) {
+         System.out.println("ERROR: " + e.getMessage());
          e.printStackTrace();
          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
