@@ -356,11 +356,11 @@ public class FormularioTransferController {
       Path imagePath = Paths.get(projectPath.toString(), "src", "main", "resources", "static", "logo",
             "logoCabezera.png");
       String imagen = imagePath.toString();
-      //System.out.println(imagen);
+      // System.out.println(imagen);
       Map<String, Object> parametros = new HashMap<>();
       parametros.put("idFormulario", id_formularioTransferencia);
       parametros.put("rutaImg", imagen);
-      parametros.put("lugarFechaTexto", "Cobija, "+utilidadService.fechaActualTexto());
+      parametros.put("lugarFechaTexto", "Cobija, " + utilidadService.fechaActualTexto());
 
       ByteArrayOutputStream stream;
       try {
@@ -382,7 +382,8 @@ public class FormularioTransferController {
    }
 
    @GetMapping("/verIcoPdfFormulario/{id}")
-   public ResponseEntity<byte[]> verIcoPdfFormulario(@PathVariable Long id) throws IOException, DocumentException, JRException, SQLException {
+   public ResponseEntity<byte[]> verIcoPdfFormulario(@PathVariable Long id)
+         throws DocumentException, JRException, SQLException {
 
       String nombreArchivo = "FormularioTransferenciaReport.jrxml";
 
@@ -390,41 +391,47 @@ public class FormularioTransferController {
       Path imagePath = Paths.get(projectPath.toString(), "src", "main", "resources", "static", "logo",
             "logoCabezera.png");
       String imagen = imagePath.toString();
-      //System.out.println(imagen);
+      // System.out.println(imagen);
       Map<String, Object> parametros = new HashMap<>();
       parametros.put("idFormulario", id);
       parametros.put("rutaImg", imagen);
-      parametros.put("lugarFechaTexto", "Cobija, "+utilidadService.fechaActualTexto());
+      parametros.put("lugarFechaTexto", "Cobija, " + utilidadService.fechaActualTexto());
 
       ByteArrayOutputStream stream;
       try {
-         stream = utilidadService.compilarAndExportarReporte(nombreArchivo, parametros);
-         byte[] bytes = stream.toByteArray();
-         PDDocument document = PDDocument.load(bytes);
-         PDFRenderer renderer = new PDFRenderer(document);
-         BufferedImage image = renderer.renderImageWithDPI(0, 300);
-         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+         try {
+            stream = utilidadService.compilarAndExportarReporte(nombreArchivo, parametros);
+            byte[] bytes = stream.toByteArray();
+            PDDocument document = PDDocument.load(bytes);
+            PDFRenderer renderer = new PDFRenderer(document);
+            BufferedImage image = renderer.renderImageWithDPI(0, 300);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-         // Guardar la imagen en formato JPG
-         ImageIO.write(image, "jpg", baos);
+            // Guardar la imagen en formato JPG
+            ImageIO.write(image, "jpg", baos);
 
-         baos.flush();
-         byte[] imageBytes = baos.toByteArray();
-         baos.close();
-         document.close();
+            baos.flush();
+            byte[] imageBytes = baos.toByteArray();
+            baos.close();
+            document.close();
 
-         // Configurar los encabezados para evitar el caché
-         HttpHeaders headers = new HttpHeaders();
-         headers.setCacheControl("no-cache, no-store, must-revalidate");
-         headers.setPragma("no-cache");
-         headers.setExpires(0);
+            // Configurar los encabezados para evitar el caché
+            HttpHeaders headers = new HttpHeaders();
+            headers.setCacheControl("no-cache, no-store, must-revalidate");
+            headers.setPragma("no-cache");
+            headers.setExpires(0);
 
-         return ResponseEntity.ok()
-               .headers(headers)
-               .contentType(MediaType.IMAGE_JPEG)
-               .contentLength(imageBytes.length)
-               .body(imageBytes);
-      } catch (IOException | JRException e ) {
+            return ResponseEntity.ok()
+                  .headers(headers)
+                  .contentType(MediaType.IMAGE_JPEG)
+                  .contentLength(imageBytes.length)
+                  .body(imageBytes);
+         } catch (JRException | SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+         }
+      } catch (IOException e) {
          System.out.println("ERROR: " + e.getMessage());
          e.printStackTrace();
          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

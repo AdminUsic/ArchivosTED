@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dao.DaoArchivosData;
 
 import com.example.demo.entity.Archivo;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Service
 public class ArchivoServiceImpl implements ArchivoService{
