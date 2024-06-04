@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.entity.Control;
+import com.example.demo.entity.Menu;
 import com.example.demo.entity.Rol;
 import com.example.demo.entity.Unidad;
 import com.example.demo.entity.Usuario;
@@ -56,7 +57,7 @@ public class RolController {
     @PostMapping(value = "/NuevoRegistroRol")
     public String NuevoRegistroRol(HttpServletRequest request, Model model) {
         model.addAttribute("rol", new Rol());
-        model.addAttribute("menus", menuService.menuDisponible());
+        model.addAttribute("menus", menuService.findAll());
         System.out.println("NUEVO ROL");
         return "/roles/formulario";
     }
@@ -101,6 +102,7 @@ public class RolController {
         if (rolService.rolByNombre(rol.getNombre()) == null) {
             rol.setEstado("A");
             rolService.save(rol);
+
             Control control = new Control();
             control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
             control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
@@ -120,7 +122,7 @@ public class RolController {
             @PathVariable("id_rol") Long id_rol) {
 
         System.out.println("EDITAR ROL");
-        model.addAttribute("menus", menuService.menuDisponible());
+        model.addAttribute("menus", menuService.findAll());
         model.addAttribute("rol", rolService.findOne(id_rol));
         model.addAttribute("edit", "true");
         return "/roles/formulario";
