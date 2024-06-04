@@ -70,37 +70,9 @@ public class loginController {
             }
 
             model.addAttribute("userLog", userLog);
-            for (Rol rol : usuarioService.findOne(userLog.getId_usuario()).getPersona().getRoles()) {
-                if (rol.getNombre().equals("ARCHIVOS")) {
-                    // List<Usuario> usuarios = new ArrayList<>();
-                    List<Usuario> usuarios = usuarioService.findAll();
-                    for (int i = 0; i < usuarios.size(); i++) {
-                        if (usuarios.get(i) == usuarioService.findOne(userLog.getId_usuario())) {
-                            usuarios.remove(i);
-                        }
-                    }
-                    model.addAttribute("userChats", usuarios);
-                } else {
-                    List<Usuario> usuarios2 = new ArrayList<>();
-                    List<Usuario> usuarios = usuarioService.findAll();
-                    for (Usuario usuario3 : usuarios) {
-                        for (Rol rol2 : usuario3.getPersona().getRoles()) {
-                            if (rol2.getNombre().equals("ARCHIVOS")) {
-                                usuarios2.add(usuario3);
-                            }
-                        }
-                    }
-                    model.addAttribute("userChats", usuarios2);
-                }
-            }
-
-            Rol rol = (Rol) request.getSession().getAttribute("userRol");
-            System.out.println("NOMBRE ROL: " + rol.getNombre());
-            Rol userRol = rolService.findOne(rol.getId_rol());
-            model.addAttribute("listaMenu", userRol.getMenus());
-            // if
-            // (usuarioService.findOne(userLog.getId_usuario()).getPersona().getRol().getNombre().equals("ARCHIVOS"))
-            // {
+            // for (Rol rol :
+            // usuarioService.findOne(userLog.getId_usuario()).getPersona().getRoles()) {
+            // if (rol.getNombre().equals("ARCHIVOS")) {
             // // List<Usuario> usuarios = new ArrayList<>();
             // List<Usuario> usuarios = usuarioService.findAll();
             // for (int i = 0; i < usuarios.size(); i++) {
@@ -113,13 +85,31 @@ public class loginController {
             // List<Usuario> usuarios2 = new ArrayList<>();
             // List<Usuario> usuarios = usuarioService.findAll();
             // for (Usuario usuario3 : usuarios) {
-            // if (usuario3.getPersona().getRol().getNombre().equals("ARCHIVOS")) {
+            // for (Rol rol2 : usuario3.getPersona().getRoles()) {
+            // if (rol2.getNombre().equals("ARCHIVOS")) {
             // usuarios2.add(usuario3);
+            // }
             // }
             // }
             // model.addAttribute("userChats", usuarios2);
             // }
-            System.out.println("METODO DE INICIAR ");
+            // }
+            List<Usuario> listaUserChat = new ArrayList<>();
+            if (userLog.getPersona().getUnidad().getNombre().equals("ARCHIVO Y BIBLIOTECA")) {
+                for (Usuario user : usuarioService.listaUsuarioChatPersonalArchivo(userLog.getId_usuario())) {
+                    listaUserChat.add(user);
+                }
+            } else {
+                for (Usuario user : usuarioService.listaUsuarioChatRestoPersonal(userLog.getId_usuario())) {
+                    listaUserChat.add(user);
+                }
+            }
+            model.addAttribute("userChats", listaUserChat);
+
+            Rol rol = (Rol) request.getSession().getAttribute("userRol");
+            Rol userRol = rolService.findOne(rol.getId_rol());
+            model.addAttribute("listaMenu", userRol.getMenus());
+
             return "index";
         } else {
             return "login";
@@ -131,9 +121,9 @@ public class loginController {
             @RequestParam(value = "user", required = false) String ci,
             @RequestParam(value = "password", required = false) String password) {
         Usuario usuario = usuarioService.credenciales(ci);
-        System.out.println("INICIAR");
+        
         if (usuario != null) {
-            System.out.println("INICIAR");
+            
             String contenidoDescencryptado;
             try {
                 contenidoDescencryptado = utilidadService.decrypt(usuario.getContraseña());
@@ -144,11 +134,11 @@ public class loginController {
 
             if (usuario.getContraseña().equals(password)) {
                 if (usuario.getPersona().getRoles().size() > 1) {
-                    System.out.println("TIENE ROLES");
+                    
                     return ResponseEntity.ok("MostrarRoles");
 
                 } else {
-                    System.out.println("TIENE UN ROL");
+                    
                     HttpSession session = request.getSession(true); // Crear una nueva sesión si no existe
                     session.setMaxInactiveInterval(1800);
                     usuario.setSesion("ON");

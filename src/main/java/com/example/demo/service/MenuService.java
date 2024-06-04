@@ -9,4 +9,6 @@ public interface MenuService {
   public List<Menu> findAll();
 
 	public Menu findOne(Long id);
+
+  public Menu menuDisponible();
 }

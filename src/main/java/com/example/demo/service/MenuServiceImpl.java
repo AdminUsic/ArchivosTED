@@ -23,5 +23,9 @@ public class MenuServiceImpl implements MenuService{
     return daoMenuData.findById(id).orElse(null);
   }
 
+  @Override
+  public Menu menuDisponible() {
+    return daoMenuData.menuDisponible();
+  }
 
 }

@@ -3,6 +3,8 @@ package com.example.demo.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Query;
+
 import com.example.demo.entity.Usuario;
 
 public interface UsuarioService {
@@ -25,5 +27,11 @@ public interface UsuarioService {
     public List<Usuario> listaUsuarioPorNombreRol(String nombreRol);
 
     public Usuario getUsuarioActivo(Long idPersona);
+
+    public List<Usuario> listaUsuarioPorNombreUnidad(String nombre);
+
+    public List<Usuario> listaUsuarioChatRestoPersonal(Long id);
+
+    public List<Usuario> listaUsuarioChatPersonalArchivo(Long id);
 
 }

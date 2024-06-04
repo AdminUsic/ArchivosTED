@@ -30,7 +30,7 @@
           <!-- text input -->
           <label class="form-label">Menus Disponibles</label>
           <select class="select-field-Multiple" style="width: 100%;" th:field="${rol.menus}" id="selectMenu" multiple>
-            <option th:each="menu: ${menus}" th:text="${menu.nombre}" th:value="${menu.id_menu}"
+            <option th:each="menu: ${menus}" th:text="${menu.nombre}" th:value="${menu.id_menu}" th:if="${menu.idText != null}"
               th:selected="${menu == rol.menus}">
             </option>
           </select>

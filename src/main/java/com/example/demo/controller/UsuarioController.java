@@ -371,52 +371,41 @@ public class UsuarioController {
         Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
         Usuario logueado = usuarioService.findOne(usuario.getId_usuario());
 
-        for (Rol rol : usuarioService.findOne(usuario.getId_usuario()).getPersona().getRoles()) {
-            if (rol.getNombre().equals("ARCHIVOS")) {
-                List<Usuario> usuarios = usuarioService.findAll();
-                for (Usuario u : usuarios) {
-                    if (u.getId_usuario() != usuario.getId_usuario()) {
-                        String[] userData = { u.getNombre_user(), String.valueOf(u.getId_usuario()) };
-                        userChats.add(userData);
-                    }
-                }
-                break;
-            } else {
-                List<Usuario> usuarios2 = new ArrayList<>();
-                List<Usuario> usuarios = usuarioService.findAll();
-                for (Usuario usuario3 : usuarios) {
-                    for (Rol rol2 : usuario3.getPersona().getRoles()) {
-                        if (rol2.getNombre().equals("ARCHIVOS")) {
-                            String[] userData = { usuario3.getNombre_user(), String.valueOf(usuario3.getId_usuario()) };
-                            userChats.add(userData);
-
-                        }
-                    }
-                }
+        if (logueado.getPersona().getUnidad().getNombre().equals("ARCHIVO Y BIBLIOTECA")) {
+            for (Usuario user : usuarioService.listaUsuarioChatPersonalArchivo(logueado.getId_usuario())) {
+                String[] userData = { user.getNombre_user(), String.valueOf(user.getId_usuario()) };
+                userChats.add(userData);
+            }
+        } else {
+            for (Usuario user : usuarioService.listaUsuarioChatRestoPersonal(logueado.getId_usuario())) {
+                String[] userData = { user.getNombre_user(), String.valueOf(user.getId_usuario()) };
+                userChats.add(userData);
             }
         }
 
-        // if
-        // (usuarioService.findOne(usuario.getId_usuario()).getPersona().getRol().getNombre().equals("ARCHIVOS"))
-        // {
-        // List<Usuario> usuarios = usuarioService.findAll();
-        // for (Usuario u : usuarios) {
-        // if (u.getId_usuario() != usuario.getId_usuario()) {
-        // String[] userData = { u.getNombre_user(), String.valueOf(u.getId_usuario())
-        // };
-        // userChats.add(userData);
-        // }
-        // }
-        // } else {
-        // List<Usuario> usuarios2 = new ArrayList<>();
-        // List<Usuario> usuarios = usuarioService.findAll();
-        // for (Usuario usuario3 : usuarios) {
-        // if (usuario3.getPersona().getRol().getNombre().equals("ARCHIVOS")) {
-        // String[] userData = { usuario3.getNombre_user(),
-        // String.valueOf(usuario3.getId_usuario()) };
-        // userChats.add(userData);
-        // }
-        // }
+        // for (Rol rol : usuarioService.findOne(usuario.getId_usuario()).getPersona().getRoles()) {
+        //     if (rol.getNombre().equals("ARCHIVOS")) {
+        //         List<Usuario> usuarios = usuarioService.findAll();
+        //         for (Usuario u : usuarios) {
+        //             if (u.getId_usuario() != usuario.getId_usuario()) {
+        //                 String[] userData = { u.getNombre_user(), String.valueOf(u.getId_usuario()) };
+        //                 userChats.add(userData);
+        //             }
+        //         }
+        //         break;
+        //     } else {
+        //         List<Usuario> usuarios2 = new ArrayList<>();
+        //         List<Usuario> usuarios = usuarioService.findAll();
+        //         for (Usuario usuario3 : usuarios) {
+        //             for (Rol rol2 : usuario3.getPersona().getRoles()) {
+        //                 if (rol2.getNombre().equals("ARCHIVOS")) {
+        //                     String[] userData = { usuario3.getNombre_user(), String.valueOf(usuario3.getId_usuario()) };
+        //                     userChats.add(userData);
+
+        //                 }
+        //             }
+        //         }
+        //     }
         // }
 
         return new ResponseEntity<>(userChats, HttpStatus.OK);

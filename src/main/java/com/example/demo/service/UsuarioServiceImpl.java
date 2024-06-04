@@ -71,4 +71,19 @@ public class UsuarioServiceImpl implements UsuarioService {
         return daoUsuarioData.getUsuarioActivo(idPersona);
     }
 
+    @Override
+    public List<Usuario> listaUsuarioPorNombreUnidad(String nombre) {
+        return daoUsuarioData.listaUsuarioPorNombreUnidad(nombre);
+    }
+
+    @Override
+    public List<Usuario> listaUsuarioChatRestoPersonal(Long id) {
+        return daoUsuarioData.listaUsuarioChatRestoPersonal(id);
+    }
+
+    @Override
+    public List<Usuario> listaUsuarioChatPersonalArchivo(Long id) {
+        return daoUsuarioData.listaUsuarioChatPersonalArchivo(id);
+    }
+
 }

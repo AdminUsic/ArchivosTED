@@ -21,6 +21,25 @@ public interface DaoUsuarioData extends JpaRepository<Usuario, Long> {
     @Query(value = "select u from Usuario u where u.persona.unidad.id_unidad = ?1 AND u.estado != 'X'")
     public List<Usuario> listaUsuarioPorUnidad(Long idUnidad);
 
+    @Query(value = "select u from Usuario u where u.persona.unidad.nombre = ?1 AND u.estado != 'X'")
+    public List<Usuario> listaUsuarioPorNombreUnidad(String nombre);
+
+    @Query(value = """
+            select * from usuario u
+            inner join persona p on p.id_persona = u.id_persona
+            inner join unidad uni on uni.id_unidad = p.id_unidad
+            where uni.nombre = 'ARCHIVO Y BIBLIOTECA' and u.id_usuario != ?1 and u.estado != 'X';
+                """, nativeQuery = true)
+    public List<Usuario> listaUsuarioChatRestoPersonal(Long id);
+
+    @Query(value = """
+                    select * from usuario u
+            inner join persona p on p.id_persona = u.id_persona
+            inner join unidad uni on uni.id_unidad = p.id_unidad
+            where uni.nombre != 'ARCHIVO Y BIBLIOTECA' and u.id_usuario != ?1 and u.estado != 'X';
+                        """, nativeQuery = true)
+    public List<Usuario> listaUsuarioChatPersonalArchivo(Long id);
+
     @Query(value = """
             select * from usuario u
             inner join persona p ON p.id_persona = u.id_persona

@@ -56,7 +56,7 @@ public class RolController {
     @PostMapping(value = "/NuevoRegistroRol")
     public String NuevoRegistroRol(HttpServletRequest request, Model model) {
         model.addAttribute("rol", new Rol());
-        model.addAttribute("menus", menuService.findAll());
+        model.addAttribute("menus", menuService.menuDisponible());
         System.out.println("NUEVO ROL");
         return "/roles/formulario";
     }
@@ -120,7 +120,7 @@ public class RolController {
             @PathVariable("id_rol") Long id_rol) {
 
         System.out.println("EDITAR ROL");
-        model.addAttribute("menus", menuService.findAll());
+        model.addAttribute("menus", menuService.menuDisponible());
         model.addAttribute("rol", rolService.findOne(id_rol));
         model.addAttribute("edit", "true");
         return "/roles/formulario";
