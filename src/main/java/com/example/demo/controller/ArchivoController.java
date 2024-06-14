@@ -1,6 +1,10 @@
 package com.example.demo.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -22,14 +26,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.example.demo.entity.Archivo;
+import com.example.demo.entity.Caja;
 import com.example.demo.entity.Carpeta;
 import com.example.demo.entity.Control;
+import com.example.demo.entity.FormularioTransferencia;
+import com.example.demo.entity.TipoArchivo;
 import com.example.demo.entity.Usuario;
 import com.example.demo.service.ArchivoService;
+import com.example.demo.service.CajaService;
 import com.example.demo.service.CarpetaService;
 import com.example.demo.service.ControlService;
+import com.example.demo.service.CubiertaService;
+import com.example.demo.service.FormularioTransferenciaService;
 import com.example.demo.service.PersonaService;
 import com.example.demo.service.SerieDocumentalService;
 import com.example.demo.service.TipoArchivoService;
@@ -74,6 +85,15 @@ public class ArchivoController {
     @Autowired
     private UtilidadServiceProject utilidadService;
 
+    @Autowired
+    private FormularioTransferenciaService formularioTransferenciaService;
+
+    @Autowired
+    private CajaService cajaService;
+    
+   @Autowired
+   private CubiertaService cubiertaService;
+
     @GetMapping("/DOCUMENTOS")
     public String ventanaDocumentos(HttpServletRequest request, Model model) {
         if (request.getSession().getAttribute("userLog") != null) {
@@ -91,6 +111,7 @@ public class ArchivoController {
             model.addAttribute("carpetas", carpetaService.findAll());
             model.addAttribute("personas", personaService.findAll());
             model.addAttribute("seccionesDocumental", unidadService.findAll());
+            model.addAttribute("cubiertas", cubiertaService.findAll());
             return "/archivos/formulario";
         } else {
             return "expiracion";
@@ -128,56 +149,85 @@ public class ArchivoController {
 
     @PostMapping("/GuardarRegistroArchivo")
     public ResponseEntity<String> GuardarRegistroArchivo(HttpServletRequest request, Model model,
-            @RequestParam("PDF") MultipartFile archivoPdf, @Validated Archivo archivo,
+            @RequestParam(value = "PDF", required = false) MultipartFile archivoPdf, @Validated Archivo archivo,
             @RequestParam(value = "id_carpeta", required = false) Long id_carpeta) {
         if (request.getSession().getAttribute("userLog") != null) {
             Usuario us = (Usuario) request.getSession().getAttribute("userLog");
             Usuario userLog = usuarioService.findOne(us.getId_usuario());
-            try {
-                byte[] contenido = archivoPdf.getBytes();
-                System.out.println("Tamaño del archivo: " + contenido.length);
+            byte[] contenido = null;
 
-                try {
+            try {
+                if (archivoPdf != null && !archivoPdf.isEmpty()) {
+
+                    contenido = archivoPdf.getBytes();
                     byte[] encryptedBytes = utilidadService.encrypt(contenido);
                     archivo.setContenido(encryptedBytes);
-                } catch (Exception e) {
-                    System.out.println("Error en la encriptacion: " + e);
-                }
-                if (id_carpeta != null) {
-                    Carpeta carpeta = carpetaService.findOne(id_carpeta);
-                    archivo.setCarpeta(carpeta);
-                }
+                    PDDocument document = PDDocument.load(contenido);
+                    //archivo.setCantidadHojas(document.getNumberOfPages());
+                    String nombFile = archivoPdf.getOriginalFilename();
+                    String extension = getFileExtension(nombFile);
 
-                PDDocument document = PDDocument.load(contenido);
-                archivo.setCantidadHojas(document.getNumberOfPages());
-                archivo.setFechaRegistro(new Date());
-                archivo.setHoraRegistro(new Date());
-                archivo.setEstado("A");
-                String nombFile = archivoPdf.getOriginalFilename();
-                archivo.setExtension(getFileExtension(nombFile));
+                    TipoArchivo tipoArchivo = tipoArchivoService.tipoArchivoByTipo(extension);
+                    if (tipoArchivo == null) {
+                        tipoArchivo = new TipoArchivo();
+                        tipoArchivo.setNombre_tipo(extension);
+                        tipoArchivo.setEstado("A");
+                        tipoArchivoService.save(tipoArchivo);
+                    }
+                    archivo.setTipoArchivo(tipoArchivo);
 
-                try {
-                    archivo.setIcono(utilidadService.extraerIconPdf(archivoPdf));
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    try {
+                        archivo.setIcono(utilidadService.extraerIconPdf(archivoPdf));
+                    } catch (Exception e) {
+                        System.out.println(e);
+                        e.printStackTrace();
+                    }
+                    document.close();
                 }
-
-                document.close();
-                archivoService.save(archivo);
-                Control control = new Control();
-                control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
-                control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
-                        + " de una nueva documental " + archivo.getNombre());
-                control.setUsuario(userLog);
-                control.setFecha(new Date());
-                control.setHora(new Date());
-                controService.save(control);
-                return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
-            } catch (IOException e) {
-                System.out.println("ERROR REGISTRAR ARCHIVO: " + e.getMessage());
-                return ResponseEntity.ok("ERROR AL REGISTRAR ARCHIVO");
+            } catch (Exception e) {
+                System.out.println("Error en la encriptacion: " + e);
+                e.printStackTrace();
             }
+            Carpeta carpeta = carpetaService.findOne(id_carpeta);
+            archivo.setCarpeta(carpeta);
+            // if (id_carpeta != null) {
+            // Carpeta carpeta = carpetaService.findOne(id_carpeta);
+            // archivo.setCarpeta(carpeta);
+            // }
+            archivo.setFechaRegistro(new Date());
+            archivo.setHoraRegistro(new Date());
+            archivo.setEstado("A");
+            archivo.setPersona(userLog.getPersona());
+            archivo.setUnidad(userLog.getPersona().getUnidad());
+            archivoService.save(archivo);
+
+            carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+            FormularioTransferencia formularioTransferencia = formularioTransferenciaService
+                    .formularioTransferenciaCarpeta(id_carpeta);
+            formularioTransferencia.setCantDocumentos(carpeta.getTotalArchivo());
+            formularioTransferenciaService.save(formularioTransferencia);
+
+            Caja caja = new Caja();
+            caja.setArchivo(archivo);
+            caja.setGestion(carpeta.getGestion());
+            caja.setTituloDoc(archivo.getNombre());
+            caja.setEstado("A");
+            caja.setNotas(archivo.getNota());
+            caja.setFojas(archivo.getCantidadHojas());
+            caja.setVolumen(carpeta.getVolumen());
+            caja.setCubierta(archivo.getCubierta());
+            caja.setFormularioTransferencia(formularioTransferencia);
+            cajaService.save(caja);
+
+            Control control = new Control();
+            control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+            control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+                    + " de una nueva documental " + archivo.getNombre());
+            control.setUsuario(userLog);
+            control.setFecha(new Date());
+            control.setHora(new Date());
+            controService.save(control);
+            return ResponseEntity.ok("Se ha Registrado el Archivo correctamente");
         } else {
             return ResponseEntity.ok("Se ha cerrado la sesion por inactividad.");
         }
@@ -201,6 +251,7 @@ public class ArchivoController {
             model.addAttribute("personas", personaService.findAll());
             model.addAttribute("seccionesDocumental", unidadService.findAll());
             model.addAttribute("edit", "true");
+            model.addAttribute("cubiertas", cubiertaService.findAll());
             return "/archivos/formulario";
         } else {
             return "expiracion";
@@ -244,36 +295,80 @@ public class ArchivoController {
         Usuario userLog = usuarioService.findOne(us.getId_usuario());
         Archivo archivoAntes = archivoService.findOne(id_archivo);
         try {
-            byte[] contenido = archivoPdf.getBytes();
 
             if (archivoPdf.isEmpty()) {
                 archivo.setContenido(archivoAntes.getContenido());
-                archivo.setCantidadHojas(archivoAntes.getCantidadHojas());
+                //archivo.setCantidadHojas(archivoAntes.getCantidadHojas());
                 archivo.setIcono(archivoAntes.getIcono());
-            } else if (!archivoPdf.isEmpty()) {
+            } else if (archivoPdf != null && !archivoPdf.isEmpty()) {
+                byte[] contenido = archivoPdf.getBytes();
+
                 try {
-                    // archivo.setContenido(encrypt(contenido, "Lanza12310099812"));
-                    archivo.setContenido(utilidadService.encrypt(contenido));
-                    archivo.setIcono(utilidadService.extraerIconPdf(archivoPdf));
+                    contenido = archivoPdf.getBytes();
+                    byte[] encryptedBytes = utilidadService.encrypt(contenido);
+                    archivo.setContenido(encryptedBytes);
+                    PDDocument document = PDDocument.load(contenido);
+                    //archivo.setCantidadHojas(document.getNumberOfPages());
+                    String nombFile = archivoPdf.getOriginalFilename();
+                    String extension = getFileExtension(nombFile);
+
+                    TipoArchivo tipoArchivo = tipoArchivoService.tipoArchivoByTipo(extension);
+                    if (tipoArchivo == null) {
+                        tipoArchivo = new TipoArchivo();
+                        tipoArchivo.setNombre_tipo(extension);
+                        tipoArchivo.setEstado("A");
+                        tipoArchivoService.save(tipoArchivo);
+                        archivo.setTipoArchivo(tipoArchivo);
+                    }
+                    else{
+                        archivo.setTipoArchivo(archivoAntes.getTipoArchivo());
+                    }
+                    
+
+                    try {
+                        archivo.setIcono(utilidadService.extraerIconPdf(archivoPdf));
+                    } catch (Exception e) {
+                        System.out.println(e);
+                        e.printStackTrace();
+                    }
+                    document.close();
                 } catch (Exception e) {
                     System.out.println("ERROR EN LA ENCRIPTACION DEL ARCHIVO MODIFICADO: " + e);
                 }
                 PDDocument document = PDDocument.load(contenido);
-
+                archivo.setPersona(archivoAntes.getPersona());
                 archivo.setCantidadHojas(document.getNumberOfPages());
                 document.close();
             }
             // System.out.println("Fecha de emision: " + fechaEmision);
+            Carpeta carpeta = carpetaService.findOne(id_carpeta);
+            carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
             if (id_carpeta != null) {
-                Carpeta carpeta = carpetaService.findOne(id_carpeta);
+                // Carpeta carpeta = carpetaService.findOne(id_carpeta);
                 archivo.setCarpeta(carpeta);
             }
 
+            archivo.setUnidad(archivoAntes.getUnidad());
             archivo.setFechaRegistro(archivoAntes.getFechaRegistro());
-            archivo.setHoraRegistro(archivo.getHoraRegistro());
-            archivo.setEstado("A");
-
+            archivo.setHoraRegistro(archivoAntes.getHoraRegistro());
+            archivo.setEstado(archivoAntes.getEstado());
             archivoService.save(archivo);
+
+            FormularioTransferencia formularioTransferencia = formularioTransferenciaService
+                    .formularioTransferenciaCarpeta(id_carpeta);
+            formularioTransferencia.setCantDocumentos(carpeta.getTotalArchivo());
+            formularioTransferenciaService.save(formularioTransferencia);
+
+            Caja caja = cajaService.archivoCaja(id_archivo);
+            caja.setGestion(carpeta.getGestion());
+            caja.setTituloDoc(archivo.getNombre());
+            caja.setNotas(archivo.getNota());
+            caja.setFojas(archivo.getCantidadHojas());
+            caja.setVolumen(carpeta.getVolumen());
+            caja.setCubierta(archivo.getCubierta());
+            caja.setArchivo(archivo);
+            cajaService.save(caja);
+
             System.out.println("ARCHIVO MODIFICADO CORRECTAMENTE");
             Control control = new Control();
             control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
@@ -298,6 +393,10 @@ public class ArchivoController {
             Usuario us = (Usuario) request.getSession().getAttribute("userLog");
             Usuario userLog = usuarioService.findOne(us.getId_usuario());
             Archivo archivo = archivoService.findOne(id_archivo);
+
+            Caja caja = cajaService.archivoCaja(id_archivo);
+            caja.setEstado("X");
+            cajaService.save(caja);
 
             archivoService.delete(id_archivo);
             Control control = new Control();
@@ -374,12 +473,20 @@ public class ArchivoController {
     // ******************** SECCION BUSQUEDAS **********************************
     @GetMapping("/BusquedaArchivo")
     public String BusquedaArchivo(HttpServletRequest request, Model model) {
-        model.addAttribute("unidades", unidadService.findAll());
+
         model.addAttribute("volumenes", volumenService.findAll());
         model.addAttribute("seriesDocs", documentalService.findAll());
         model.addAttribute("carpetas", carpetaService.findAll());
-        System.out.println("VENTANA DE BUSQUEDAS");
-        return "/busquedas/busquedas";
+
+        Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(usuario.getId_usuario());
+
+        if (!userLog.getPersona().getCargo().getNombre().equals("VOCAL")) {
+            return "/busquedas/busquedas2";
+        } else {
+            model.addAttribute("unidades", unidadService.findAll());
+            return "/busquedas/busquedas";
+        }
     }
 
     void siglas(List<Carpeta> listaCarpetas) {

@@ -40,7 +40,10 @@ public class Caja implements Serializable {
     @JoinColumn(name = "id_cubierta")
     private Cubierta cubierta;
 
-    
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_archivo")
+    private Archivo archivo;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_formularioTransferencia")
     private FormularioTransferencia formularioTransferencia;

@@ -39,4 +39,8 @@ public interface CarpetaService {
     public List<Carpeta> buscarPorUnidadSerieVolumenGestion(Long id_serie, Long id_unidad, Long id_volumen, int gestion);
 
     public List<Carpeta> buscarPorGestion(int gestion);
+
+    public List<Carpeta> listarPorIdPersona(Long idPersona);
+
+    public List<Carpeta> listarTodasCarpetas();
 }

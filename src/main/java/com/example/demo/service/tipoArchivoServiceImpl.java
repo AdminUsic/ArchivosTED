@@ -32,5 +32,10 @@ public class tipoArchivoServiceImpl implements TipoArchivoService{
     public void delete(Long id) {
         daoTipoArchivo.deleteById(id);
     }
+
+    @Override
+    public TipoArchivo tipoArchivoByTipo(String nombre) {
+        return daoTipoArchivo.tipoArchivoByTipo(nombre);
+    }
     
 }

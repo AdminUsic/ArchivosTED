@@ -15,4 +15,6 @@ public interface FormularioTransferenciaService {
 
 	List<FormularioTransferencia> listaFormularioTransferenciaByIdUsuario(Long id_persona);
 
+	FormularioTransferencia formularioTransferenciaCarpeta(Long id_carpeta);
+
 }

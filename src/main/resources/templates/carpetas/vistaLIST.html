@@ -1,11 +1,17 @@
-<div id="FormularioUser"></div>
+<div class="modal fade" id="FormModCarpModalList" aria-labelledby="FormModCarpModalList" tabindex="-1" aria-hidden="true"
+    data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl" >
+        <div class="modal-content"  id="FormularioUser">
+
+        </div>
+    </div>
+</div>
+
 <div id="TablaUser"></div>
 <script>
     cargarTabla();
-    cargarFormulario();
 
     function cargarModFormulario(id) {
-        //alert("AAAAAAAAAAAAAAAAAAA");
         $.ajax({
             url: '/ModCarpeta/' + id, // Reemplaza '/ruta_del_servidor' por la URL de tu servidor
             method: 'GET', // Utiliza el método HTTP que corresponda (GET, POST, etc.)
@@ -48,7 +54,7 @@
             type: 'POST',
             url: "/AgregarArchivoCList/" + id_carpeta,  // Ruta del metodo del controlador en Spring Boot
             success: function (response) {
-                $("#formularioArchivoCList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                $("#tablaArchivoCList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
             }
         });
     }
@@ -58,7 +64,7 @@
             type: 'POST',
             url: "/ModificarArchivoCList/" + id_carpeta,  // Ruta del metodo del controlador en Spring Boot
             success: function (response) {
-                $("#formularioArchivoCList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                $("#tablaArchivoCList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
             }
         });
     }
@@ -102,18 +108,6 @@
 
             }
         });
-       /* Swal.fire({
-            title: '¿Eliminar Registro?',
-            type: 'error',
-            showCancelButton: true,
-            showConfirmButton: false,
-            cancelButtonText: "Cancelar",
-
-            html:
-                "<a type='button' class='btn btn-block btn-danger btn-lg' style='width: 150px; height: 50px; display: inline-block; align-items: center; justify-content: center;' onclick='eliminarRegistroSeleccionado(\"" + id + "\")'>" +
-                "Eliminar" +
-                "</a>",
-        }).then().done();*/
     }
 
     function eliminarRegistroSeleccionado(id) {

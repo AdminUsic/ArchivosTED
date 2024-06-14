@@ -41,5 +41,10 @@ public class FormularioTransferenciaServiceImlp implements FormularioTransferenc
     public List<FormularioTransferencia> listaFormularioTransferenciaByIdUsuario(Long id_persona) {
         return dataFormularioTransferenciaData.listaFormularioTransferenciaByIdUsuario(id_persona);
     }
+
+    @Override
+    public FormularioTransferencia formularioTransferenciaCarpeta(Long id_carpeta) {
+        return dataFormularioTransferenciaData.formularioTransferenciaCarpeta(id_carpeta);
+    }
     
 }

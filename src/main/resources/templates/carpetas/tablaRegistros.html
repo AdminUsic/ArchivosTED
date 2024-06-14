@@ -3,6 +3,13 @@
         <div class="card card-info">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold card-title">Registros de Carpetas</h6>
+                <div class="btn-group float-sm-right">
+                    <a class="btn btn-success" type="button" data-mdb-toggle="modal"
+                        data-mdb-target="#FormModCarpModalList" onclick="cargarFormulario()"
+                        th:if="${#lists.contains(permisos.![nombre], 'registrar_carpeta')}">
+                        <i class="fa-solid fa-folder-plus"></i> Nueva Carpeta
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -13,7 +20,6 @@
                                 <th>Seccion Documental</th>
                                 <th>Sigla Area/Unidad</th>
                                 <th>Serie Documental</th>
-                                <!--<th>Sub Serie Documental</th>-->
                                 <th>Volumen/Tomo</th>
                                 <th>Cantidad</th>
                                 <th>Gestion</th>
@@ -25,7 +31,6 @@
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center" th:text="${carp.unidad.nombre}"></td>
                                 <td class="text-center" th:text="'TSE - '+${carp.unidad.sigla}"></td>
-                                <!--<td class="text-center" th:text="${carp.serieDocumental.nombre}"></td>-->
                                 <td class="text-center">
                                     <div class="dropdown " id="menuArchivo">
                                         <a class="dropdown-toggle" type="button" data-toggle="dropdown" style="text-decoration: none; color: black;">
@@ -39,23 +44,22 @@
                                         </div>
                                     </div>
                                 </td>
-                                <!--<td class="text-center" th:text="${carp.serieDocumental.nombre}"></td>-->
                                 <td class="text-center" th:text="${carp.volumen.nombre}"></td>
                                 <td class="text-center" th:text="${carp.TotalArchivo}"></td>
                                 <td class="text-center" th:text="${carp.gestion}"></td>
                                 <td class="text-center">
                                     <div class="btn-group">
-                                        <a class="btn btn-info" type="button"
-                                            th:attr="onclick='cargarModFormulario(\'' + ${carp.id_carpeta} + '\')'">
+                                        <a class="btn btn-info" type="button" th:if="${#lists.contains(permisos.![nombre], 'editar_carpeta')}"
+                                            th:attr="onclick='cargarModFormulario(\'' + ${carp.id_carpeta} + '\')'" style="color: white;">
                                             <li class="fas fa-pencil-alt"></li>
                                         </a>
-                                        <a class="btn btn-danger" type="button"
-                                            th:attr="onclick='EliminarRegistro(\'' + ${carp.id_carpeta} + '\')'">
+                                        <a class="btn btn-danger" type="button" th:if="${#lists.contains(permisos.![nombre], 'eliminar_carpeta')}"
+                                            th:attr="onclick='EliminarRegistro(\'' + ${carp.id_carpeta} + '\')'" style="color: white;">
                                             <li class="fa-solid fa-trash"></li>
                                         </a>
-                                        <a class="btn btn-default" type="button" data-mdb-toggle="modal"
+                                        <a class="btn btn-primary" type="button" data-mdb-toggle="modal"
                                             data-mdb-target="#AbreCarpetaArchivoList"
-                                            th:attr="onclick='AbrirCarpetaList(\'' + ${carp.id_carpeta} + '\')'">
+                                            th:attr="onclick='AbrirCarpetaList(\'' + ${carp.id_carpeta} + '\')'" style="color: white;">
                                             <li class="fa fa-folder-open"></li>
                                         </a>
                                     </div>
@@ -68,7 +72,6 @@
                                 <th>Seccion Documental</th>
                                 <th>Sigla Area/Unidad</th>
                                 <th>Serie Documental</th>
-                                <!--<th>Sub Serie Documental</th>-->
                                 <th>Volumen/Tomo</th>
                                 <th>Cantidad</th>
                                 <th>Gestion</th>
@@ -81,43 +84,6 @@
         </div>
         <!-- /.row -->
     </div>
-    <!--
-        <div class="content">
-            <div class="container-fluid">
-                <div class="card card-info">
-                    <div class="container">
-                        <h1>Carpetas</h1>
-                        
-                        <div class="filter-container p-0 row">
-                            <div class="filtr-item col-sm-2 border rounded mailbox-attachment-info " data-category="1" data-sort="white sample" th:each="carp:${ListCarpetas}" th:if="${carp.estado!='X'}" style="padding: 5px;">
-                                <a href="https://via.placeholder.com/1200/FFFFFF.png?text=1" data-mdb-toggle="modal" data-mdb-target="#carpetaModal" class="btn bg-white"
-                                th:attr="onclick='AbrirCarpeta(\'' + ${carp.id_carpeta} + '\')'">
-                                <img src="../../static/logo/Logo-TED-Pando-Actual-1-1536x1094.png" class="img-fluid mb-2" alt="white sample"/>
-                                </a>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
-                                        <i class='fas fa-ellipsis-v'></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" type="button" data-mdb-toggle="modal" data-mdb-target="#FormModCarpModal" 
-                                        th:attr="onclick='cargarModFormularioModal(\'' + ${carp.id_carpeta} + '\')'">Editar</a>
-                                        <a class="dropdown-item" type="button" th:attr="onclick='EliminarRegistro(\'' + ${carp.id_carpeta} + '\')'">Eliminar</a>
-                                    </div>
-                                </div>
-                                
-                                <h5 class="font-weight-bold mb-0 text-align" th:text="${carp.volumen.nombre}"></h5>
-                                <p th:text="${'Seccion: '+carp.unidad.nombre}" class="m-0"></p>
-                                <p th:text="${'Serie: '+carp.serieDocumental.seriePadre.nombre}" class="m-0"></p>
-                                <p th:text="${'Cant. de Hojas: '+carp.TotalArchivo}" class="m-0"></p>
-                                <p th:text="${'Gestion: '+carp.gestion}" class="text-muted m-0"></p>
-                                
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>-->
 
     <script>
         $(document).ready(function () {

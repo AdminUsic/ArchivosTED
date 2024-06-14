@@ -12,4 +12,6 @@ public interface CajaService {
 	public Caja findOne(Long id);
 
 	public void delete(Long id);
+
+	public Caja archivoCaja(Long id_archivo);
 }

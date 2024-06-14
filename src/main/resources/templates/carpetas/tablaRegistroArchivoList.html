@@ -1,8 +1,15 @@
 <section class="content">
     <div class="container-fluid">
         <div class="card card-info">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold card-title">Registros de Archivos</h6>
+            <div class="card-header ">
+                <div class="d-flex justify-content-lg-between ">
+                    <h6 class="m-0 font-weight-bold card-title">Registros de Archivos</h6>
+                    <a class="btn btn-success" type="button" id="botonAgregarArchivo"
+                        th:attr="onclick='cargarFormularioArchivoList(\'' + ${carpeta.id_carpeta} + '\')'"
+                        th:if="${#lists.contains(permisos.![nombre], 'registrar_archivo')}">
+                        Agregar Archivo <li class="fa-solid fa-file-circle-plus"></li>
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive table-hover">
@@ -10,15 +17,13 @@
                         <thead class="table-dark">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro. Doc.</th>
-                                <th>Nombre del Archivo</th>
-                                <th>Descripcion</th>
-                                <th>Tipo de Archivo</th>
-                                <th>Cantidad Hojas</th>
-                                <th>Responsable</th>
-                                <th>Carpeta</th>
-                                <th>Fecha de Emision</th>
-                                <th>Ruta Fisica</th>
+                                <th>Nro. unidad documental</th>
+                                <th>Nombre del archivo</th>
+                                <th>Notas</th>
+                                <th>Cantidad hojas</th>
+                                <th>Usuario</th>
+                                <th>Serie documental</th>
+                                <th>Ubicación fisica del documento</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -27,27 +32,25 @@
                                 <td th:text="${rowStat.count}"></td>
                                 <td class="text-center" th:text="${ar.NroDocumental}"></td>
                                 <td class="text-center" th:text="${ar.Nombre}"></td>
-                                <td class="text-center" th:text="${ar.descripcion}"></td>
-                                <td class="text-center" th:text="${ar.tipoArchivo.nombre_tipo}"></td>
+                                <td class="text-center" th:text="${ar.nota}"></td>
                                 <td class="text-center" th:text="${ar.cantidadHojas}"></td>
                                 <td class="text-center" th:text="${ar.persona.nombre}+' '+${ar.persona.apellido}"></td>
-                                <td class="text-center"
-                                    th:text="${ar.carpeta.volumen.nombre}+' | Seccion: '+${ar.carpeta.unidad.nombre}+' | Serie: '+${ar.carpeta.serieDocumental.nombre}+' | Gestion: '+${ar.carpeta.gestion}">
+                                <td class="text-center" th:text="${ar.serieDocumental.nombre}">
                                 </td>
-                                <td class="text-center" th:text="${ar.fechaEmision}"></td>
+                                <td class="text-center" th:text="${#dates.format(ar.fechaEmision, 'dd/MM/yyyy')}"></td>
                                 <td class="text-center" th:text="${ar.rutaFisica}"></td>
                                 <td class="text-center">
                                     <div class="container-fluid">
-                                        <a class="btn btn-info" type="button"
+                                        <a class="btn btn-info" type="button" style="color: white;"
                                             th:attr="onclick='cargarFormularioModArchivoList(\'' + ${ar.id_archivo} + '\')'">
                                             <li class="fas fa-pencil-alt"></li>
                                         </a>
-                                        <a class="btn btn-danger" type="button"
+                                        <a class="btn btn-danger" type="button" style="color: white;"
                                             th:attr="onclick='EliminarArchivoList(\'' + ${ar.id_archivo} + '\')'">
                                             <li class="fa-solid fa-trash"></li>
                                         </a>
                                         <a class="btn btn-default" type="button" data-mdb-toggle="modal"
-                                            data-mdb-target="#archivoModal"
+                                            data-mdb-target="#archivoModal" th:if="${ar.contenido != null}"
                                             th:attr="onclick='ContenidoArchivoList(\'' + ${ar.id_archivo} + '\')'">
                                             <li class="fa-regular fa-file-pdf"></li>
                                         </a>
@@ -58,15 +61,13 @@
                         <tfoot class="table-secondary">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro. Doc.</th>
-                                <th>Nombre del Archivo</th>
-                                <th>Descripcion</th>
-                                <th>Tipo de Archivo</th>
-                                <th>Cantidad Hojas</th>
-                                <th>Responsable</th>
-                                <th>Carpeta</th>
-                                <th>Fecha de Emision</th>
-                                <th>Ruta Fisica</th>
+                                <th>Nro. unidad documental</th>
+                                <th>Nombre del archivo</th>
+                                <th>Notas</th>
+                                <th>Cantidad hojas</th>
+                                <th>Usuario</th>
+                                <th>Serie documental</th>
+                                <th>Ubicación fisica del documento</th>
                                 <th>Acciones</th>
                             </tr>
                         </tfoot>
@@ -83,7 +84,6 @@
 
         function EliminarArchivoList(id) {
             var id_carpeta = document.getElementById("id_carpeta").value;
-            cargarFormularioArchivoList(id_carpeta);
 
             Swal.fire({
                 title: '!Atención¡',
@@ -115,20 +115,6 @@
                 }
             });
 
-            
-           /* Swal.fire({
-                title: '¿Eliminar Registro?',
-                type: 'error',
-                showCancelButton: true,
-                showConfirmButton: false,
-                cancelButtonText: "Cancelar",
-
-                html:
-                    "<a type='button' class='btn btn-block btn-danger btn-lg' style='width: 150px; height: 50px; display: inline-flex; align-items: center; justify-content: center;' onclick='eliminarArchivoSeleccionadoList(\"" + id + "\", \"" + id_carpeta + "\")'>" +
-                    "Eliminar" +
-                    "</a>",
-
-            }).then().done();*/
         }
 
         function eliminarArchivoSeleccionadoList(id, id_carpeta) {

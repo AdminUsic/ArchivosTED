@@ -33,5 +33,10 @@ public class CajaServiceImpl implements CajaService{
     public void delete(Long id) {
         cajaData.deleteById(id);
     }
+
+    @Override
+    public Caja archivoCaja(Long id_archivo) {
+        return cajaData.archivoCaja(id_archivo);
+    }
     
 }

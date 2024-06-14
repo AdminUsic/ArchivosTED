@@ -43,6 +43,7 @@
         </div>
       </div>
     </div>
+
     <!-- /.modal -->
     <!-------------- MODAL CARPETA-------------->
     <div class="modal fade" id="carpetaModal" tabindex="-1" aria-labelledby="carpetaModal" aria-hidden="true"
@@ -73,6 +74,37 @@
       aria-hidden="true" data-mdb-backdrop="static">
       <div class="modal-dialog modal-xl">
         <div class="modal-content" id="ContenidoCarpetaList" style="overflow-y: auto;">
+        </div>
+      </div>
+    </div>
+    <!-- /.modal -->
+
+    <!-------------- CARPETA MODAL FORMULARIO TRANSFERENCIA---------------->
+    <div class="modal fade" id="ventanaModalTransferencia" aria-labelledby="ventanaModalTransferencia" tabindex="-1"
+      aria-hidden="true" data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="overflow-y: auto;">
+          <div class="modal-header">
+            <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
+            <div class="btn-group dropend">
+              <a type="button" class="btn btn-default dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-envelope-open-text"></i>
+              </a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-item font-weight-bold">Enviar formulario a:</li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <div id="usuariosAEnviar"></div>
+              </ul>
+            </div>
+            <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal"
+              id="cerrarVentanaFormulario">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="contenidoModalTransferencia">
+          </div>
         </div>
       </div>
     </div>
@@ -152,7 +184,7 @@
           url: "/ContenidoCarpetaList/" + id,  // Ruta del metodo del controlador en Spring Boot
           success: function (response) {
             $("#ContenidoCarpetaList").html(response);  // Actualiza el contenido del div con la respuesta del servidor
-            cargarFormularioArchivoList(id);
+            //cargarFormularioArchivoList(id);
             cargarTablaArchivoList(id);
           }, error: function (xhr, status, error) {
 
@@ -186,6 +218,31 @@
           }
         });
 
+      }
+
+      function generarFormularioTransferencia(id, idFormulario) {
+        $('#contenidoModalTransferencia').html('<embed src="/GenerarFormularioTransferencia/' + id + '" type="application/pdf" width="100%" height="600px" />');
+        var userLog4 = $("#userlog").val();;
+        $.ajax({
+          type: 'GET',
+          url: "/optenerIdentFormulario/" + id,
+          success: function (formulario) {
+            $.ajax({
+              type: 'POST',
+              url: "/UsuariosReceptores",
+              dataType: 'json',
+              success: function (data) {
+                data.forEach(function (usuario) {
+                  $('#usuariosAEnviar').html('<form method="post"' +
+                    'onsubmit="enviarMensaje2(event, ' + usuario[1] + ', ' + userLog4 + ', ' + formulario + ')">' +
+                    '<input type="hidden" id="formTr-' + usuario[1] + '" value="' + formulario + '" />' +
+                    '<input type="submit" class="dropdown-item" type="button" value="' + usuario[0] + '"/>' +
+                    '</form>');
+                });
+              }
+            });
+          }
+        });
       }
     </script>
 

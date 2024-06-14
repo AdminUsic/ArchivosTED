@@ -33,7 +33,10 @@ public class ArchivoServiceImpl implements ArchivoService{
 
     @Override
     public void delete(Long id) {
-        archivosData.deleteById(id);
+        //archivosData.deleteById(id);
+        Archivo archivo = archivosData.findById(id).orElse(null);
+        archivo.setEstado("X");
+        archivosData.save(archivo);
     }
 
     @Override

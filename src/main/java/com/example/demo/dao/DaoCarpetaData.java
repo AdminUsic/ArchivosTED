@@ -42,4 +42,10 @@ public interface DaoCarpetaData extends JpaRepository<Carpeta, Long>{
 
     @Query(value = "select * from carpeta c where c.gestion = ?1", nativeQuery = true)
     public List<Carpeta> buscarPorGestion(int gestion);
+
+    @Query(value = "select * from carpeta c where c.id_persona = ?1 and c.estado != 'X'", nativeQuery = true)
+    public List<Carpeta> listarPorIdPersona(Long idPersona);
+
+    @Query(value = "select * from carpeta c where c.estado != 'X'", nativeQuery = true)
+    public List<Carpeta> listarTodasCarpetas();
 }

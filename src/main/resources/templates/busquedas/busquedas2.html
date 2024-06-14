@@ -8,20 +8,11 @@
     </div><!-- /.container-fluid -->
     <div class="container-fluid">
         <h2 class="text-center display-4">Buscar Carpeta</h2>
-        <form action="/buscarCarpeta" id="FormularioBusquedaCarpeta">
+        <form action="/buscarCarpeta2" id="FormularioBusquedaCarpeta">
             <div class="row">
                 <div class="col-md-10 offset-md-1">
                     <div class="row">
                         <div class="col-sm-6">
-                            <!-- text input -->
-                            <div class="form-group">
-                                <label for="tipoArchivo">Unidad/Seccion</label>
-                                <select class="select-fieldFormBusque" style="width: 100%;" id="selectUnidadC" name="unidadCarpeta">
-                                    <option value="" selected>Seleccionar</option>
-                                    <option th:each="unid: ${unidades}" th:text="${unid.nombre}"
-                                        th:value="${unid.id_unidad}" th:if="${unid.unidadPadre==null}"></option>
-                                </select>
-                            </div>
                             <div class="form-group">
                                 <label for="tipoArchivo">Tomo/Volumen</label>
                                 <select class="select-fieldFormBusque" style="width: 100%;" id="selectVolumen" name="volumenCarpeta">
@@ -30,9 +21,6 @@
                                         th:value="${vol.id_volumen}"></option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <!-- text input -->
                             <div class="form-group">
                                 <label for="tipoArchivo">Serie Documental</label>
                                 <select class="select-fieldFormBusque" style="width: 100%;" id="selectSerieD"
@@ -42,20 +30,23 @@
                                         th:value="${serie.id_serie}" th:if="${serie.seriePadre==null}"></option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <!-- text input -->
                             <div class="form-group">
                                 <label>Gestion</label>
                                 <select class="select-fieldFormBusque" style="width: 100%;" id="años" name="gestion">
                                     <option value="0">Seleccionar</option>
                                 </select>
                             </div>
+                            
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="input-group input-group-lg">
-                            <button type="submit" class="btn btn-lg btn-default">
-                                Buscar <i class="fa fa-search"></i>
-                            </button>
+                        <div class="form-group">
+                            <div class="input-group input-group-lg">
+                                <button type="submit" class="btn btn-lg btn-default">
+                                    Buscar <i class="fa fa-search"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

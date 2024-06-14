@@ -12,6 +12,10 @@
                                 <i class='fas fa-ellipsis-v'></i>
                             </a>
                             <div class="dropdown-menu">
+                                <a class="dropdown-item" type="button" data-mdb-toggle="modal" data-mdb-target="#ventanaModalTransferencia"
+                                th:if="${userLog.persona.cargo.nombre != 'ARCHIVO Y BIBLIOTECA'}" th:attr="onclick='generarFormularioTransferencia(\'' + ${carp.id_carpeta} + '\')'">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    <small>Ver Formulario de Transferencia</small></a>
                                 <a class="dropdown-item" type="button" data-mdb-toggle="modal"
                                     data-mdb-target="#FormModCarpModal"
                                     th:if="${#lists.contains(permisos.![nombre], 'editar_carpeta')}"
@@ -36,15 +40,15 @@
                         </div>
                         <div class="document-footer" style="height: 100%;">
                             <span class="document-name" style="color: aliceblue;"
-                                th:text="${carp.volumen.nombre}"></span>
+                                th:text="${'Volumen: '+carp.volumen.nombre}"></span>
                             <span class="document-name" style="color: aliceblue;"
                                 th:text="${'Seccion: '+carp.unidad.nombre}"></span>
                             <span class="document-name" style="color: aliceblue;"
                                 th:text="${'Serie: '+carp.serieDocumental.nombre}"></span>
-                            <div th:each="subSerie: ${carp.serieDocumental.subSeries}">
+                            <!-- <div th:each="subSerie: ${carp.serieDocumental.subSeries}">
                                 <span class="document-description" style="color: aliceblue;"
                                     th:text="${subSerie.nombre}"></span>
-                            </div>
+                            </div> -->
                             <span class="document-name" style="color: aliceblue;"
                                 th:text="${'Cant. de Hojas: '+carp.TotalArchivo}"></span>
                             <span class="document-name" style="color: aliceblue;"

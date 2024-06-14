@@ -42,10 +42,13 @@ public class CarpetaServiceImlp implements CarpetaService{
 
     @Override
     public void delete(Long id) {
-        for (Archivo archivo : archivosData.archivosCarpeta(id)) {
-            archivosData.deleteById(archivo.getId_archivo());
-        }
-        carpetaData.deleteById(id);
+        // for (Archivo archivo : archivosData.archivosCarpeta(id)) {
+        //     archivosData.deleteById(archivo.getId_archivo());
+        // }
+        //carpetaData.deleteById(id);
+        Carpeta carpeta = carpetaData.findById(id).orElse(null);
+        carpeta.setEstado("X");
+        carpetaData.save(carpeta);
     }
 
     @Override
@@ -102,6 +105,16 @@ public class CarpetaServiceImlp implements CarpetaService{
     @Override
     public List<Carpeta> buscarPorUnidadVolumenGestion(Long id_unidad, Long id_volumen, int gestion) {
         return (List<Carpeta>) carpetaData.buscarPorUnidadVolumenGestion(id_unidad, id_volumen, gestion);
+    }
+
+    @Override
+    public List<Carpeta> listarPorIdPersona(Long idPersona) {
+        return carpetaData.listarPorIdPersona(idPersona);
+    }
+
+    @Override
+    public List<Carpeta> listarTodasCarpetas() {
+        return carpetaData.listarTodasCarpetas();
     }
     
 }

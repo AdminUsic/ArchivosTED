@@ -72,6 +72,9 @@ public class Carpeta implements Serializable {
     @JoinColumn(name = "id_serie")
     private SerieDocumental serieDocumental;
 
+    @OneToMany(mappedBy = "carpeta", fetch = FetchType.LAZY)
+    private List<FormularioTransferencia> formularioTransferencias;
+
     @Transient
     private int TotalArchivo;
 

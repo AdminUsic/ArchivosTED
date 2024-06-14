@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 
+import com.example.demo.entity.Caja;
 import com.example.demo.entity.Cargo;
 
 public interface CargoService {

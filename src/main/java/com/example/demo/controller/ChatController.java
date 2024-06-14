@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.demo.entity.FormularioTransferencia;
 import com.example.demo.entity.Mensaje;
 import com.example.demo.entity.Persona;
+import com.example.demo.entity.Revision;
 import com.example.demo.entity.Rol;
 import com.example.demo.entity.Usuario;
 import com.example.demo.service.ChatService;
 import com.example.demo.service.FormularioTransferenciaService;
+import com.example.demo.service.RevisionService;
 import com.example.demo.service.UsuarioService;
 import com.example.demo.service.UtilidadServiceProject;
 
@@ -53,6 +55,9 @@ public class ChatController {
 
     @Autowired
     private UtilidadServiceProject utilidadService;
+
+    @Autowired
+    private RevisionService revisionService;
 
     @MessageMapping("/salonA")
     @SendTo("/topic/mensajesGrupo")
@@ -82,10 +87,6 @@ public class ChatController {
 
         Date fechaActual = new Date();
 
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
-
-        String fechaFormateada = formatoFecha.format(fechaActual);
-
         Date horaActual = java.sql.Time.valueOf(fechaHoraActual.toLocalTime());
 
         // mensajeR.appendField("fechaRegistro", fechaFormateada);
@@ -96,6 +97,7 @@ public class ChatController {
         // mensaje.setHoraRegistro(String.valueOf(horaActual));
         mensaje.setFechaRegistro(fechaActual);
         mensaje.setHoraRegistro(fechaActual);
+        mensaje.setEstado("EN_REVISION");
         chatService.save(mensaje);
         System.out.println("Envia mensaje");
         return mensajeR;
@@ -116,15 +118,6 @@ public class ChatController {
         mensaje.setRemitente(usuarioService.findOne(id_emisor));
         mensaje.setDestino(usuarioService.findOne(id_receptor));
         System.out.println("EL NOMBRE USUARIO RECEPTOR ES: " + usuarioService.findOne(id_receptor).getNombre_user());
-        LocalDateTime fechaHoraActual = LocalDateTime.now();
-
-        Date fechaActual = new Date();
-
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-yyyy");
-
-        String fechaFormateada = formatoFecha.format(fechaActual);
-
-        Date horaActual = java.sql.Time.valueOf(fechaHoraActual.toLocalTime());
 
         if (mensajeR.getAsString("contenidoTexto") != null) {
             mensaje.setContenidoTexto(mensajeR.getAsString("contenidoTexto"));
@@ -135,22 +128,15 @@ public class ChatController {
             mensaje.setFormularioTransferencia(formularioTransferencia);
         }
         mensaje.setTipoMensaje(mensajeR.getAsString("tipoMensaje"));
-        // Imprimir la hora actual
-        // mensajeR.appendField("fechaRegistro", fechaFormateada);
-        // mensajeR.appendField("horaRegistro", horaActual);
-        System.out.println("Hora actual como Date: " + horaActual);
-        // mensaje.setFechaRegistro(String.valueOf(fechaFormateada));
-        // mensaje.setHoraRegistro(String.valueOf(horaActual));
+
         mensaje.setFechaRegistro(new Date());
         mensaje.setHoraRegistro(new Date());
+        mensaje.setEstado("EN_REVISION");
         chatService.save(mensaje);
-
-        // mensajeR.appendField("id_mensaje", );
-        // simpMessagingTemplate.convertAndSendToUser(userIdEmisor, "/private",
-        // mensajeR);userIdEmisor
 
         simpMessagingTemplate.convertAndSendToUser(userIdEmisor, "/private", mensajeR);
 
+        mensajeR.appendField("fechaRegistro", utilidadService.fechaTexto(new Date()));
         return mensajeR;
     }
 
@@ -162,26 +148,46 @@ public class ChatController {
         List<Mensaje> mensajes = chatService.mensajeUsuario(userIdEmisor, userIdReceptor);
 
         for (Mensaje mensaje : mensajes) {
-            JSONObject mensajeJSON = new JSONObject();
-            mensajeJSON.put("remitente", mensaje.getRemitente().getId_usuario());
-            mensajeJSON.put("nameRemitente", mensaje.getRemitente().getNombre_user());
+            if (mensaje.getEstado().equals("EN_REVISION")) {
+                JSONObject mensajeJSON = new JSONObject();
+                mensajeJSON.put("remitente", mensaje.getRemitente().getId_usuario());
+                mensajeJSON.put("nameRemitente", mensaje.getRemitente().getNombre_user());
 
-            if (mensaje.getContenidoTexto() != null) {
-                mensajeJSON.put("contenidoTexto", mensaje.getContenidoTexto());
-            } 
-            if (mensaje.getFormularioTransferencia() != null) {
-                mensajeJSON.put("contenido", mensaje.getFormularioTransferencia().getId_formularioTransferencia());
+                if (mensaje.getContenidoTexto() != null) {
+                    mensajeJSON.put("contenidoTexto", mensaje.getContenidoTexto());
+                }
+                if (mensaje.getFormularioTransferencia() != null) {
+                    mensajeJSON.put("contenido", mensaje.getFormularioTransferencia().getId_formularioTransferencia());
+                }
+
+                mensajeJSON.put("receptor", mensaje.getDestino().getId_usuario());
+                mensajeJSON.put("fechaRegistro", utilidadService.fechaTexto(mensaje.getFechaRegistro()));
+                mensajeJSON.put("horaRegistro", mensaje.getHoraRegistro());
+                mensajeJSON.put("tipoMensaje", mensaje.getTipoMensaje());
+
+                mensajesJSON.add(mensajeJSON);
             }
-            
-            mensajeJSON.put("receptor", mensaje.getDestino().getId_usuario());
-            mensajeJSON.put("fechaRegistro", mensaje.getFechaRegistro());
-            mensajeJSON.put("horaRegistro", mensaje.getHoraRegistro());
-            mensajeJSON.put("tipoMensaje", mensaje.getTipoMensaje());
-
-            mensajesJSON.add(mensajeJSON);
         }
 
         return ResponseEntity.ok(mensajesJSON);
     }
 
+    @PostMapping(value = "/FinalizarRevision/{userIdEmisor}/{userIdReceptor}")
+    public ResponseEntity<String> FinalizarRevision(@PathVariable("userIdEmisor") Long userIdEmisor,
+            @PathVariable("userIdReceptor") Long userIdReceptor) {
+
+        Revision revision = new Revision();
+        revision.setEstado("FINALIZADO");
+        revision.setFechaRegistro(new Date());
+        revision.setHoraRegistro(new Date());
+        revisionService.save(revision);
+        List<Mensaje> mensajes = chatService.mensajeUsuario(userIdEmisor, userIdReceptor);
+        for (Mensaje mensaje : mensajes) {
+            mensaje.setEstado("REVIZADO");
+            mensaje.setRevision(revision);
+            chatService.save(mensaje);
+        }
+
+        return ResponseEntity.ok("finalizado");
+    }
 }

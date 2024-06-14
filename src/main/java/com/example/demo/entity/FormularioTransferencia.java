@@ -71,6 +71,11 @@ public class FormularioTransferencia implements Serializable {
     @JoinColumn(name = "id_persona")
     private Persona persona;
 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_carpeta")
+    private Carpeta carpeta;
+
     @OneToMany(mappedBy = "formularioTransferencia", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Caja> cajas;
 

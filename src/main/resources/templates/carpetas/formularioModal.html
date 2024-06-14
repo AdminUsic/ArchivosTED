@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <!-- text input -->
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="tipoArchivo">Unidad/Seccion</label>
                             <select class="select-fieldModalCarp" style="width: 100%;" th:field="${carpeta.unidad}"
                                 id="selectUnidadCModal">
@@ -30,16 +30,14 @@
                                 <option th:each="unid: ${unidades}" th:text="${unid.nombre}"
                                     th:value="${unid.id_unidad}"></option>
                             </select>
-                        </div>
+                        </div> -->
+                        
                         <div class="form-group">
                             <label for="tipoArchivo">Tomo/Volumen</label>
                             <select class="select-fieldModalCarp" style="width: 100%;" th:field="${carpeta.volumen}"
                                 id="selectVolumenModal">
-                                <option th:value="${edit} ? ${carpeta.volumen.id_volumen} : ''"
-                                    th:text="${carpeta.volumen != null} ? ${carpeta.volumen.nombre} : 'Seleccionar'"
-                                    selected></option>
                                 <option th:each="vol: ${volumenes}" th:text="${vol.nombre}"
-                                    th:value="${vol.id_volumen}"></option>
+                                    th:value="${vol.id_volumen}" th:selected="${vol == carpeta.volumen}"></option>
                             </select>
                         </div>
                     </div>

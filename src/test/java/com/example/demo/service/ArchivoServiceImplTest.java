@@ -31,7 +31,7 @@ public class ArchivoServiceImplTest {
         archivo.setNombre("informe");
         archivo.setEstado("A");
         archivo.setEstado(".pdf");
-        archivo.setDescripcion("INFORMES ASS");
+        archivo.setNota("INFORMES ASS");
     }
 
     @Test

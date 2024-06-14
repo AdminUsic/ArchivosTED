@@ -24,7 +24,7 @@
             <div class="container">
                 <h4 th:if="${carpeta.TotalArchivo == 0}">Esta carpeta contiene no contiene ninguna hoja</h4>
                 <h4 th:if="${carpeta.TotalArchivo > 0}"
-                    th:text="(${carpeta.TotalArchivo} > 1) ? 'Esta carpeta contiene ' + ${carpeta.TotalArchivo} + ' hojas en total' : 'Contiene ' + ${carpeta.TotalArchivo} + ' archivo en total'">
+                    th:text="(${carpeta.TotalArchivo} > 1) ? 'Esta carpeta contiene ' + ${carpeta.TotalArchivo} + ' hojas en total' : 'Contiene ' + ${carpeta.TotalArchivo} + ' hoja en total'">
                 </h4>
                 <div class="container">
                     <div class="row">

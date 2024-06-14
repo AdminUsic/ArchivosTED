@@ -40,8 +40,6 @@ public class Archivo implements Serializable {
     private Long NroDocumental;
 
     private String nombre;
-    private String descripcion;
-    //private String observacion;
 
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(fetch = FetchType.EAGER)
@@ -52,19 +50,15 @@ public class Archivo implements Serializable {
 
     private byte[] icono;
 
-    //@Column(length = 10000)
-    //private String contenidoEncryptado;
     private int cantidadHojas;
 
     private String rutaFisica;
 
-    private String extension;
+    private String nota;
+
+    private int gestion;
 
     private String estado;
-
-    @Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private Date fechaEmision;
 
     @Column
     @Temporal(TemporalType.DATE)
@@ -83,9 +77,15 @@ public class Archivo implements Serializable {
     @JoinColumn(name = "id_unidad")
     private Unidad unidad;
 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_cubierta")
+    private Cubierta cubierta;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_serie")
     private SerieDocumental serieDocumental;
+
     // Otros atributos de archivo
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_persona")
@@ -95,11 +95,6 @@ public class Archivo implements Serializable {
     @PreUpdate
     public void beforeSaveOrUpdate() {
         nombre = nombre.toUpperCase();
-        descripcion = descripcion.toUpperCase();
-//        observacion = observacion.toUpperCase();
-        rutaFisica = rutaFisica.toUpperCase();
-        estado = estado.toUpperCase();
-
     }
 
 }

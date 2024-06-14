@@ -25,11 +25,4 @@ public class TipoArchivo implements Serializable{
     private String nombre_tipo;
     private String estado;
 
-
-    @PrePersist
-    @PreUpdate
-    public void beforeSaveOrUpdate() {
-        nombre_tipo = nombre_tipo.toUpperCase();
-        estado = estado.toUpperCase();
-    }
 }

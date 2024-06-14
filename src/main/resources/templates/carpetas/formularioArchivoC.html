@@ -19,41 +19,37 @@
                     name="id_carpeta" />
                 <div class="row">
                     <div class="col-sm-6">
+                        <label>Nro. de Fojas</label>
+                        <div class="form-group form-outline">
+                            <input type="number" th:field="${archivo.cantidadHojas}" class="form-control"
+                                placeholder="Introdusca el Nro. de Fojas" min="1" required />
+                            <label class="form-label">Nro. Fojas:</label>
+                        </div>
+                        <th:block th:if="${userLog.persona.cargo.nombre == 'ARCHIVO Y BIBLIOTECA'}">
+                        <label>Nro. Documental</label>
                         <div class="form-group form-outline">
                             <input type="number" th:field="${archivo.NroDocumental}" class="form-control"
                                 placeholder="Introdusca el Nro. Documental" min="1" required />
                             <label class="form-label">Nro. Documental:</label>
                         </div>
+                        </th:block>
+                        <label>Nombre del Documento</label>
                         <div class="form-group form-outline">
                             <input type="text" th:field="${archivo.nombre}" class="form-control"
                                 placeholder="Introdusca un nombre/titulo" required />
                             <label class="form-label">Nombre:</label>
                         </div>
+                        <label>Gestion</label>
                         <div class="form-group form-outline">
-                            <input type="text" th:field="${archivo.descripcion}" class="form-control"
-                                placeholder="Descripción del Archivo" required />
-                            <label class="form-label">Descripción:</label>
-                        </div>
-                        <div class="form-group form-outline">
-                            <input type="text" th:field="${archivo.rutaFisica}" class="form-control"
-                                placeholder="Introdusca una ruta fisica del Archivo" required />
-                            <label class="form-label">Ruta del Archivo</label>
-                        </div>
-                        <div class="form-group">
-                            <label>Seccion Documental</label>
-                            <select class="select-fieldArchivoModalC" style="width: 100%;" th:field="${archivo.unidad}">
-                                <option th:value="${edit} ? ${archivo.unidad.id_unidad} : ''"
-                                    th:text="${archivo.unidad != null} ? ${archivo.unidad.nombre} : 'Seleccionar'"
-                                    selecte></option>
-                                <option th:each="unid: ${seccionesDocumental}" th:text="${unid.nombre}"
-                                    th:value="${unid.id_unidad}"></option>
-                            </select>
+                            <input type="number" th:field="${archivo.gestion}" class="form-control"
+                                placeholder="Introdusca una nota si es necesario">
+                            <label class="form-label">Gestion:</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label>Serie Documental</label>
-                            <select class="select-fieldArchivoModalC" style="width: 100%;"
+                            <select class="select-fieldArchivoCarpetaModal" style="width: 100%;"
                                 th:field="${archivo.serieDocumental}" id="selectSeccionDAC">
                                 <option th:value="${edit} ? ${archivo.serieDocumental.id_serie} : ''"
                                     th:text="${edit} ? ${archivo.serieDocumental.nombre} : 'Seleccionar'" selected>
@@ -62,21 +58,25 @@
                                     th:value="${serieDoc.id_serie}"></option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="tipoArchivo">Tipo de Archivo</label>
-                            <select class="select-fieldArchivoModalC" style="width: 100%;"
-                                th:field="${archivo.tipoArchivo}" id="selectTipoAC">
-                                <option th:value="${edit} ? ${archivo.tipoArchivo.id_tipoArchivo} : ''"
-                                    th:text="${archivo.tipoArchivo != null} ? ${archivo.tipoArchivo.nombre_tipo} : 'Seleccionar'"
-                                    selected></option>
-                                <option th:each="tiposA: ${TiposArchivos}" th:text="${tiposA.nombre_tipo}"
-                                    th:value="${tiposA.id_tipoArchivo}"></option>
-                            </select>
+                        <label>Notas</label>
+                        <div class="form-group form-outline">
+                            <textarea type="text" th:field="${archivo.nota}" class="form-control"
+                                placeholder="Introdusca una nota si es necesario"></textarea>
+                            <label class="form-label">Notas:</label>
                         </div>
-                        <div class="form-group">
+                        <th:block th:if="${userLog.persona.cargo.nombre == 'ARCHIVO Y BIBLIOTECA'}">
+                            <label>Ubicación Fisica</label>
+                            <div class="form-group form-outline"
+                                th:if="${userLog.persona.cargo.nombre == 'ARCHIVO Y BIBLIOTECA'}">
+                                <input type="text" th:field="${archivo.rutaFisica}" class="form-control"
+                                    placeholder="Introdusca una ruta fisica del Archivo" required />
+                                <label class="form-label">Ubicacion Fisica del Documento</label>
+                            </div>
+                        </th:block>
+                        <!-- <div class="form-group">
                             <label for="tipoArchivo">Responsable de la Unidad Documental</label><br>
                             <div class="input-group" style="width: 100%;">
-                                <select class="select-fieldArchivoModalC" style="width: 90%;"
+                                <select class="select-fieldArchivoCarpetaModal" style="width: 90%;"
                                     th:field="${archivo.persona}" id="selectResponsableAC">
                                     <option th:value="${edit} ? ${archivo.persona.id_persona} : ''"
                                         th:text="${archivo.persona != null} ? ${archivo.persona.nombre + ' ' + archivo.persona.apellido} : 'Seleccionar'"
@@ -89,34 +89,52 @@
                                     <i class="fas fa-user-plus"></i>
                                 </a>
                             </div>
-                        </div>
-
-                        <div class="form-group">
+                        </div> -->
+                        <!-- <div class="form-group">
                             <label class="form-label">Fecha de Emision:</label>
                             <input type="text" class="form-control datepickerformArch" name="fechaEmision"
                                 placeholder="Seleccione una fecha" id="fechaEmision" th:field="${archivo.fechaEmision}"
                                 required />
+                        </div> -->
+                        <div class="form-group">
+                            <label for="tipoArchivo">Cubierta</label>
+                            <select class="select-fieldArchivoCarpetaModal" style="width: 100%;"
+                                th:field="${archivo.cubierta}" id="selectUnidadCModal">
+                                <option th:value="${edit} ? ${archivo.cubierta.id_cubierta} : ''"
+                                    th:text="${edit} ? ${archivo.cubierta.nombre} : 'Seleccionar'" selected></option>
+                                <option th:each="cubierta: ${cubiertas}" th:text="${cubierta.nombre}"
+                                    th:value="${cubierta.id_cubierta}"></option>
+                            </select>
                         </div>
                     </div>
                     <div th:class="${edit}? 'col-sm-6' : ''">
                         <div class="form-group">
-                            <label class="form-label">Adjuntar Archivo</label>
-                            <input type="file" name="PDF" id="PDFformularioModalC" accept=".pdf"
-                                data-validation="required" th:required="${edit==null}">
+                            <label class="form-label">Adjuntar Documento</label>
+                            <input type="file" name="PDF" id="PDFformularioModalC" accept=".pdf">
                             <div id="alertasFormArchivoModalC"></div>
                         </div>
                     </div>
                     <div th:class="${edit}? 'col-sm-6' : ''" th:if="${edit == 'true'}">
                         <div class="form-group" th:if="${edit == 'true'}">
-                            <div class="filtr-item col-sm-2">
-                                <p class="text-muted m-0">Archivo:</p>
+                            <div class="filtr-item col-sm-6">
+                                <div class="row">
+                                    <p class="text-muted m-0">Documento:</p>
+                                </div>
                                 <div class="image-container">
                                     <a type="button" data-mdb-dismiss="modal" data-mdb-toggle="modal"
-                                        data-mdb-target="#archivoModal"
+                                        data-mdb-target="#archivoModal" th:if="${archivo.contenido != null}"
                                         th:attr="onclick='ContenidoArchivo(\'' + ${archivo.id_archivo} + '\')'">
                                         <img class="icono-image" th:src="@{'/verIcoPdf/' + ${archivo.id_archivo}}"
                                             alt="Imagen 1">
                                     </a>
+                                    <div class="alert alert-warning d-flex align-items-center" role="alert"
+                                        th:if="${archivo.contenido == null}">
+                                        <i class="fa-solid fa-triangle-exclamation me-2" width="24" height="24"></i>
+
+                                        <div>
+                                            Este registro no tiene el contenido del documento.
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -125,14 +143,13 @@
                 <div class="card-footer" style="background-color: white;">
                     <div class="d-flex justify-content-between">
                         <div id="botonesFormulario">
-                            <input type="submit" class="btn btn-success" th:value="${edit} ? 'Guardar Cambios' : 'Registrar'">
-                            <!-- <button type="submit" class="btn btn-success"
-                            th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button> -->
+                            <input type="submit" class="btn btn-success"
+                                th:value="${edit} ? 'Guardar Cambios' : 'Registrar'">
                         </div>
-                        
+
                         <a type="button" onclick="cancelarModArchivo()" class="btn btn-default">Cancelar</a>
                     </div>
-                    
+
                 </div>
         </form>
     </div>
@@ -140,6 +157,20 @@
     <!-- /.card -->
     <script>
         $(document).ready(function () {
+
+            $('input.datepickerformArch').datepicker({
+                format: "DD/MM/YYYY",
+                minDate: "1900-01-01"
+            });
+
+            $('.select-fieldArchivoCarpetaModal').select2({
+                theme: 'bootstrap-5'
+            });
+
+            // $('.select-fieldArchivoModalC1').select2({
+            //     theme: 'bootstrap-5'
+            // });
+
             $('#FormularioRegistrarArchi').submit(function (event) {
                 event.preventDefault();
 
@@ -161,10 +192,9 @@
                 //var formData = $(this).serialize();
 
                 var selectSeccionDAC = document.getElementById("selectSeccionDAC").value;
-                var selectTipoAC = document.getElementById("selectTipoAC").value;
-                var selectResponsableAC = document.getElementById("selectResponsableAC").value;
+                //var selectResponsableAC = document.getElementById("selectResponsableAC").value;
 
-                if (selectSeccionDAC != "" && selectTipoAC != "" && selectResponsableAC != "") {
+                if (selectSeccionDAC != "") {
                     $.ajax({
                         type: 'POST',
                         url: $(this).attr('action'),
@@ -209,29 +239,6 @@
                                     'error'
                                 );
                             }
-                            /*
-                            if (action == "/ModArchivoG") {
-                                AbrirCarpeta(id_carpeta);
-                                var Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-end',
-                                    showConfirmButton: false,
-                                    timer: 3000
-                                });
-                                toastr.success('Los datos del Registro se han Modificado Correctamente');
-                            } else {
-                                AbrirCarpeta(id_carpeta);
-                                cargarTabla();
-                                var Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-end',
-                                    showConfirmButton: false,
-                                    timer: 3000
-                                });
-                                toastr.success('Los datos se han Registrado Correctamente');
-                            }
-                            var div = document.getElementById("dataTable");
-                            div.scrollIntoView({ behavior: 'smooth' });*/
                         },
                         error: function (xhr, status, error) {
                             toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
@@ -245,22 +252,6 @@
                     Swal.fire(
                         'Imposible Registrar!',
                         'Tiene que seleccionar una Unidad/Seccion Documental para este Registro',
-                        'error'
-                    );
-                } else if (selectTipoAC == "") {
-                    //toastr.info('Tiene que seleccionar un Tipo de Archivo para este Registro');
-                    $('#botonesFormulario').html(botonRegistrar);
-                    Swal.fire(
-                        'Imposible Registrar!',
-                        'Tiene que seleccionar un Tipo de Archivo para este Registro',
-                        'error'
-                    );
-                } else if (selectResponsableAC == "") {
-                    //toastr.info('Tiene que seleccionar al Responsable de la Unidad Documental para este Registro');
-                    $('#botonesFormulario').html(botonRegistrar);
-                    Swal.fire(
-                        'Imposible Registrar!',
-                        'Tiene que seleccionar al Responsable de la Unidad Documental para este Registro',
                         'error'
                     );
                 }
@@ -341,25 +332,6 @@
             new mdb.Input(formOutline).init();
         });
     </script>
-    <script>
-        $('.select-fieldArchivoModalC').select2({
-            theme: 'bootstrap-5'
-        });
-
-        $('.select-fieldArchivoModalC1').select2({
-            theme: 'bootstrap-5'
-        });
-    </script>
-
-    <script>
-        $(function () {
-            $('input.datepickerformArch').datepicker({
-                format: "DD/MM/YYYY",
-                minDate: "1900-01-01"
-            });
-        });
-    </script>
-
     <script>
         $(function () {
             bsCustomFileInput.init();

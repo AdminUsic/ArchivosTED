@@ -12,4 +12,6 @@ public interface TipoArchivoService {
 	public TipoArchivo findOne(Long id);
 
 	public void delete(Long id);
+
+	public TipoArchivo tipoArchivoByTipo(String nombre);
 }
