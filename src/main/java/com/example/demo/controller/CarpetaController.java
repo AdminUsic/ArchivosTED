@@ -313,9 +313,16 @@ public class CarpetaController {
          @RequestParam(value = "gestion") String gestion) {
       Usuario us = (Usuario) request.getSession().getAttribute("userLog");
       Usuario userLog = usuarioService.findOne(us.getId_usuario());
-      carpeta.setGestion(Integer.parseInt(gestion));
-      carpeta.setEstado("A");
-      carpetaService.save(carpeta);
+      Carpeta carpetaRegistrada = carpetaService.findOne(carpeta.getId_carpeta());
+      carpetaRegistrada.setGestion(carpeta.getGestion());
+      carpetaRegistrada.setVolumen(carpeta.getVolumen());
+      carpetaRegistrada.setSerieDocumental(carpetaRegistrada.getSerieDocumental());
+      carpetaService.save(carpetaRegistrada);
+
+      FormularioTransferencia formularioTransferencia = formularioTransferenciaService.formularioTransferenciaCarpeta(carpeta.getId_carpeta());
+      formularioTransferencia.setGestion(carpeta.getGestion());
+      formularioTransferenciaService.save(formularioTransferencia);
+
       Control control = new Control();
       control.setTipoControl(tipoControService.findAllByTipoControl("Modificación"));
       control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()

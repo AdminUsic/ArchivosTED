@@ -209,7 +209,7 @@ public class ArchivoController {
 
             Caja caja = new Caja();
             caja.setArchivo(archivo);
-            caja.setGestion(carpeta.getGestion());
+            caja.setGestion(archivo.getGestion());
             caja.setTituloDoc(archivo.getNombre());
             caja.setEstado("A");
             caja.setNotas(archivo.getNota());
@@ -336,7 +336,6 @@ public class ArchivoController {
                     System.out.println("ERROR EN LA ENCRIPTACION DEL ARCHIVO MODIFICADO: " + e);
                 }
                 PDDocument document = PDDocument.load(contenido);
-                archivo.setPersona(archivoAntes.getPersona());
                 archivo.setCantidadHojas(document.getNumberOfPages());
                 document.close();
             }
@@ -347,7 +346,7 @@ public class ArchivoController {
                 // Carpeta carpeta = carpetaService.findOne(id_carpeta);
                 archivo.setCarpeta(carpeta);
             }
-
+            archivo.setPersona(archivoAntes.getPersona());
             archivo.setUnidad(archivoAntes.getUnidad());
             archivo.setFechaRegistro(archivoAntes.getFechaRegistro());
             archivo.setHoraRegistro(archivoAntes.getHoraRegistro());
@@ -360,7 +359,7 @@ public class ArchivoController {
             formularioTransferenciaService.save(formularioTransferencia);
 
             Caja caja = cajaService.archivoCaja(id_archivo);
-            caja.setGestion(carpeta.getGestion());
+            caja.setGestion(archivo.getGestion());
             caja.setTituloDoc(archivo.getNombre());
             caja.setNotas(archivo.getNota());
             caja.setFojas(archivo.getCantidadHojas());

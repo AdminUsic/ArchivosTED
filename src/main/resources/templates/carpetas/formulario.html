@@ -76,8 +76,7 @@
       var selectVolumen = document.getElementById("selectVolumen").value;
       var selectSerieD = document.getElementById("selectSerieD").value;
       var selectGestion = document.getElementById("años").value;
-
-      if (selectUnidadC != "" && selectVolumen != "" && selectSerieD != "" && selectGestion != "") {
+      if (selectVolumen != "" && selectSerieD != "" && selectGestion != "") {
         $.ajax({
           type: 'POST',
           url: $(this).attr('action'),
@@ -115,8 +114,6 @@
             // Manejo de errores
           }
         });
-      } else if (selectUnidadC == "") {
-        toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
       } else if (selectVolumen == "") {
         toastr.info('Tiene que seleccionar un Volumen para este Registro');
       } else if (selectSerieD == "") {

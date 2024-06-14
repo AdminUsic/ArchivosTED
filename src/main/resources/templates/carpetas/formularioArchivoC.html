@@ -190,11 +190,11 @@
                 //formData.append("fechaEmision", fechaEmision);
                 //alert("la action es: "+action);
                 //var formData = $(this).serialize();
-
+                var selectUnidadCModal = document.getElementById("selectUnidadCModal").value;
                 var selectSeccionDAC = document.getElementById("selectSeccionDAC").value;
                 //var selectResponsableAC = document.getElementById("selectResponsableAC").value;
 
-                if (selectSeccionDAC != "") {
+                if (selectUnidadCModal != "" && selectSeccionDAC != "") {
                     $.ajax({
                         type: 'POST',
                         url: $(this).attr('action'),
@@ -246,6 +246,8 @@
                             // Manejo de errores
                         }
                     });
+                } else if (selectUnidadCModal == "") {
+                    toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
                 } else if (selectSeccionDAC == "") {
                     //toastr.info('Tiene que seleccionar una Unidad/Seccion Documental para este Registro');
                     $('#botonesFormulario').html(botonRegistrar);

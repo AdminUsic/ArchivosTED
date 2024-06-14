@@ -103,12 +103,11 @@
                 //alert("la action es: "+action);
                 var formData = $(this).serialize();
 
-                var selectUnidadCModal = document.getElementById("selectUnidadCModal").value;
                 var selectVolumenModal = document.getElementById("selectVolumenModal").value;
                 var selectSerieDModal = document.getElementById("selectSerieDModal").value;
                 var selectGestionModal = document.getElementById("años2").value;
 
-                if (selectUnidadCModal != "" && selectVolumenModal != "" && selectSerieDModal != "" && selectGestionModal != "") {
+                if (selectVolumenModal != "" && selectSerieDModal != "" && selectGestionModal != "") {
                     $.ajax({
                         type: 'POST',
                         url: $(this).attr('action'),
@@ -144,8 +143,6 @@
                             // Manejo de errores
                         }
                     });
-                } else if (selectUnidadCModal == "") {
-                    toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
                 } else if (selectVolumenModal == "") {
                     toastr.info('Tiene que seleccionar un Volumen para este Registro');
                 } else if (selectSerieDModal == "") {
