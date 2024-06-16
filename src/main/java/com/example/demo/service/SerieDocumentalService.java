@@ -18,4 +18,8 @@ public interface SerieDocumentalService {
 	public SerieDocumental serieDocumentalNombre(String nombre);
 
 	public SerieDocumental serieDocumentalModNombre(String nombreActual, String nombre);
+
+	public List<SerieDocumental> listaSerieDocumentalPadre();
+
+    public List<SerieDocumental> listaSubSerieDocumental(Long idSeriePadre);
 }

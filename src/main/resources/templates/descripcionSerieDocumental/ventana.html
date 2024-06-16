@@ -1,0 +1,182 @@
+<div id="contenidoArchivo">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h4 class="m-1">MODULO DESCRIPCION DE SERIE DOCUMENTAL</h4>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard v1</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <div class="modal fade" id="formularioRegistroModal" aria-labelledby="formularioRegistroModal" tabindex="-1"
+    aria-hidden="true" data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" id="FormularioSeriesDoc" style="overflow-y: auto;">
+      </div>
+    </div>
+  </div>
+
+  <div id="TablaSeriesDoc"></div>
+
+  <!--MODAL SUBSERIES-->
+  <div class="modal fade" id="modal_SubSerie">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" id="SubSeriesDocs">
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+
+  <div class="modal fade" id="ventanaModalDescripcionSerieDoc" aria-labelledby="ventanaModalTransferencia" tabindex="-1"
+    aria-hidden="true" data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" style="overflow-y: auto;">
+        <div class="modal-header d-flex justify-content-lg-between">
+          <div>
+            <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
+          </div>
+          <div>
+            <a onclick="descargarExcel()" href="#" class="btn btn-success btn-sm">
+              <i class="fa fa-file-excel"></i><span> Descargar Excel</span>
+            </a>
+            <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal"
+              id="cerrarVentanaFormulario">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div id="contenidoIdentDescripcionSerie"></div>
+          <div id="contenidoReportePdf"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    // Carga inicial del div
+    cargarTabla();
+    //cargarFormulario();
+
+    function cargarTabla() {
+      $.ajax({
+        type: 'POST',
+        url: "/RegistrosTipoDescripcionSeriesDoc",  // Ruta del metodo del controlador en Spring Boot
+        success: function (response) {
+          $("#TablaSeriesDoc").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+        }
+      });
+    }
+
+    function cargarFormulario() {
+      $.ajax({
+        type: 'POST',
+        url: "/NuevoRegistroDescripcionSerieDoc",  // Ruta del metodo del controlador en Spring Boot
+        success: function (response) {
+          $("#FormularioSeriesDoc").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+        }
+      });
+    }
+
+    function cargarVentanaSubSeries(id_padre) {
+      $.ajax({
+        url: '/VentanaDescripcionSerieDocDetalles/' + id_padre,
+        method: 'GET',
+        success: function (response) {
+          $("#SubSeriesDocs").html(response);
+          cargarFormulariosSubSerie();
+          cargarTablaSubSerie();
+        },
+        error: function (xhr, status, error) {
+          // Maneja los errores de la solicitud AJAX
+          console.log(error);
+        }
+      });
+    }
+
+  </script>
+  <script>
+
+    function EliminarRegistro(id) {
+      var mensaje = '¿Estas Seguro que desea eliminar el registro de esta descripción de serie documental?';
+      Swal.fire({
+        title: '!Atención¡',
+        text: mensaje,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, eliminar!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            type: 'POST',
+            url: "/EliminarRegistroDescripcionSerieDoc/" + id,
+            success: function (response) {
+              cargarTabla();
+              Swal.fire(
+                'Eliminado!',
+                'Este registro se ha eliminado con éxito.',
+                'success'
+              );
+            }, error: function (xhr, status, error) {
+              console.log(error);
+            }
+          });
+        }
+      })
+    }
+
+    function cargarModFormulario(id) {
+      $.ajax({
+        url: '/ModDescripcionSerieDoc/' + id, // Reemplaza '/ruta_del_servidor' por la URL de tu servidor
+        method: 'GET', // Utiliza el método HTTP que corresponda (GET, POST, etc.)
+        success: function (response) {
+
+          $("#FormularioSeriesDoc").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          toastr.info('¿Modificar Registro?');
+        },
+        error: function (xhr, status, error) {
+          // Maneja los errores de la solicitud AJAX
+          console.log(error);
+        }
+      });
+    }
+
+    function verReportePdfDescripcionSerieDoc(id) {
+      $('#contenidoReportePdf').html('<embed src="/GenerarReporteDescripcionSerie/' + id + '" type="application/pdf" width="100%" height="600px" />');
+      $('#contenidoIdentDescripcionSerie').html('<input type="hidden" id="descripcionSerieDoc" value="' + id + '">');
+    }
+
+    function descargarExcel() {
+      var descripcionSerieDoc = $("#descripcionSerieDoc").val();
+
+      var url = '/GenerarReporteExcelDescripcionSerie/' + descripcionSerieDoc;
+
+      // Crear un elemento <a> temporal para descargar el archivo
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = 'Descripcion Serie Documental.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    $(document).ready(function () {
+      $('#dataTable').DataTable();
+    });
+  </script>
+</div>

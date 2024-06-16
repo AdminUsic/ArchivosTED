@@ -84,26 +84,37 @@
       aria-hidden="true" data-mdb-backdrop="static">
       <div class="modal-dialog modal-xl">
         <div class="modal-content" style="overflow-y: auto;">
-          <div class="modal-header">
-            <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
-            <div class="btn-group dropend">
-              <a type="button" class="btn btn-default dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-envelope-open-text"></i>
-              </a>
-              <ul class="dropdown-menu">
-                <li class="dropdown-item font-weight-bold">Enviar formulario a:</li>
-                <li>
-                  <hr class="dropdown-divider" />
-                </li>
-                <div id="usuariosAEnviar"></div>
-              </ul>
+          <div class="modal-header d-flex justify-content-lg-between">
+            <div>
+              <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
+              <div class="btn-group dropend">
+                <a type="button" class="btn btn-default dropdown-toggle" data-mdb-toggle="dropdown"
+                  aria-expanded="false">
+                  <i class="fa-solid fa-envelope-open-text"></i>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="dropdown-item font-weight-bold">Enviar formulario a:</li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <div id="usuariosAEnviar"></div>
+                </ul>
+              </div>
             </div>
-            <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal"
-              id="cerrarVentanaFormulario">
-              <span aria-hidden="true">&times;</span>
-            </button>
+
+            <div>
+              <a onclick="descargarFormularioTransferenciaExcel()" href="#" class="btn btn-success btn-sm">
+                <i class="fa fa-file-excel"></i><span> Descargar Excel</span>
+              </a>
+              <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal"
+                id="cerrarVentanaFormulario">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
           </div>
-          <div class="modal-body" id="contenidoModalTransferencia">
+          <div class="modal-body">
+            <div id="contenidoModalTransferencia"></div>
+            <div id="contenidoIdentTransferencia"></div>
           </div>
         </div>
       </div>
@@ -220,13 +231,14 @@
 
       }
 
-      function generarFormularioTransferencia(id, idFormulario) {
-        $('#contenidoModalTransferencia').html('<embed src="/GenerarFormularioTransferencia/' + id + '" type="application/pdf" width="100%" height="600px" />');
+      function generarFormularioTransferencia(id) {
         var userLog4 = $("#userlog").val();;
         $.ajax({
           type: 'GET',
           url: "/optenerIdentFormulario/" + id,
           success: function (formulario) {
+            $('#contenidoModalTransferencia').html('<embed src="/GenerarReporte/' + formulario + '" type="application/pdf" width="100%" height="600px" />');
+            $('#contenidoIdentTransferencia').html('<input type="hidden" id="formularioTransferenciaOptenido" value="' + formulario + '">');
             $.ajax({
               type: 'POST',
               url: "/UsuariosReceptores",
@@ -243,6 +255,20 @@
             });
           }
         });
+      }
+
+      function descargarFormularioTransferenciaExcel() {
+        var idFormularioTransferencia = $("#formularioTransferenciaOptenido").val();
+
+        var url = '/GenerarReporteExcel/' + idFormularioTransferencia;
+
+        // Crear un elemento <a> temporal para descargar el archivo
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'Formulario_de_Transferencia.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     </script>
 

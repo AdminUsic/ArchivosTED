@@ -31,13 +31,13 @@
                                     th:value="${unid.id_unidad}"></option>
                             </select>
                         </div> -->
-                        
+
                         <div class="form-group">
                             <label for="tipoArchivo">Tomo/Volumen</label>
                             <select class="select-fieldModalCarp" style="width: 100%;" th:field="${carpeta.volumen}"
                                 id="selectVolumenModal">
-                                <option th:each="vol: ${volumenes}" th:text="${vol.nombre}"
-                                    th:value="${vol.id_volumen}" th:selected="${vol == carpeta.volumen}"></option>
+                                <option th:each="vol: ${volumenes}" th:text="${vol.nombre}" th:value="${vol.id_volumen}"
+                                    th:selected="${vol == carpeta.volumen}"></option>
                             </select>
                         </div>
                     </div>
@@ -175,7 +175,8 @@
     </script>
     <script>
         $('.select-fieldModalCarp').select2({
-            theme: 'bootstrap-5'
+            theme: 'bootstrap-5',
+            placeholder: 'Seleccione una opción'
         });
     </script>
 

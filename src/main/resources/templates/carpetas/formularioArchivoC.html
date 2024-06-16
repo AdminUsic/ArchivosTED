@@ -26,12 +26,12 @@
                             <label class="form-label">Nro. Fojas:</label>
                         </div>
                         <th:block th:if="${userLog.persona.cargo.nombre == 'ARCHIVO Y BIBLIOTECA'}">
-                        <label>Nro. Documental</label>
-                        <div class="form-group form-outline">
-                            <input type="number" th:field="${archivo.NroDocumental}" class="form-control"
-                                placeholder="Introdusca el Nro. Documental" min="1" required />
-                            <label class="form-label">Nro. Documental:</label>
-                        </div>
+                            <label>Nro. Documental</label>
+                            <div class="form-group form-outline">
+                                <input type="number" th:field="${archivo.NroDocumental}" class="form-control"
+                                    placeholder="Introdusca el Nro. Documental" min="1" required />
+                                <label class="form-label">Nro. Documental:</label>
+                            </div>
                         </th:block>
                         <label>Nombre del Documento</label>
                         <div class="form-group form-outline">

@@ -47,5 +47,15 @@ public class UnidadServiceImpl implements UnidadService{
     public Unidad UnidadModNombre(String nombreActual, String nombre) {
         return daoUnidadData.UnidadModNombre(nombreActual, nombre);
     }
-    
+
+    @Override
+    public List<Unidad> listaSubUnidadesPadres(Long idUnidadPadre) {
+        return daoUnidadData.listaSubUnidadesPadres(idUnidadPadre);
+    }
+
+    @Override
+    public List<Unidad> listaUnidadesPadres() {
+        return daoUnidadData.listaUnidadesPadres();
+    }
+
 }

@@ -108,11 +108,17 @@ public class FormularioTransferController {
       Usuario usuario = (Usuario) request.getSession().getAttribute("userLog");
       Usuario usuario2 = usuarioService.findOne(usuario.getId_usuario());
       model.addAttribute("rolesUserLog", usuario2.getPersona().getRoles());
-      model.addAttribute("FormulariosTransferencias", formularioTransferenciaService
+      if (usuario2.getPersona().getCargo().getNombre().equals("ARCHIVO Y BIBLIOTECA")) {
+         model.addAttribute("FormulariosTransferencias", formularioTransferenciaService.findAll());
+      } else {
+         model.addAttribute("FormulariosTransferencias", formularioTransferenciaService
             .listaFormularioTransferenciaByIdUsuario(usuario2.getPersona().getId_persona()));
+      }
+      
       Unidad unidad = unidadService.UnidadNombre("ARCHIVO Y BIBLIOTECA");
       model.addAttribute("usuariosArchivos", usuarioService.listaUsuarioPorUnidad(unidad.getId_unidad()));
       model.addAttribute("idUserLog", usuario2.getId_usuario());
+      model.addAttribute("userLog", usuario2);
       return "/FormularioTransferencias/tablaRegistros";
    }
 
@@ -371,6 +377,43 @@ public class FormularioTransferController {
          return ResponseEntity.ok()
                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + "Formulario de Transferencia.pdf")
                .contentType(MediaType.APPLICATION_PDF)
+               .contentLength(bytes.length)
+               .body(resource);
+      } catch (IOException | JRException e) {
+         // Manejo de excepciones comunes
+         System.out.println("ERROR: " + e.getMessage());
+         e.printStackTrace();
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Devolver un estado de error
+      }
+
+   }
+
+   @GetMapping("/GenerarReporteExcel/{id_formularioTransferencia}")
+   public ResponseEntity<ByteArrayResource> verExcel(Model model, HttpServletRequest request,
+         @PathVariable("id_formularioTransferencia") Long id_formularioTransferencia) throws SQLException {
+
+      String nombreArchivo = "FormularioTransferenciaReport.jrxml";
+
+      Path projectPath = Paths.get("").toAbsolutePath();
+      Path imagePath = Paths.get(projectPath.toString(), "src", "main", "resources", "static", "logo",
+            "logoCabezera.png");
+      String imagen = imagePath.toString();
+
+      Map<String, Object> parametros = new HashMap<>();
+      parametros.put("idFormulario", id_formularioTransferencia);
+      parametros.put("rutaImg", imagen);
+      parametros.put("lugarFechaTexto", "Cobija, " + utilidadService.fechaActualTexto());
+
+      ByteArrayOutputStream stream;
+      try {
+         stream = utilidadService.compilarAndExportarReporteExcel(nombreArchivo, parametros);
+         byte[] bytes = stream.toByteArray();
+         ByteArrayResource resource = new ByteArrayResource(bytes);
+
+         return ResponseEntity.ok()
+               .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Formulario de Transferencia.xlsx")
+               .contentType(
+                     MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                .contentLength(bytes.length)
                .body(resource);
       } catch (IOException | JRException e) {

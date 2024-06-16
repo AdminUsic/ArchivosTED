@@ -1,0 +1,197 @@
+<div class="modal-header">
+  <h2 class="m-0 font-weight-bold card-title"
+    th:text="${edit}? 'Modificar descripción de serie documental' : 'Registrar descripción de serie documental'"></h2>
+  <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal" id="cerrarVentanaFormulario">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<form class="form-horizontal" id="FormularioRegistrarSerieDoc" method="POST"
+  th:action="${edit} ? @{/ModDescripcionSerieDocG} : @{/GuardarRegistroDescripcionSeriesDoc}"
+  enctype="multipart/form-data">
+  <div class="modal-body">
+    <div th:if="${edit == 'true'}">
+      <input type="hidden" th:field="${descripcionSerieDocumental.id_descripcion_serie_documental}" />
+    </div>
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="selectSeccionDModal">Sección</label>
+        <select class="select-fieldSerie" style="width: 100%;" id="selectSeccionDModal">
+          <option value="">Seleccione una opción</option>
+          <option th:each="unidad : ${unidades}" th:value="${unidad.id_unidad}" th:text="${unidad.nombre}"
+            th:selected="${descripcionSerieDocumental.unidad != null && unidad.id_unidad == descripcionSerieDocumental.unidad.unidadPadre.id_unidad}">
+          </option>
+
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="selectSubSeccionDModal">Sub Sección</label>
+        <select class="select-fieldSerie" style="width: 100%;" id="selectSubSeccionDModal" name="subSeccion">
+          <option th:value="${edit!=null ? descripcionSerieDocumental.unidad.id_unidad : ''}"
+            th:text="${edit!=null ? descripcionSerieDocumental.unidad.nombre : 'Seleccionar'}" selected="selected">
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="selectSerieDModal">Serie Documental</label>
+        <select class="select-fieldSerie" style="width: 100%;" id="selectSerieDModal">
+          <option value="">Seleccione una opción</option>
+          <option th:each="serie : ${seriesDocumentales}" th:value="${serie.id_serie}" th:text="${serie.nombre}"
+            th:selected="${descripcionSerieDocumental.serieDocumental != null && serie == descripcionSerieDocumental.serieDocumental.seriePadre}">
+          </option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="selectSubSerieDModal">Sub Serie Documental</label>
+        <select class="select-fieldSerie" style="width: 100%;" id="selectSubSerieDModal" name="subSerieDocumental">
+          <option th:value="${edit!=null ? descripcionSerieDocumental.serieDocumental.id_serie : ''}"
+            th:text="${edit!=null ? descripcionSerieDocumental.serieDocumental.nombre : 'Seleccionar'}"
+            selected="selected"></option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="codigoSerie">Código de Serie</label>
+        <div class="form-group form-outline">
+          <input type="text" th:field="${descripcionSerieDocumental.codigoSerie}" class="form-control"
+            placeholder="Introduzca el código de serie" required>
+          <label class="form-label">Código de Serie</label>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="unidadDocumental">Nro. Unidad Documental</label>
+        <div class="form-group form-outline">
+          <input type="number" th:field="${descripcionSerieDocumental.unidadDocumental}" class="form-control"
+            placeholder="Introduzca el nro. Unidad Documental" min="0" required>
+          <label class="form-label">Nro. Unidad Documental</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="gestionSerie">Fecha Extrema</label>
+        <select class="select-fieldSerie" style="width: 100%;" id="gestionSerie" name="fechaExtrema">
+          <option th:value="${edit!=null ? descripcionSerieDocumental.fechaExtrema : ''}"
+            th:text="${edit!=null ? descripcionSerieDocumental.fechaExtrema : 'Seleccionar'}"></option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="metroLineal">Metros Lineales</label>
+        <div class="form-group form-outline">
+          <textarea class="form-control" id="metroLineal" name="metroLineal"
+            th:field="${descripcionSerieDocumental.metroLineal}"
+            placeholder="Introduzca los metros lineales si es necesario"></textarea>
+          <label class="form-label">Metros Lineales</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-success" th:text="${edit!=null ? 'Guardar Cambios' : 'Registrar'}"></button>
+    <a type="button" class="btn btn-default float-right" aria-label="Cerrar" data-mdb-toggle="modal"
+      data-dismiss="modal">Cancelar</a>
+  </div>
+</form>
+
+<script>
+  $(document).ready(function () {
+
+    // Generar años en el select de fecha extrema
+    var startYear = 1900;
+    var endYear = new Date().getFullYear();
+    var selectGestion = document.getElementById("gestionSerie");
+    for (var year = endYear; year >= startYear; year--) {
+      var option = document.createElement("option");
+      option.text = year;
+      option.value = year;
+      selectGestion.appendChild(option);
+    }
+
+    $('#FormularioRegistrarSerieDoc').submit(function (event) {
+      event.preventDefault();
+      var form = document.getElementById("FormularioRegistrarSerieDoc");
+      var action = form.action;
+      var formData = $(this).serialize();
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        contentType: 'application/x-www-form-urlencoded',
+        success: function (response) {
+          var mensaje = response;
+          if (mensaje === 'Ya existe un registro con este nombre') {
+            Swal.fire(
+              'Imposible Registrar!',
+              mensaje,
+              'error'
+            );
+          } else if (mensaje === 'Se realizó el registro correctamente' || mensaje === 'Se guardaron los cambios correctamente') {
+            cargarFormulario();
+            cargarTabla();
+            var div = document.getElementById("dataTable");
+            div.scrollIntoView({ behavior: 'smooth' });
+            $('#cerrarVentanaFormulario').click();
+            Swal.fire(
+              'Registrado!',
+              mensaje + '.',
+              'success'
+            );
+          }
+        },
+        error: function (xhr, status, error) {
+          toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+          console.error(error);
+        }
+      });
+    });
+
+
+    $('#selectSeccionDModal').change(function () {
+      var idPadre = $(this).val();
+      $.ajax({
+        type: 'POST',
+        url: '/cargarSubUnidades/' + idPadre,
+        success: function (response) {
+          var options = '';
+          for (var i = 0; i < response.length; i++) {
+            options += '<option value="' + response[i][1] + '">' + response[i][0] + '</option>';
+          }
+          $('#selectSubSeccionDModal').html(options);
+        },
+        error: function (xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+
+    $('#selectSerieDModal').change(function () {
+      var idSerie = $(this).val();
+      $.ajax({
+        type: 'POST',
+        url: '/cargarSubSeriesDocumentales/' + idSerie,
+        success: function (response) {
+          var options = '';
+          for (var i = 0; i < response.length; i++) {
+            options += '<option value="' + response[i][1] + '">' + response[i][0] + '</option>';
+          }
+          $('#selectSubSerieDModal').html(options);
+        },
+        error: function (xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+  });
+</script>
+<script>
+  document.querySelectorAll('.form-outline').forEach((formOutline) => {
+    new mdb.Input(formOutline).init();
+  });
+  $('.select-fieldSerie').select2({
+    theme: 'bootstrap-5',
+    placeholder: 'Seleccione una opción'
+  });
+</script>

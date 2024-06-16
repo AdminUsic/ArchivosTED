@@ -43,5 +43,16 @@ public class SerieDocumentalServiceImpl implements SerieDocumentalService{
     public SerieDocumental serieDocumentalModNombre(String nombreActual, String nombre) {
         return daoSerieDocumentalData.serieDocumentalModNombre(nombreActual, nombre);
     }
+
+    @Override
+    public List<SerieDocumental> listaSerieDocumentalPadre() {
+        return daoSerieDocumentalData.listaSerieDocumentalPadre();
+    }
+
+    @Override
+    public List<SerieDocumental> listaSubSerieDocumental(Long idSeriePadre) {
+        return daoSerieDocumentalData.listaSubSerieDocumental(idSeriePadre);
+    }
+
     
 }

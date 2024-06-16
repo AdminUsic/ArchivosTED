@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
+
 import com.example.demo.entity.Unidad;
 import com.example.demo.entity.Usuario;
 
@@ -18,5 +20,7 @@ public interface UnidadService {
 
 	public Unidad UnidadModNombre(String nombreActual, String nombre);
 
-	
+	List<Unidad> listaUnidadesPadres();
+
+    public List<Unidad> listaSubUnidadesPadres(Long idUnidadPadre);
 }

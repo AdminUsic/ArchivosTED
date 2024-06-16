@@ -45,7 +45,7 @@ public interface DaoUsuarioData extends JpaRepository<Usuario, Long> {
             inner join persona p ON p.id_persona = u.id_persona
             inner join rol_persona rp ON rp.id_persona = u.id_persona
             inner join rol r on r.id_rol = rp.id_rol
-            where r.nombre = :nombreRol AND u.estado != 'X';
+            where r.nombre = ?1 AND u.estado != 'X';
             """, nativeQuery = true)
     public List<Usuario> listaUsuarioPorNombreRol(@Param("nombreRol") String nombreRol);
 

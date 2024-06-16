@@ -26,7 +26,7 @@ public interface UtilidadServiceProject {
 
   byte[] extraerIconPdf(MultipartFile file) throws Exception;
 
-  byte[] generarReporte(String rutaJasper, Map<String, Object> parametros);
-
   ByteArrayOutputStream compilarAndExportarReporte(String ruta, Map<String, Object> params) throws IOException, JRException, SQLException;
+
+  ByteArrayOutputStream compilarAndExportarReporteExcel(String ruta, Map<String, Object> params) throws IOException, JRException, SQLException;
 }

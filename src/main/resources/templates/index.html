@@ -61,11 +61,14 @@
   <!--MODAL SUBSERIES-->
   <div class="modal fade" id="modal_ReporteFormularioT" tabindex="-1" aria-labelledby="ModalModPerfil"
     aria-hidden="true" data-mdb-backdrop="static">
+    <div id="identFormularioTrans"></div>
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
-
+          <a onclick="descargarExcelFormularioTransfer()" href="#" class="btn btn-success btn-sm">
+            <i class="fa fa-file-excel"></i><span> Descargar Excel</span>
+          </a>
           <div th:if="!${#lists.contains(userLog.persona.roles.![nombre], 'ARCHIVOS')}" class="btn-group dropend">
             <a type="button" class="btn btn-default dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
               <i class="fa-solid fa-envelope-open-text"></i>
@@ -650,7 +653,8 @@
               th:text="${userChats.persona.nombre}+'  '+${userChats.persona.apellido}"></span>
             <div>
               <a th:onclick="'finalizarRevision(' + ${userChats.id_usuario} + ')'" type="button" class="botonTooltip"
-                th:if="${userLog.persona.cargo.nombre == 'ARCHIVO Y BIBLIOTECA'}" data-bs-toggle="tooltip" data-bs-placement="top" title="Finalizar Revisión">
+                th:if="${userLog.persona.cargo.nombre == 'ARCHIVO Y BIBLIOTECA'}" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="Finalizar Revisión">
                 <i class="fa-solid fa-check-to-slot" style="color: #1b1b1b;"></i>
               </a>
               <a type="button" class="btn-close text-reset" data-mdb-dismiss="offcanvas" aria-label="Close"></a>
@@ -984,6 +988,7 @@
 
     function verReporteFormTr(id) {
       $('#Reporte').html('<embed src="/GenerarReporte/' + id + '" type="application/pdf" width="100%" height="600px" />');
+      $('#identFormularioTrans').html('<input type="hidden" id="identFormularioTransVal" value="' + id + '">');
       var userLog3 = $("#userlog").val();;
       $.ajax({
         type: 'POST',
@@ -1155,36 +1160,36 @@
 
     function finalizarRevision(idReceptor) {
       var userLog = $("#userlog").val();
-        Swal.fire({
-          title: '!Finalizar Revisión¡',
-          text: '¿Estas Seguro que desea esta finalizar esta revision?, se limpiara este panel de chat',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, finalizar!'
-        }).then((result) => {
-          if (result.isConfirmed) {
+      Swal.fire({
+        title: '!Finalizar Revisión¡',
+        text: '¿Estas Seguro que desea esta finalizar esta revision?, se limpiara este panel de chat',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, finalizar!'
+      }).then((result) => {
+        if (result.isConfirmed) {
 
-            $.ajax({
-              type: 'POST',
-              url: "/FinalizarRevision/" + userLog +'/'+idReceptor,
-              success: function (response) {
-                $('#panelChat-'+idReceptor).remove();
-                Swal.fire(
-                  'Finalizado!',
-                  'Se ha limpiado el panel por la finalización.',
-                  'success'
-                );
-              }, error: function (xhr, status, error) {
-                console.log(error);
-              }
-            });
+          $.ajax({
+            type: 'POST',
+            url: "/FinalizarRevision/" + userLog + '/' + idReceptor,
+            success: function (response) {
+              $('#panelChat-' + idReceptor).remove();
+              Swal.fire(
+                'Finalizado!',
+                'Se ha limpiado el panel por la finalización.',
+                'success'
+              );
+            }, error: function (xhr, status, error) {
+              console.log(error);
+            }
+          });
 
-          }
-        });
-      }
-    
+        }
+      });
+    }
+
 
   </script>
 
@@ -1414,6 +1419,21 @@
 
       });
 
+      $("#opcion_descripcion_serie_documental").click(function (e) {
+        e.preventDefault();
+
+        cargarContenido("/DescripcionSerieDocumental");
+
+        if (botonPulsado.classList.contains("active")) {
+          botonPulsado.classList.remove("active");
+        }
+
+        botonPulsado = document.getElementById("opcion_descripcion_serie_documental");
+
+        botonPulsado.classList.add("active");
+
+      });
+
       // Función para cargar el contenido de la opción seleccionada
       function cargarContenido(url) {
         const miDiv = document.getElementById('contenido');
@@ -1493,7 +1513,19 @@
           location.reload();
         }
       });
+    }
 
+    function descargarExcelFormularioTransfer() {
+      var descripcionSerieDoc = $("#identFormularioTransVal").val();
+      var url = '/GenerarReporteExcel/' + descripcionSerieDoc;
+
+      // Crear un elemento <a> temporal para descargar el archivo
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = 'Formulario_de_Transferencia.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   </script>
 

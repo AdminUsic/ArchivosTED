@@ -1,0 +1,80 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <input type="hidden" id="id_padre" th:value="${descripcionSerieDocPadre.id_descripcion_serie_documental}">
+        <h4 class="modal-title">Detalles de la descripcion de la serie documental</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container-fluid" id="formularioSubSeriesDoc"></div>
+        <div class="container-fluid" id="tablaSubSeriesDoc"></div>
+    </div>
+    <script>
+        function cargarFormulariosSubSerie() {
+            var id_padre = document.getElementById('id_padre').value;
+            $.ajax({
+                type: 'POST',
+                url: "/NuevoRegistroDescripcionSerieDocDetalle/" + id_padre,  // Ruta del metodo del controlador en Spring Boot
+                success: function (response) {
+                    $("#formularioSubSeriesDoc").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                }
+            });
+        }
+
+        function cargarTablaSubSerie() {
+            var id_padre = document.getElementById('id_padre').value;
+            $.ajax({
+                type: 'POST',
+                url: "/RegistrosDescripcionSeriesDocDetalles/" + id_padre,  // Ruta del metodo del controlador en Spring Boot
+                success: function (response) {
+                    $("#tablaSubSeriesDoc").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                }
+            });
+        }
+        function cargarModFormulariosSubSerie(id) {
+            $.ajax({
+                type: 'POST',
+                url: "/ModDescripcionSerieDocDetalles/" + id,  // Ruta del metodo del controlador en Spring Boot
+                success: function (response) {
+
+                    $("#formularioSubSeriesDoc").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                }
+            });
+        }
+
+        function EliminarRegistroSubSerie(id, nombre) {
+            var mensaje = '¿Estas Seguro que desea eliminar el registro del detalle de la descripción de serie documental?';
+            Swal.fire({
+                title: '!Atención¡',
+                text: mensaje,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "/EliminarRegistroDescripcionSerieDocDetalle/" + id,
+                        success: function (response) {
+                            cargarFormulariosSubSerie();
+                            cargarTablaSubSerie();
+                            cargarTabla();
+                            Swal.fire(
+                                'Eliminado!',
+                                'Este registro se ha eliminado con éxito.',
+                                'success'
+                            );
+                        }, error: function (xhr, status, error) {
+                            console.log(error);
+                        }
+                    });
+
+                }
+            })
+        }
+    </script>
+</div>

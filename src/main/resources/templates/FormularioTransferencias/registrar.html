@@ -63,7 +63,6 @@
   <script th:inline="javascript">
     // Carga inicial del div
     cargarTabla();
-    // cargarFormulario();
 
     function cargarTabla() {
       $.ajax({
@@ -144,18 +143,6 @@
           }
         })
 
-      /*Swal.fire({
-        title: '¿Eliminar Registro?',
-        type: 'error',
-        showCancelButton: true,
-        showConfirmButton: false,
-        cancelButtonText: "Cancelar",
-
-        html:
-          "<a type='button' class='btn btn-block btn-danger btn-lg' style='width: 150px; height: 50px; display: inline-block; align-items: center; justify-content: center;' onclick='eliminarRegistroSeleccionado(\"" + id + "\")'>" +
-          "Eliminar" +
-          "</a>",
-      }).then().done();*/
     }
 
 

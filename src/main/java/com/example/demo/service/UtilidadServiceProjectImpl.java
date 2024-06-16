@@ -34,6 +34,9 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 @Service
 public class UtilidadServiceProjectImpl implements UtilidadServiceProject {
@@ -225,40 +228,6 @@ public class UtilidadServiceProjectImpl implements UtilidadServiceProject {
   }
 
   @Override
-  public byte[] generarReporte(String rutaJasper, Map<String, Object> parametros) {
-    Connection conexionBD = null;
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-    try {
-      // Obtener una conexión a la base de datos
-      conexionBD = dataSource.getConnection();
-
-      // Llenar el informe con datos y obtener los bytes
-      JasperPrint jasperPrint = JasperFillManager.fillReport(rutaJasper, parametros, conexionBD);
-      net.sf.jasperreports.engine.JasperExportManager.exportReportToPdfStream(jasperPrint, byteArrayOutputStream);
-
-      return byteArrayOutputStream.toByteArray();
-    } catch (SQLException | JRException e) {
-      System.out.println("ERROR: " + e.getMessage());
-      e.printStackTrace();
-      // Manejar errores aquí
-      return null;
-    } finally {
-      // Cerrar la conexión a la base de datos en el bloque finally para garantizar su
-      // cierre
-      if (conexionBD != null) {
-        try {
-          conexionBD.close();
-        } catch (SQLException e) {
-          System.out.println("ERROR: " + e.getMessage());
-          e.printStackTrace();
-          // Manejar errores aquí
-        }
-      }
-    }
-  }
-
-  @Override
   public ByteArrayOutputStream compilarAndExportarReporte(String nombreArchivo, Map<String, Object> params)
       throws IOException, JRException, SQLException {
     Connection con = null;
@@ -284,6 +253,41 @@ public class UtilidadServiceProjectImpl implements UtilidadServiceProject {
     con.close();
     return stream;
 
+  }
+
+  @Override
+  public ByteArrayOutputStream compilarAndExportarReporteExcel(String nombreArchivo, Map<String, Object> params)
+      throws IOException, JRException, SQLException {
+    Connection con = null;
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+    Path rootPath = Paths.get("").toAbsolutePath();
+    Path directorio = Paths.get(rootPath.toString(), "reportes", nombreArchivo);
+    String ruta = directorio.toString();
+
+    try (InputStream reportStream = new FileInputStream(ruta)) {
+      con = dataSource.getConnection();
+
+      JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+      JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, con);
+
+      // Exportar a Excel
+      JRXlsxExporter exporter = new JRXlsxExporter();
+      exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+      exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(stream));
+
+      exporter.exportReport();
+
+    } catch (IOException | JRException | SQLException e) {
+      System.out.println("ERROR: " + e.getMessage());
+      e.printStackTrace();
+    } finally {
+      if (con != null) {
+        con.close();
+      }
+    }
+
+    return stream;
   }
 
 }
