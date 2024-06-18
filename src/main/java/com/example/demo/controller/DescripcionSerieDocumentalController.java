@@ -291,7 +291,7 @@ public class DescripcionSerieDocumentalController {
             HttpServletRequest request,
             @PathVariable("id_descripcionSerie") Long id_descripcionSerie) throws SQLException {
 
-        String nombreArchivo = "DescripcionSerieDocReport.jrxml";
+        String nombreArchivo = "DescripcionSerieDocReportExcel.jrxml";
 
         Path projectPath = Paths.get("").toAbsolutePath();
         Path imagePath = Paths.get(projectPath.toString(), "src", "main", "resources", "static", "logo",

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_Letter_4" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4c95f0d0-a822-4f69-b6ce-0968540dc0b6">
-	<property name="com.jaspersoft.studio.data.sql.tables">
-		<![CDATA[dW5pZGFkICwxNSwxNSw4OGVjOGMyOC0xMDljLTRlYWYtYjMzOC1kMTJmYjA4ZmQ3MmI7Zm9ybXVs
-YXJpb190cmFuc2ZlcmVuY2lhICwxODcsNDcsYzRhMTBhYjgtZjAwYS00MjkyLTk3ODctN2FmZDBk
-MjgyODA0O2NhcmdvICwxNSwyMTEsMTFlYWM4MjEtZWU2Ny00ZjFkLTkxOTctZDcxYmE1MWI0ZTc0
-Ow==]]>
-	</property>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="archivosTED"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#FFFFFF">
 		<box>
@@ -128,7 +123,7 @@ WHERE
 	<queryString language="SQL">
 		<![CDATA[SELECT u.nombre,
 	c.nombre,
-	f.cant_documentos,
+(select count(*) from caja c2 where c2.id_formulario_transferencia = f.id_formulario_transferencia) as cant_documentos,
 	f.gestion
 FROM formulario_transferencia f
 	INNER JOIN unidad u ON 
@@ -393,7 +388,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ $F{nombre}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="29" width="405" height="19" uuid="0f97f886-7b1b-451d-8acb-b519cd9b0df9">
@@ -409,7 +404,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{COLUMN_2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ $F{COLUMN_2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="67" width="405" height="18" uuid="e0b538c8-1cdc-4100-9bf1-4d65413bb6f0">
@@ -425,7 +420,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cant_documentos}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ $F{cant_documentos}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="85" width="405" height="19" uuid="ea8af571-d4fd-448c-9b4c-4a997fe5a0b7">
@@ -441,7 +436,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{gestion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ $F{gestion}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="89">
