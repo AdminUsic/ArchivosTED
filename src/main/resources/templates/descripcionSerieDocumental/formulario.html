@@ -79,6 +79,23 @@
         </select>
       </div>
       <div class="form-group col-md-6">
+        <label for="gestionSerie">Fecha Final</label>
+        <select class="select-fieldSerie" style="width: 100%;" id="gestionSerie2" name="fechaFinal">
+          <option th:value="${edit!=null ? descripcionSerieDocumental.fechaFinal : ''}"
+            th:text="${edit!=null ? descripcionSerieDocumental.fechaFinal : 'Seleccionar'}"></option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="gestionSerie">Contexto</label>
+        <div class="form-group form-outline">
+          <input type="text" th:field="${descripcionSerieDocumental.contexto}" class="form-control"
+            placeholder="Introduzca el contexto" required>
+          <label class="form-label">Contexto</label>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
         <label for="metroLineal">Metros Lineales</label>
         <div class="form-group form-outline">
           <textarea class="form-control" id="metroLineal" name="metroLineal"
@@ -103,11 +120,13 @@
     var startYear = 1900;
     var endYear = new Date().getFullYear();
     var selectGestion = document.getElementById("gestionSerie");
+    var selectGestion2 = document.getElementById("gestionSerie2");
     for (var year = endYear; year >= startYear; year--) {
       var option = document.createElement("option");
       option.text = year;
       option.value = year;
       selectGestion.appendChild(option);
+      selectGestion2.appendChild(option);
     }
 
     $('#FormularioRegistrarSerieDoc').submit(function (event) {

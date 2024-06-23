@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,13 +148,16 @@ public class DescripcionSerieDocumentalController {
             DescripcionSerieDocumental descripcionSerieDocumental,
             @RequestParam(value = "subSeccion", required = false) Long selectSubSeccionDModal,
             @RequestParam(value = "subSerieDocumental", required = false) Long subSerieDocumental,
-            @RequestParam(value = "fechaExtrema", required = false) String fechaExtrema) {
+            @RequestParam(value = "fechaExtrema", required = false) String fechaExtrema,
+            @RequestParam(value = "fechaFinal", required = false) String fechaFinal) {
         // System.out.println("METODO REGISTRAR DESCRIPCION SERIE DOCUMENTAL");
 
         descripcionSerieDocumental.setEstado("A");
         descripcionSerieDocumental.setUnidad(unidadService.findOne(selectSubSeccionDModal));
         descripcionSerieDocumental.setSerieDocumental(documentalService.findOne(subSerieDocumental));
         descripcionSerieDocumental.setFechaExtrema(fechaExtrema);
+        descripcionSerieDocumental.setFechaFinal(fechaFinal);
+        descripcionSerieDocumental.setFechaRegistro(new Date());
         descripcionSerieDocumentalService.save(descripcionSerieDocumental);
         return ResponseEntity.ok("Se realizó el registro correctamente");
     }
@@ -189,7 +193,8 @@ public class DescripcionSerieDocumentalController {
             DescripcionSerieDocumental descripcionSerieDocumental,
             @RequestParam(value = "subSeccion", required = false) Long selectSubSeccionDModal,
             @RequestParam(value = "subSerieDocumental", required = false) Long subSerieDocumental,
-            @RequestParam(value = "fechaExtrema", required = false) String fechaExtrema) {
+            @RequestParam(value = "fechaExtrema", required = false) String fechaExtrema,
+            @RequestParam(value = "fechaFinal", required = false) String fechaFinal) {
         // System.out.println("METODO REGISTRAR DESCRIPCION SERIE DOCUMENTAL");
 
         DescripcionSerieDocumental dSerieDocumental = descripcionSerieDocumentalService
@@ -197,9 +202,12 @@ public class DescripcionSerieDocumentalController {
         dSerieDocumental.setUnidad(unidadService.findOne(selectSubSeccionDModal));
         dSerieDocumental.setSerieDocumental(documentalService.findOne(subSerieDocumental));
         dSerieDocumental.setFechaExtrema(fechaExtrema);
+        dSerieDocumental.setFechaFinal(fechaFinal);
         dSerieDocumental.setCodigoSerie(descripcionSerieDocumental.getCodigoSerie());
         dSerieDocumental.setMetroLineal(descripcionSerieDocumental.getMetroLineal());
         dSerieDocumental.setUnidadDocumental(descripcionSerieDocumental.getUnidadDocumental());
+        dSerieDocumental.setFechaFinal(descripcionSerieDocumental.getFechaFinal());
+        dSerieDocumental.setContexto(descripcionSerieDocumental.getContexto());
         descripcionSerieDocumentalService.save(dSerieDocumental);
         return ResponseEntity.ok("Se guardaron los cambios correctamente");
     }
@@ -216,7 +224,8 @@ public class DescripcionSerieDocumentalController {
     @ResponseBody
     public ResponseEntity<String> GuardarRegistroDescripcionSeriesDocDetalle(HttpServletRequest request, Model model,
             DescripcionSerieDocumentalDetalle descripcionSerieDocumentalDetalle,
-            @RequestParam(value = "id_seriePadre", required = false) Long id_seriePadre) {
+            @RequestParam(value = "id_seriePadre", required = false) Long id_seriePadre,
+            @RequestParam(value = "fechaExtrema", required = false) String fechaExtrema) {
         // System.out.println("METODO REGISTRAR DESCRIPCION SERIE DOCUMENTAL");
         descripcionSerieDocumentalDetalle
                 .setDescripcionSerieDocumental(descripcionSerieDocumentalService.findOne(id_seriePadre));
@@ -228,7 +237,8 @@ public class DescripcionSerieDocumentalController {
     @PostMapping("/GuardarCambiosDescripcionSeriesDocDetalle")
     @ResponseBody
     public ResponseEntity<String> GuardarCambiosDescripcionSeriesDocDetalle(HttpServletRequest request, Model model,
-            DescripcionSerieDocumentalDetalle descripcionSerieDocumentalDetalle2) {
+            DescripcionSerieDocumentalDetalle descripcionSerieDocumentalDetalle2,
+            @RequestParam(value = "fechaExtrema", required = false) String fechaExtrema) {
         // System.out.println("METODO REGISTRAR DESCRIPCION SERIE DOCUMENTAL");
         DescripcionSerieDocumentalDetalle descripcionSerieDocumentalDetalle = descripcionSerieDocumentalDetalleService
                 .findOne(descripcionSerieDocumentalDetalle2.getId_descripcion_serie_documental_detalle());
@@ -264,7 +274,8 @@ public class DescripcionSerieDocumentalController {
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idDescripcionSerie", id_descripcionSerie);
         parametros.put("rutaImg", imagen);
-        //parametros.put("lugarFechaTexto", "Cobija, " + utilidadService.fechaActualTexto());
+        // parametros.put("lugarFechaTexto", "Cobija, " +
+        // utilidadService.fechaActualTexto());
 
         ByteArrayOutputStream stream;
         try {
@@ -301,7 +312,8 @@ public class DescripcionSerieDocumentalController {
         Map<String, Object> parametros = new HashMap<>();
         parametros.put("idDescripcionSerie", id_descripcionSerie);
         parametros.put("rutaImg", imagen);
-        //parametros.put("lugarFechaTexto", "Cobija, " + utilidadService.fechaActualTexto());
+        // parametros.put("lugarFechaTexto", "Cobija, " +
+        // utilidadService.fechaActualTexto());
 
         ByteArrayOutputStream stream;
         try {

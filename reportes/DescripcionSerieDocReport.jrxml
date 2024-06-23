@@ -332,7 +332,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[UNIDAD DE ARCHIVO CENTRAL]]></text>
+				<text><![CDATA[UNIDAD DE ARCHIVO CENTRAL PN]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="10" y="60" width="30" height="20" uuid="cd29f273-a16f-4996-b914-770670deacac"/>
@@ -420,7 +420,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ $F{sub_seccion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sub_seccion}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="90" y="120" width="170" height="20" uuid="f5d32676-6ad1-49ea-a283-fb84d5bb7884">
@@ -438,7 +438,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[  $F{sub_serie}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sub_serie}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="350" y="80" width="211" height="20" uuid="f71aee2b-5924-4ad0-a69b-3cb4137c6004">
@@ -474,7 +474,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ $F{metro_lineal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{metro_lineal}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="76">

@@ -43,16 +43,20 @@
                                     <div class="btn-group">
                                         <a class="btn btn-success" type="button" data-toggle="modal"
                                             data-target="#modal_SubSerie" style="color: aliceblue;"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Añadir Sub Series Documentales"
                                             th:attr="onclick='cargarVentanaSubSeries(\'' + ${serieD.id_serie} + '\')'">
                                             <li class="fa-solid fa-plus"></li>
                                         </a>
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"
                                             data-mdb-toggle="modal" data-mdb-target="#formularioRegistroModal"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
                                             th:attr="onclick='cargarModFormulario(\'' + ${serieD.id_serie} + '\')'"
                                             th:if="${#lists.contains(permisos.![nombre], 'editar_serieDocumental')}">
                                             <li class="fas fa-pencil-alt"></li>
                                         </a>
                                         <a class="btn btn-danger" type="button" style="color: aliceblue;"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"
                                             th:if="${#lists.contains(permisos.![nombre], 'eliminar_serieDocumental')}"
                                             th:attr="onclick='EliminarRegistro(\'' + ${serieD.id_serie} + '\', \'' + ${serieD.nombre} + '\', \'' + ${serieD.subSeries.size} + '\')'">
                                             <li class="fa-solid fa-trash"></li>
@@ -81,6 +85,11 @@
     <script>
         $(document).ready(function () {
             $('#dataTable').DataTable();
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
     </script>
 </section>

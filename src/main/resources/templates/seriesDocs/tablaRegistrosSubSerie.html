@@ -21,8 +21,10 @@
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <a class="btn btn-info" type="button"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
                                             th:attr="onclick='cargarModFormulariosSubSerie(\'' + ${subserieD.id_serie} + '\')'"><li class="fas fa-pencil-alt"></li></a>
                                         <a class="btn btn-danger" type="button"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"
                                             th:attr="onclick='EliminarRegistroSubSerie(\'' + ${subserieD.id_serie} + '\', \'' + ${subserieD.nombre} + '\')'"><li class="fa-solid fa-trash"></li></a>
                                     </div>
                                 </td>
@@ -46,6 +48,10 @@
     <script>
         $(document).ready(function () {
             $('#dataTableSUB').DataTable();
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
     </script>
 </section>

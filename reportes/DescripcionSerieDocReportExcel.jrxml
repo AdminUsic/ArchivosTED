@@ -332,7 +332,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[UNIDAD DE ARCHIVO CENTRAL]]></text>
+				<text><![CDATA[UNIDAD DE ARCHIVO CENTRAL PN]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="10" y="60" width="50" height="20" uuid="cd29f273-a16f-4996-b914-770670deacac"/>

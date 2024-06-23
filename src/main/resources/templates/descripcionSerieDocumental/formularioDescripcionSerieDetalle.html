@@ -14,7 +14,8 @@
             enctype="multipart/form-data">
             <div class="card-body">
                 <div th:if="${edit == 'true'}">
-                    <input type="hidden" th:field="${descripcionSerieDocDetalle.id_descripcion_serie_documental_detalle}" />
+                    <input type="hidden"
+                        th:field="${descripcionSerieDocDetalle.id_descripcion_serie_documental_detalle}" />
                 </div>
                 <input type="hidden" th:each="idP: ${id_descripcioSerieDocumental}" th:value="${idP}"
                     name="id_seriePadre" />
@@ -43,17 +44,17 @@
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="metroLineal">Fechas Extremas</label>
-                        <div class="form-group form-outline">
-                            <input type="number" th:field="${descripcionSerieDocDetalle.fechaExtrema}"
-                                class="form-control" placeholder="Introduzca fecha extrema" min="0" required>
-                            <label class="form-label">Fechas Extremas</label>
-                        </div>
+                        <select class="select-fieldSerie" style="width: 100%;" id="gestionSelect3" name="fechaExtrema">
+                            <option th:value="${edit!=null ? descripcionSerieDocDetalle.fechaExtrema : ''}"
+                                th:text="${edit!=null ? descripcionSerieDocDetalle.fechaExtrema : 'Seleccionar'}">
+                            </option>
+                        </select>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="metroLineal">Verificación</label>
                         <div class="form-group form-outline">
-                            <input type="text" th:field="${descripcionSerieDocDetalle.verificaion}"
-                                class="form-control" placeholder="Introduzca verificación" min="0" required>
+                            <input type="text" th:field="${descripcionSerieDocDetalle.verificaion}" class="form-control"
+                                placeholder="Introduzca verificación" min="0" required>
                             <label class="form-label">Verificación</label>
                         </div>
                     </div>
@@ -63,8 +64,8 @@
                         <label for="metroLineal">Contenido</label>
                         <div class="form-group form-outline">
                             <textarea class="form-control" id="metroLineal" name="metroLineal"
-                                th:field="${descripcionSerieDocDetalle.contenido}"
-                                placeholder="Introduzca el contenido" required></textarea>
+                                th:field="${descripcionSerieDocDetalle.contenido}" placeholder="Introduzca el contenido"
+                                required></textarea>
                             <label class="form-label">Contenido</label>
                         </div>
                     </div>
@@ -81,8 +82,8 @@
                 <div class="card-footer" style="background-color: white;">
                     <button type="submit" class="btn btn-success"
                         th:text="${edit} ? 'Guardar Cambios' : 'Registrar'"></button>
-                        <a th:if="${edit != null}" type="button"
-                        th:onclick="'cargarFormulariosSubSerie()'" class="btn btn-default float-right">
+                    <a th:if="${edit != null}" type="button" th:onclick="'cargarFormulariosSubSerie()'"
+                        class="btn btn-default float-right">
                         Cancelar</a>
                 </div>
         </form>
@@ -90,6 +91,17 @@
     <!-- /.card -->
     <script>
         $(document).ready(function () {
+
+            var startYear2 = 1900;
+            var endYear2 = new Date().getFullYear();
+            var selectGestionModal = document.getElementById("gestionSelect3");
+            for (var year = endYear2; year >= startYear2; year--) {
+                var option = document.createElement("option");
+                option.text = year;
+                option.value = year;
+                selectGestionModal.appendChild(option);
+            }
+
             $('#FormularioRegistrarSubSerieDoc').submit(function (event) {
                 event.preventDefault();
                 var form = document.getElementById("FormularioRegistrarSubSerieDoc");

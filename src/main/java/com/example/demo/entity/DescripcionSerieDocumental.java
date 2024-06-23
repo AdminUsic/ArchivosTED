@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,6 +33,10 @@ public class DescripcionSerieDocumental implements Serializable {
     private String fechaExtrema;
     private String metroLineal;
     private String estado;
+    private String fechaFinal;
+
+    private String contexto;
+    private Date fechaRegistro;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_unidad")
