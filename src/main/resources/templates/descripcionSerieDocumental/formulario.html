@@ -71,19 +71,21 @@
       </div>
     </div>
     <div class="row">
-      <div class="form-group col-md-6">
-        <label for="gestionSerie">Fecha Extrema</label>
-        <select class="select-fieldSerie" style="width: 100%;" id="gestionSerie" name="fechaExtrema">
-          <option th:value="${edit!=null ? descripcionSerieDocumental.fechaExtrema : ''}"
-            th:text="${edit!=null ? descripcionSerieDocumental.fechaExtrema : 'Seleccionar'}"></option>
-        </select>
+      <div class="col-md-6">
+        <label for="">Fecha Extrema</label>
+        <div class="form-group form-outline">
+          <input type="number" th:field="${descripcionSerieDocumental.fechaExtrema}" class="form-control"
+            placeholder="Introduzca la fecha Extrema" required>
+          <label class="form-label">Fecha Extrema</label>
+        </div>
       </div>
-      <div class="form-group col-md-6">
-        <label for="gestionSerie">Fecha Final</label>
-        <select class="select-fieldSerie" style="width: 100%;" id="gestionSerie2" name="fechaFinal">
-          <option th:value="${edit!=null ? descripcionSerieDocumental.fechaFinal : ''}"
-            th:text="${edit!=null ? descripcionSerieDocumental.fechaFinal : 'Seleccionar'}"></option>
-        </select>
+      <div class="col-md-6">
+        <label for="">Fecha Final</label>
+        <div class="form-group form-outline">
+          <input type="number" th:field="${descripcionSerieDocumental.fechaFinal}" class="form-control"
+            placeholder="Introduzca la fecha Final" required>
+          <label class="form-label">Fecha Final</label>
+        </div>
       </div>
     </div>
     <div class="row">
@@ -115,19 +117,6 @@
 
 <script>
   $(document).ready(function () {
-
-    // Generar años en el select de fecha extrema
-    var startYear = 1900;
-    var endYear = new Date().getFullYear();
-    var selectGestion = document.getElementById("gestionSerie");
-    var selectGestion2 = document.getElementById("gestionSerie2");
-    for (var year = endYear; year >= startYear; year--) {
-      var option = document.createElement("option");
-      option.text = year;
-      option.value = year;
-      selectGestion.appendChild(option);
-      selectGestion2.appendChild(option);
-    }
 
     $('#FormularioRegistrarSerieDoc').submit(function (event) {
       event.preventDefault();
