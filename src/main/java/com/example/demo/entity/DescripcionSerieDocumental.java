@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -30,10 +31,10 @@ public class DescripcionSerieDocumental implements Serializable {
 
     private String codigoSerie;
     private String unidadDocumental;
-    private String fechaExtrema;
+    private int fechaExtrema;
     private String metroLineal;
     private String estado;
-    private String fechaFinal;
+    private int fechaFinal;
 
     private String contexto;
     private Date fechaRegistro;
@@ -46,5 +47,7 @@ public class DescripcionSerieDocumental implements Serializable {
     @JoinColumn(name = "id_serie")
     private SerieDocumental serieDocumental;
 
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_persona")
+    private Usuario usuario;
 }

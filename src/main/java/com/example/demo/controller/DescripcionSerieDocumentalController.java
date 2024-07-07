@@ -113,6 +113,7 @@ public class DescripcionSerieDocumentalController {
                 descripcionSerieDocumentalService.listaDescripcionSerieDocumental());
         Usuario user = (Usuario) request.getSession().getAttribute("userLog");
         Usuario userLog = usuarioService.findOne(user.getId_usuario());
+        model.addAttribute("unidadesPadres", unidadService.listaUnidadesPadres());
         model.addAttribute("permisos", userLog.getPermisos());
         return "/descripcionSerieDocumental/tablaRegistros";
     }
@@ -148,18 +149,25 @@ public class DescripcionSerieDocumentalController {
             DescripcionSerieDocumental descripcionSerieDocumental,
             @RequestParam(value = "subSeccion", required = false) Long selectSubSeccionDModal,
             @RequestParam(value = "subSerieDocumental", required = false) Long subSerieDocumental,
-            @RequestParam(value = "fechaExtrema", required = false) String fechaExtrema,
-            @RequestParam(value = "fechaFinal", required = false) String fechaFinal) {
+            @RequestParam(value = "fechaExtrema", required = false) int fechaExtrema,
+            @RequestParam(value = "fechaFinal", required = false) int fechaFinal) {
         // System.out.println("METODO REGISTRAR DESCRIPCION SERIE DOCUMENTAL");
+        if (request.getSession().getAttribute("userLog") != null) {
+            Usuario usu = (Usuario) request.getSession().getAttribute("userLog");
+            Usuario userLog = usuarioService.findOne(usu.getId_usuario());
+            descripcionSerieDocumental.setEstado("A");
+            descripcionSerieDocumental.setUnidad(unidadService.findOne(selectSubSeccionDModal));
+            descripcionSerieDocumental.setSerieDocumental(documentalService.findOne(subSerieDocumental));
+            descripcionSerieDocumental.setFechaExtrema(fechaExtrema);
+            descripcionSerieDocumental.setFechaFinal(fechaFinal);
+            descripcionSerieDocumental.setFechaRegistro(new Date());
+            descripcionSerieDocumental.setUsuario(userLog);
+            descripcionSerieDocumentalService.save(descripcionSerieDocumental);
+            return ResponseEntity.ok("Se realizó el registro correctamente");
+        } else {
+            return ResponseEntity.ok("Se ha cerrado la sesion por inactividad.");
+        }
 
-        descripcionSerieDocumental.setEstado("A");
-        descripcionSerieDocumental.setUnidad(unidadService.findOne(selectSubSeccionDModal));
-        descripcionSerieDocumental.setSerieDocumental(documentalService.findOne(subSerieDocumental));
-        descripcionSerieDocumental.setFechaExtrema(fechaExtrema);
-        descripcionSerieDocumental.setFechaFinal(fechaFinal);
-        descripcionSerieDocumental.setFechaRegistro(new Date());
-        descripcionSerieDocumentalService.save(descripcionSerieDocumental);
-        return ResponseEntity.ok("Se realizó el registro correctamente");
     }
 
     @GetMapping(value = "/ModDescripcionSerieDoc/{id_serie}")
@@ -193,8 +201,8 @@ public class DescripcionSerieDocumentalController {
             DescripcionSerieDocumental descripcionSerieDocumental,
             @RequestParam(value = "subSeccion", required = false) Long selectSubSeccionDModal,
             @RequestParam(value = "subSerieDocumental", required = false) Long subSerieDocumental,
-            @RequestParam(value = "fechaExtrema", required = false) String fechaExtrema,
-            @RequestParam(value = "fechaFinal", required = false) String fechaFinal) {
+            @RequestParam(value = "fechaExtrema", required = false) int fechaExtrema,
+            @RequestParam(value = "fechaFinal", required = false) int fechaFinal) {
         // System.out.println("METODO REGISTRAR DESCRIPCION SERIE DOCUMENTAL");
 
         DescripcionSerieDocumental dSerieDocumental = descripcionSerieDocumentalService
@@ -323,6 +331,127 @@ public class DescripcionSerieDocumentalController {
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Descripcion Serie Documental.xlsx")
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .contentLength(bytes.length)
+                    .body(resource);
+        } catch (IOException | JRException e) {
+            // Manejo de excepciones comunes
+            System.out.println("ERROR: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Devolver un estado de error
+        }
+    }
+
+    @GetMapping("/GenerarReporteRegistrosDescripcionSeriePdf/{idUnidad}/{fechaFinal}/{fechaFinalFin}")
+    public ResponseEntity<ByteArrayResource> GenerarReporteRegistrosDescripcionSeriePdf(Model model,
+            HttpServletRequest request,
+            @PathVariable(value = "idUnidad", required = false) Long idUnidad,
+            @PathVariable(value = "fechaFinal", required = false) int fechaFinal,
+            @PathVariable(value = "fechaFinalFin", required = false) int fechaFinalFin) throws SQLException {
+        System.out.println("idUnidad: " + idUnidad);
+        System.out.println("fechaFinal: " + fechaFinal);
+        System.out.println("fechaFinalFin: " + fechaFinalFin);
+        String nombreArchivo = "";
+        Path projectPath = Paths.get("").toAbsolutePath();
+        Path imagePath = Paths.get(projectPath.toString(), "src", "main", "resources", "static", "logo",
+                "logoCabezera.png");
+        String imagen = imagePath.toString();
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("rutaImg", imagen);
+
+        if (idUnidad > 0 && fechaFinal > 0 && fechaFinalFin > 0) {
+            nombreArchivo = "ReportRangoFechaFinalUnidadDescripcionSerieDoc.jrxml";
+            parametros.put("fechaFinal", fechaFinal);
+            parametros.put("fechaFinalFin", fechaFinalFin);
+            parametros.put("idUnidadPadre", idUnidad);
+        } else if (fechaFinal > 0 && idUnidad > 0) {
+            nombreArchivo = "ReportFechaFinalUnidadDescripcionSerieDoc.jrxml";
+            parametros.put("idUnidadPadre", idUnidad);
+            parametros.put("fechaFinal", fechaFinal);
+        } else if (fechaFinal > 0 && fechaFinalFin > 0) {
+            nombreArchivo = "ReportRangoFechaFinalDescripcionSerieDoc.jrxml";
+            parametros.put("fechaFinal", fechaFinal);
+            parametros.put("fechaFinalFin", fechaFinalFin);
+        } else if (fechaFinal > 0) {
+            nombreArchivo = "ReportFechaFinalDescripcionSerieDoc.jrxml";
+            parametros.put("fechaFinal", fechaFinal);
+        } else if (idUnidad > 0) {
+            parametros.put("idUnidad", idUnidad);
+            nombreArchivo = "ReportDescripcionSerieDocPorUnidad.jrxml";
+        } else {
+            nombreArchivo = "ReportTodosDescripcionSerieDoc.jrxml";
+        }
+
+        ByteArrayOutputStream stream;
+        try {
+            stream = utilidadService.compilarAndExportarReporte(nombreArchivo, parametros);
+            byte[] bytes = stream.toByteArray();
+            ByteArrayResource resource = new ByteArrayResource(bytes);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline;filename=" + "Reporte de Descripcion Serie Documental.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .contentLength(bytes.length)
+                    .body(resource);
+        } catch (IOException | JRException e) {
+            // Manejo de excepciones comunes
+            System.out.println("ERROR: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Devolver un estado de error
+        }
+    }
+
+    @GetMapping("/GenerarReporteRegistrosDescripcionSerieExcel/{idUnidad}/{fechaFinal}/{fechaFinalFin}")
+    public ResponseEntity<ByteArrayResource> GenerarReporteRegistrosDescripcionSerieExcel(Model model, HttpServletRequest request,
+    @PathVariable(value = "idUnidad", required = false) Long idUnidad,
+    @PathVariable(value = "fechaFinal", required = false) int fechaFinal,
+    @PathVariable(value = "fechaFinalFin", required = false) int fechaFinalFin) throws SQLException {
+
+        System.out.println("idUnidad: " + idUnidad);
+        System.out.println("fechaFinal: " + fechaFinal);
+        System.out.println("fechaFinalFin: " + fechaFinalFin);
+        String nombreArchivo = "";
+        Path projectPath = Paths.get("").toAbsolutePath();
+        Path imagePath = Paths.get(projectPath.toString(), "src", "main", "resources", "static", "logo",
+                "logoCabezera.png");
+        String imagen = imagePath.toString();
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("rutaImg", imagen);
+
+        if (idUnidad > 0 && fechaFinal > 0 && fechaFinalFin > 0) {
+            nombreArchivo = "ReportRangoFechaFinalUnidadDescripcionSerieDoc.jrxml";
+            parametros.put("fechaFinal", fechaFinal);
+            parametros.put("fechaFinalFin", fechaFinalFin);
+            parametros.put("idUnidadPadre", idUnidad);
+        } else if (fechaFinal > 0 && idUnidad > 0) {
+            nombreArchivo = "ReportFechaFinalUnidadDescripcionSerieDoc.jrxml";
+            parametros.put("idUnidadPadre", idUnidad);
+            parametros.put("fechaFinal", fechaFinal);
+        } else if (fechaFinal > 0 && fechaFinalFin > 0) {
+            nombreArchivo = "ReportRangoFechaFinalDescripcionSerieDoc.jrxml";
+            parametros.put("fechaFinal", fechaFinal);
+            parametros.put("fechaFinalFin", fechaFinalFin);
+        } else if (fechaFinal > 0) {
+            nombreArchivo = "ReportFechaFinalDescripcionSerieDoc.jrxml";
+            parametros.put("fechaFinal", fechaFinal);
+        } else if (idUnidad > 0) {
+            parametros.put("idUnidad", idUnidad);
+            nombreArchivo = "ReportDescripcionSerieDocPorUnidad.jrxml";
+        } else {
+            nombreArchivo = "ReportTodosDescripcionSerieDoc.jrxml";
+        }
+
+        ByteArrayOutputStream stream;
+        try {
+            stream = utilidadService.compilarAndExportarReporteExcel(nombreArchivo, parametros);
+            byte[] bytes = stream.toByteArray();
+            ByteArrayResource resource = new ByteArrayResource(bytes);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=Formulario de Transferencia.xlsx")
                     .contentType(
                             MediaType.parseMediaType(
                                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))

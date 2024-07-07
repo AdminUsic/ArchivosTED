@@ -40,7 +40,7 @@
       <div class="modal-content" style="overflow-y: auto;">
         <div class="modal-header d-flex justify-content-lg-between">
           <div>
-            <h2 class="m-0 font-weight-bold card-title">Formulario de Tranferencia</h2>
+            <h2 class="m-0 font-weight-bold card-title">Descripcion de Series Documentales</h2>
           </div>
           <div>
             <a onclick="descargarExcel()" href="#" class="btn btn-success btn-sm">
@@ -55,6 +55,31 @@
         <div class="modal-body">
           <div id="contenidoIdentDescripcionSerie"></div>
           <div id="contenidoReportePdf"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="ventanaModalDescripcionSerieDoc2" aria-labelledby="ventanaModalTransferencia2"
+    tabindex="-1" aria-hidden="true" data-mdb-backdrop="static">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" style="overflow-y: auto;">
+        <div class="modal-header d-flex justify-content-lg-between">
+          <div>
+            <h2 class="m-0 font-weight-bold card-title">Reporte Descripcion de Series Documentales</h2>
+          </div>
+          <div>
+            <a onclick="descargarExcel2()" href="#" class="btn btn-success btn-sm">
+              <i class="fa fa-file-excel"></i><span> Descargar Excel</span>
+            </a>
+            <button type="button" class="close" aria-label="Cerrar" data-mdb-toggle="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div id="contenidoIdentDescripcionSerie2"></div>
+          <div id="contenidoReportePdf2"></div>
         </div>
       </div>
     </div>

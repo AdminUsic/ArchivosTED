@@ -7,7 +7,7 @@
                 th:text="'Serie Documental: ' + ${carpeta.serieDocumental.nombre}"></li>
             <li class="breadcrumb-item active text-center" th:text="'Gestion: ' + ${carpeta.Gestion}"></li>
         </ol>
-        <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar" onclick="cancelarMod()"></a>
+        <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></a>
     </div>
     <div class="modal-body">
         <div class="container-fluid" id="body-Carpeta">
@@ -106,8 +106,6 @@
                                                         th:text="'Emisor: '+${arch.persona.nombre}+' '+${arch.persona.apellido}"></span>
                                                     <span class="document-name"
                                                         th:text="'Cant. Hojas: '+${arch.cantidadHojas}"></span>
-                                                    <span class="document-name"
-                                                        th:text="'Emisión: ' + ${#dates.format(arch.fechaEmision, 'dd/MM/yy')}"></span>
                                                     <span class="document-name"
                                                         th:text="'Ubicacion: '+ ${arch.rutaFisica}"></span>
                                                 </div>

@@ -31,7 +31,7 @@ public class DescripcionSerieDocumentalDetalle implements Serializable {
     private String observacion;
     private String verificaion;
     private String contenido;
-    private String fechaExtrema;
+    private int fechaExtrema;
     private String estado;
 
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })

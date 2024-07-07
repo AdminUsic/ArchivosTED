@@ -1,13 +1,57 @@
 <section class="content">
     <div class="container-fluid">
         <div class="card card-info">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold card-title">Registros de Descripcion de Series Documentales</h6>
-                <button type="button" class="btn btn-success ml-auto px-4 py-2" data-mdb-toggle="modal"
-                    data-mdb-target="#formularioRegistroModal" onclick="cargarFormulario();">
-                    <span class="mr-2">Registrar</span>
-                    <i class="fas fa-plus-circle"></i>
-                </button>
+            <div class="card-header">
+                <div class="row">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold card-title">Registros de Descripcion de Series Documentales</h6>
+                        <button type="button" class="btn btn-success ml-auto px-4 py-2" data-mdb-toggle="modal"
+                            data-mdb-target="#formularioRegistroModal" onclick="cargarFormulario();">
+                            <span class="mr-2">Registrar</span>
+                            <i class="fas fa-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <label for="">Reportes</label>
+                    <div class="col-md-12 d-flex justify-content-between">
+                        <div class="col-md-4">
+                            <label for="">Fecha final(Inicio)</label>
+                            <select id="fechaFinal" class="fechaFinalReport select-report w-100">
+                                <option value="0">Seleccione una Fecha Final</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">Fecha final(Fin)</label>
+                            <select id="fechaFinalFin" class="fechaFinalReport select-report w-100">
+                                <option value="0">Seleccione una Fecha Final</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">Unidad</label>
+                            <select id="idUnidad" class="select-report w-100">
+                                <option value="0">Seleccione una Unidad</option>
+                                <option th:each="unidad: ${unidadesPadres}" th:value="${unidad.id_unidad}"
+                                    th:text="${unidad.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="d-flex justify-content-sm-evenly">
+                        <button type="button" class="btn btn-danger btn-sm "
+                            onclick="descargarReporteRegistroPdfDescripcionSerieDoc()">
+                            <span class="mr-2">Descargar Reporte Pdf</span>
+                            <i class="fa-regular fa-file-pdf"></i>
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm "
+                            onclick="descargarReporteRegistroPdfDescripcionSerieDocExcel()">
+                            <span class="mr-2">Descargar Reporte Excel</span>
+                            <i class="fa-regular fa-file-excel"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -54,18 +98,19 @@
                                         </a>
                                         <a class="btn btn-success" type="button" data-toggle="modal"
                                             data-target="#modal_SubSerie" style="color: aliceblue;"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Agregar Detalles de Descripción de Series Documental"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Agregar Detalles de Descripción de Series Documental"
                                             th:attr="onclick='cargarVentanaSubSeries(\'' + ${descripcionSerieDocumental.id_descripcion_serie_documental} + '\')'">
                                             <li class="fa-solid fa-plus"></li>
                                         </a>
                                         <a class="btn btn-info" type="button" style="color: aliceblue;"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
                                             data-mdb-toggle="modal" data-mdb-target="#formularioRegistroModal"
                                             th:attr="onclick='cargarModFormulario(\'' + ${descripcionSerieDocumental.id_descripcion_serie_documental} + '\')'">
                                             <li class="fas fa-pencil-alt"></li>
                                         </a>
                                         <a class="btn btn-danger" type="button" style="color: aliceblue;"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"
                                             th:attr="onclick='EliminarRegistro(\'' + ${descripcionSerieDocumental.id_descripcion_serie_documental} + '\')'">
                                             <li class="fa-solid fa-trash"></li>
                                         </a>
@@ -98,12 +143,74 @@
     <!-- /.container-fluid -->
     <script>
         $(document).ready(function () {
+
+            var startYear3 = 1900;
+            var endYear3 = new Date().getFullYear();
+            var selectfechaFinalReport = $(".fechaFinalReport");
+
+            for (var year = endYear3; year >= startYear3; year--) {
+                var option = $("<option></option>");  // Crear elemento option con jQuery
+                option.text(year);  // Establecer el texto del option
+                option.val(year);   // Establecer el valor del option
+                selectfechaFinalReport.append(option);  // Agregar el option al select
+            }
+
+
             $('#dataTable').DataTable();
             // Inicializar todos los tooltips de Bootstrap
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
+
+            $('.select-report').select2({
+                theme: 'bootstrap-5',
+            });
         });
+
+        function descargarReporteRegistroPdfDescripcionSerieDoc() {
+            var fechaFinal = $('#fechaFinal').val(); // Obtener el valor seleccionado de la facultad
+            var fechaFinalFin = $('#fechaFinalFin').val(); // Obtener el valor seleccionado de la carrera
+            var idUnidad = $('#idUnidad').val();
+            var url = '/GenerarReporteRegistrosDescripcionSeriePdf/' + idUnidad + '/' + fechaFinal + '/' + fechaFinalFin;
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob' // Esperamos un blob como respuesta
+                },
+                success: function (blob) {
+                    // Crear un objeto URL para el blob
+                    const url = URL.createObjectURL(blob);
+
+                    // Crear un elemento <a> para abrir el PDF en una nueva pestaña
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.target = "_blank"; // Abrir en una nueva pestaña
+                    a.style.display = "none"; // Ocultar el enlace
+                    document.body.appendChild(a); // Agregar el elemento <a> al DOM
+
+                    // Simular clic en el enlace para abrir el PDF en una nueva pestaña
+                    a.click();
+
+                    // Limpiar después de abrir el enlace
+                    document.body.removeChild(a);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al abrir el PDF en una nueva pestaña:', error);
+                    // Manejar errores (mostrar un mensaje al usuario, etc.)
+                }
+            });
+        }
+
+        function descargarReporteRegistroPdfDescripcionSerieDocExcel() {
+            var fechaFinal = $('#fechaFinal').val(); // Obtener el valor seleccionado de la facultad
+            var fechaFinalFin = $('#fechaFinalFin').val(); // Obtener el valor seleccionado de la carrera
+            var idUnidad = $('#idUnidad').val();
+            var url = '/GenerarReporteRegistrosDescripcionSerieExcel/' + idUnidad + '/' + fechaFinal + '/' + fechaFinalFin;
+
+            window.location.href = url;
+        }
     </script>
 </section>

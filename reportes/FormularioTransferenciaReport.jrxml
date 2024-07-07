@@ -248,43 +248,19 @@ WHERE
 				</box>
 				<imageExpression><![CDATA[$P{rutaImg}]]></imageExpression>
 			</image>
-			<staticText>
-				<reportElement x="480" y="64" width="85" height="17" uuid="27eb8461-2a82-448a-966c-f231c408edb8"/>
+			<textField>
+				<reportElement x="480" y="64" width="85" height="17" uuid="91067a8e-c9b2-45fb-942b-4f7f48ac859d"/>
 				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="480" y="64" width="21" height="17" uuid="45ab9204-4fa6-4fb6-bcb7-1dbc1814ccb1"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Calibri" size="7"/>
-				</textElement>
-				<text><![CDATA[Pag.]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="501" y="64" width="24" height="17" uuid="426c19e7-d7b0-4b6a-88ba-365dd12772ae"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="7"/>
+					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="525" y="64" width="15" height="17" uuid="f905cc53-63b4-4b50-9e70-e6a87d5fb2b8"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="7"/>
-				</textElement>
-				<text><![CDATA[de]]></text>
-			</staticText>
-			<textField evaluationTime="Report">
-				<reportElement x="540" y="64" width="21" height="17" uuid="6365a3e0-9b77-4ad3-8c28-751ed0709697"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -388,7 +364,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ $F{nombre}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="29" width="405" height="19" uuid="0f97f886-7b1b-451d-8acb-b519cd9b0df9">
@@ -404,7 +380,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ $F{COLUMN_2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{COLUMN_2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="67" width="405" height="18" uuid="e0b538c8-1cdc-4100-9bf1-4d65413bb6f0">
@@ -420,7 +396,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ $F{cant_documentos}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cant_documentos}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="160" y="85" width="405" height="19" uuid="ea8af571-d4fd-448c-9b4c-4a997fe5a0b7">
@@ -436,7 +412,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ $F{gestion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{gestion}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="89">
