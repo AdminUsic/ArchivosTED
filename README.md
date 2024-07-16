@@ -14,7 +14,7 @@
 ##### Gestiones de archivos organizados
 
 ### MANUAL DE USUARIO
-https://github.com/AdminUsic/ArchivosTED.git
+https://drive.google.com/file/d/1IECeNiQNrCOJalIFtgLaKHrBuI3bciF1/view?usp=sharing
 
 ### MANUAL DE INSTALACION
-https://github.com/AdminUsic/ArchivosTED.git
+https://drive.google.com/file/d/1_UH1iJ3M2o1mVWWWoZigRoTZO4Gz6UhM/view?usp=sharing
