@@ -75,7 +75,7 @@
                         </div>
                         <div class="form-group">
                             <label>Gestion</label>
-                            <select class="select-fieldModalCarp" style="width: 100%;" id="años2" name="gestion">
+                            <select class="select-fieldModalCarp" style="width: 100%;" id="años" name="gestion">
                                 <option th:text="${edit}? ${carpeta.gestion} : 'Seleccionar'"
                                     th:value="${edit}? ${carpeta.gestion} : ''"></option>
                             </select>
@@ -105,7 +105,7 @@
 
                 var selectVolumenModal = document.getElementById("selectVolumenModal").value;
                 var selectSerieDModal = document.getElementById("selectSerieDModal").value;
-                var selectGestionModal = document.getElementById("años2").value;
+                var selectGestionModal = document.getElementById("años").value;
 
                 if (selectVolumenModal != "" && selectSerieDModal != "" && selectGestionModal != "") {
                     $.ajax({
@@ -163,7 +163,7 @@
         var endYear = new Date().getFullYear();
         //var endYear = 2100;
         // Obtén una referencia al elemento select
-        var select = document.getElementById("años2");
+        var select = document.getElementById("años");
         // Agrega el nuevo elemento option al select
         for (var year = endYear; year >= startYear; year--) {
             // Crea un nuevo elemento option

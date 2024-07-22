@@ -12,41 +12,32 @@
     <div class="row">
       <div class="col-sm-6">
         <!-- text input -->
-        <!-- <div class="form-group">
-          <label for="tipoArchivo">Unidad/Seccion</label>
-          <select class="select-fieldFormC" style="width: 100%;" th:field="${carpeta.unidad}" id="selectUnidadC">
-            <option th:value="${edit} ? ${carpeta.unidad.id_unidad} : ''"
-              th:text="${edit} ? ${carpeta.unidad.nombre} : 'Seleccionar'" selected></option>
-            <option th:each="unid: ${unidades}" th:text="${unid.nombre}" th:value="${unid.id_unidad}"
-              th:if="${unid.unidadPadre==null}"></option>
-          </select>
-        </div> -->
+
         <div class="form-group">
           <label for="tipoArchivo">Tomo/Volumen</label>
-          <select class="select-fieldFormC" style="width: 100%;" th:field="${carpeta.volumen}" id="selectVolumen">
-            <option th:value="${edit} ? ${carpeta.volumen.id_volumen} : ''"
-              th:text="${carpeta.volumen != null} ? ${carpeta.volumen.nombre} : 'Seleccionar'" selected></option>
-            <option th:each="vol: ${volumenes}" th:text="${vol.nombre}" th:value="${vol.id_volumen}"></option>
+          <select class="select-fieldModalCarp" style="width: 100%;" th:field="${carpeta.volumen}"
+            id="selectVolumenModalList">
+            <option th:each="vol: ${volumenes}" th:text="${vol.nombre}" th:value="${vol.id_volumen}"
+              th:selected="${vol == carpeta.volumen}"></option>
           </select>
         </div>
       </div>
       <div class="col-sm-6">
-        <!-- text input -->
         <div class="form-group">
           <label for="tipoArchivo">Serie Documental</label>
-          <select class="select-fieldFormC" style="width: 100%;" th:field="${carpeta.serieDocumental}"
-            id="selectSerieD">
-            <option th:value="${edit}? ${carpeta.serieDocumental.id_serie} : ''"
+          <select class="select-fieldModalCarp" style="width: 100%;" id="selectSerieDModalList"
+            th:field="${carpeta.serieDocumental}">
+            <option th:value="${edit} ? ${carpeta.serieDocumental.id_serie} : ''"
               th:text="${carpeta.serieDocumental!= null} ? ${carpeta.serieDocumental.nombre} : 'Seleccionar'" selected>
             </option>
-            </option>
             <option th:each="serie: ${seriesDocs}" th:text="${serie.nombre}" th:value="${serie.id_serie}"
-              th:if="${serie.seriePadre==null}"></option>
+              th:if="${serie.seriePadre==null}">
+            </option>
           </select>
         </div>
         <div class="form-group">
           <label>Gestion</label>
-          <select class="select-fieldFormC" style="width: 100%;" id="años" name="gestion">
+          <select class="select-fieldModalCarp" style="width: 100%;" id="años2" name="gestion">
             <option th:text="${edit}? ${carpeta.gestion} : 'Seleccionar'" th:value="${edit}? ${carpeta.gestion} : ''">
             </option>
           </select>
@@ -72,11 +63,10 @@
       //alert("la action es: "+action);
       var formData = $(this).serialize();
 
-      var selectUnidadC = document.getElementById("selectUnidadC").value;
-      var selectVolumen = document.getElementById("selectVolumen").value;
-      var selectSerieD = document.getElementById("selectSerieD").value;
-      var selectGestion = document.getElementById("años").value;
-      if (selectVolumen != "" && selectSerieD != "" && selectGestion != "") {
+      var selectVolumenModalList = document.getElementById("selectVolumenModalList").value;
+      var selectSerieDModalList = document.getElementById("selectSerieDModalList").value;
+      var años2 = document.getElementById("años2").value;
+      if (selectVolumenModalList != "" && selectSerieDModalList != "" && años2 != "") {
         $.ajax({
           type: 'POST',
           url: $(this).attr('action'),
@@ -87,26 +77,24 @@
             if (mensajeConf == "Se ha Modificado el registro Correctamente") {
               cargarFormulario();
               cargarTabla();
-              ('#cerraModalCarpetaList').click();
               //toastr.success(mensajeConf);
               Swal.fire(
                 'Realizado!',
                 mensajeConf,
                 'success'
               );
-            } else if (mensajeConf == "Se guardó el nuevo registro Correctamente") {
+              ('#cerraModalCarpetaList').click();
+            } else {
               cargarFormulario();
               cargarTabla();
-              ('#cerraModalCarpetaList').click();
               //toastr.success(mensajeConf);
               Swal.fire(
                 'Realizado!',
                 mensajeConf,
                 'success'
               );
+              ('#cerraModalCarpetaList').click();
             }
-            var div = document.getElementById("dataTable");
-            div.scrollIntoView({ behavior: 'smooth' });
           },
           error: function (xhr, status, error) {
             toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
@@ -114,26 +102,23 @@
             // Manejo de errores
           }
         });
-      } else if (selectVolumen == "") {
+      } else if (selectVolumenModalList == "") {
         toastr.info('Tiene que seleccionar un Volumen para este Registro');
-      } else if (selectSerieD == "") {
+      } else if (selectSerieDModalList == "") {
         toastr.info('Tiene que seleccionar una Serie Documental para este Registro');
-      } else if (selectGestion == "") {
+      } else if (años2 == "") {
         toastr.info('Tiene que seleccionar un Gestion para este Registro');
       }
+
     });
   });
-  function limpiarFormularioR() {
-    var form = document.getElementById("FormularioRegistrarCarpeta");
-    form.reset();
-  }
 </script>
 <script>
   var startYear = 1900;
   var endYear = new Date().getFullYear();
   //var endYear = 2100;
   // Obtén una referencia al elemento select
-  var select = document.getElementById("años");
+  var select = document.getElementById("años2");
   // Agrega el nuevo elemento option al select
   for (var year = endYear; year >= startYear; year--) {
     // Crea un nuevo elemento option
@@ -144,7 +129,8 @@
   }
 </script>
 <script>
-  $('.select-fieldFormC').select2({
-    theme: 'bootstrap-5'
+  $('.select-fieldModalCarp').select2({
+    theme: 'bootstrap-5',
+    placeholder: 'Seleccione una opción'
   });
 </script>

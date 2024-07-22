@@ -62,7 +62,7 @@ public class Archivo implements Serializable {
 
     @Column
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "dd-MM-yy")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date fechaRegistro;
 
     @Column

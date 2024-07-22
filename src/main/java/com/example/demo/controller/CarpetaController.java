@@ -285,11 +285,12 @@ public class CarpetaController {
    @GetMapping(value = "/ModCarpeta/{id_carpeta}")
    public String EditarCarpeta(HttpServletRequest request, Model model,
          @PathVariable("id_carpeta") Long id_carpeta) {
-      System.out.println("EDITAR CARPETA");
+      System.out.println("EDITAR CARPETA l");
+      System.out.println(id_carpeta);
       model.addAttribute("carpeta", carpetaService.findOne(id_carpeta));
       model.addAttribute("archivos", archivoService.findAll());
       model.addAttribute("unidades", unidadService.findAll());
-      model.addAttribute("volumenes", volumenService.findAll());
+      model.addAttribute("volumenes", volumenService.listaDeVolumenes());
       model.addAttribute("seriesDocs", documentalService.findAll());
       model.addAttribute("edit", "true");
       return "/carpetas/formulario";
@@ -440,12 +441,14 @@ public class CarpetaController {
       Usuario us = (Usuario) request.getSession().getAttribute("userLog");
       Usuario userLog = usuarioService.findOne(us.getId_usuario());
       Archivo archivo = archivoService.findOne(id_archivo);
-      model.addAttribute("carp", archivo.getCarpeta().getId_carpeta());
+      Carpeta carpeta = archivo.getCarpeta();
       model.addAttribute("archivo", archivo);
+      model.addAttribute("carp", archivo.getCarpeta().getId_carpeta());
       model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
       model.addAttribute("personas", personaService.findAll());
-      model.addAttribute("seccionesDocumental",
-            carpetaService.findOne(archivo.getCarpeta().getId_carpeta()).getUnidad().getSubUnidades());
+      model.addAttribute("seriesDocumental", carpeta.getSerieDocumental().getSubSeries());
+      model.addAttribute("seccionesDocumental", carpeta.getUnidad().getSubUnidades());
+      model.addAttribute("cubiertas", cubiertaService.findAll());
       model.addAttribute("userLog", userLog);
       model.addAttribute("edit", "true");
       return "/carpetas/formularioArchivoC";
@@ -457,12 +460,14 @@ public class CarpetaController {
       Usuario us = (Usuario) request.getSession().getAttribute("userLog");
       Usuario userLog = usuarioService.findOne(us.getId_usuario());
       Archivo archivo = archivoService.findOne(id_archivo);
-      model.addAttribute("carp", archivo.getCarpeta().getId_carpeta());
+      Carpeta carpeta = archivo.getCarpeta();
       model.addAttribute("archivo", archivo);
+      model.addAttribute("carp", archivo.getCarpeta().getId_carpeta());
       model.addAttribute("TiposArchivos", tipoArchivoService.findAll());
       model.addAttribute("personas", personaService.findAll());
-      model.addAttribute("seccionesDocumental",
-            carpetaService.findOne(archivo.getCarpeta().getId_carpeta()).getUnidad().getSubUnidades());
+      model.addAttribute("seriesDocumental", carpeta.getSerieDocumental().getSubSeries());
+      model.addAttribute("seccionesDocumental", carpeta.getUnidad().getSubUnidades());
+      model.addAttribute("cubiertas", cubiertaService.findAll());
       model.addAttribute("userLog", userLog);
       model.addAttribute("edit", "true");
       return "/carpetas/formularioArchivoCList";

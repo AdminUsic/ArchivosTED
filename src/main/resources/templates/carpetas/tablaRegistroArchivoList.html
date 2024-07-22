@@ -1,9 +1,9 @@
 <section class="content">
     <div class="container-fluid">
-        <div class="card card-info">
+        <div class="card">
             <div class="card-header ">
                 <div class="d-flex justify-content-lg-between ">
-                    <h6 class="m-0 font-weight-bold card-title">Registros de Archivos</h6>
+                    <h6 class="m-0 font-weight-bold card-title">Lista de Archivos</h6>
                     <a class="btn btn-success" type="button" id="botonAgregarArchivo"
                         th:attr="onclick='cargarFormularioArchivoList(\'' + ${carpeta.id_carpeta} + '\')'"
                         th:if="${#lists.contains(permisos.![nombre], 'registrar_archivo')}">
@@ -17,28 +17,26 @@
                         <thead class="table-dark">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro. unidad documental</th>
-                                <th>Nombre del archivo</th>
-                                <th>Notas</th>
-                                <th>Cantidad hojas</th>
-                                <th>Usuario</th>
+                                <th>Nombre del Documento</th>
+                                <th>Cubierta</th>
+                                <th>Nro. de Fojas</th>
+                                <th>Gestion</th>
                                 <th>Serie documental</th>
-                                <th>Ubicación fisica del documento</th>
+                                <th>Notas</th>
+                                <th>Fecha de Registro</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody">
                             <tr th:each="ar, rowStat:${listaArchivos}" th:if="${ar.estado!='X'}">
                                 <td th:text="${rowStat.count}"></td>
-                                <td class="text-center" th:text="${ar.NroDocumental}"></td>
                                 <td class="text-center" th:text="${ar.Nombre}"></td>
-                                <td class="text-center" th:text="${ar.nota}"></td>
+                                <td class="text-center" th:text="${ar.cubierta.nombre}"></td>
                                 <td class="text-center" th:text="${ar.cantidadHojas}"></td>
-                                <td class="text-center" th:text="${ar.persona.nombre}+' '+${ar.persona.apellido}"></td>
-                                <td class="text-center" th:text="${ar.serieDocumental.nombre}">
-                                </td>
-                                <td class="text-center" th:text="${#dates.format(ar.fechaEmision, 'dd/MM/yyyy')}"></td>
-                                <td class="text-center" th:text="${ar.rutaFisica}"></td>
+                                <td class="text-center" th:text="${ar.gestion}"></td>
+                                <td class="text-center" th:text="${ar.serieDocumental.nombre}"></td>
+                                <td class="text-center" th:text="${ar.nota}"></td>
+                                <td class="text-center" th:text="${#dates.format(ar.fechaRegistro, 'dd/MM/yyyy')+' '+ar.horaRegistro}"></td>
                                 <td class="text-center">
                                     <div class="container-fluid">
                                         <a class="btn btn-info" type="button" style="color: white;"
@@ -61,13 +59,13 @@
                         <tfoot class="table-secondary">
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Nro. unidad documental</th>
-                                <th>Nombre del archivo</th>
-                                <th>Notas</th>
-                                <th>Cantidad hojas</th>
-                                <th>Usuario</th>
+                                <th>Nombre del Documento</th>
+                                <th>Cubierta</th>
+                                <th>Nro. de Fojas</th>
+                                <th>Gestion</th>
                                 <th>Serie documental</th>
-                                <th>Ubicación fisica del documento</th>
+                                <th>Notas</th>
+                                <th>Fecha de Registro</th>
                                 <th>Acciones</th>
                             </tr>
                         </tfoot>

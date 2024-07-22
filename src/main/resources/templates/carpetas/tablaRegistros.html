@@ -33,7 +33,8 @@
                                 <td class="text-center" th:text="'TSE - '+${carp.unidad.sigla}"></td>
                                 <td class="text-center">
                                     <div class="dropdown " id="menuArchivo">
-                                        <a class="dropdown-toggle" type="button" data-toggle="dropdown" style="text-decoration: none; color: black;">
+                                        <a class="dropdown-toggle" type="button" data-toggle="dropdown"
+                                            style="text-decoration: none; color: black;">
                                             <small th:text="${carp.serieDocumental.nombre}"></small>
                                         </a>
                                         <div class="dropdown-menu">
@@ -48,20 +49,34 @@
                                 <td class="text-center" th:text="${carp.TotalArchivo}"></td>
                                 <td class="text-center" th:text="${carp.gestion}"></td>
                                 <td class="text-center">
-                                    <div class="btn-group">
-                                        <a class="btn btn-info" type="button" th:if="${#lists.contains(permisos.![nombre], 'editar_carpeta')}"
-                                            th:attr="onclick='cargarModFormulario(\'' + ${carp.id_carpeta} + '\')'" style="color: white;">
-                                            <li class="fas fa-pencil-alt"></li>
+                                    <div class="dropdown"
+                                        th:if="${#lists.contains(permisos.![nombre], 'editar_carpeta') or #lists.contains(permisos.![nombre], 'eliminar_carpeta')}">
+                                        <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                            <i class="fa-solid fa-gear"></i>
                                         </a>
-                                        <a class="btn btn-danger" type="button" th:if="${#lists.contains(permisos.![nombre], 'eliminar_carpeta')}"
-                                            th:attr="onclick='EliminarRegistro(\'' + ${carp.id_carpeta} + '\')'" style="color: white;">
-                                            <li class="fa-solid fa-trash"></li>
-                                        </a>
-                                        <a class="btn btn-primary" type="button" data-mdb-toggle="modal"
-                                            data-mdb-target="#AbreCarpetaArchivoList"
-                                            th:attr="onclick='AbrirCarpetaList(\'' + ${carp.id_carpeta} + '\')'" style="color: white;">
-                                            <li class="fa fa-folder-open"></li>
-                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" type="button" data-mdb-toggle="modal"
+                                                data-mdb-target="#AbreCarpetaArchivoList"
+                                                th:attr="onclick='AbrirCarpetaList(\'' + ${carp.id_carpeta} + '\')'">
+                                                <i class="fa fa-folder-open"></i>
+                                                <small>Ver Contenido</small></a>
+                                            <a class="dropdown-item" type="button" data-mdb-toggle="modal"
+                                                data-mdb-target="#ventanaModalTransferencia"
+                                                th:if="${userLog.persona.cargo.nombre != 'ARCHIVO Y BIBLIOTECA'}"
+                                                th:attr="onclick='generarFormularioTransferencia(\'' + ${carp.id_carpeta} + '\')'">
+                                                <i class="fa-solid fa-file-invoice"></i>
+                                                <small>Ver Formulario de Transferencia</small></a>
+                                            <a class="dropdown-item" type="button" data-mdb-toggle="modal"
+                                                data-mdb-target="#FormModCarpModalList"
+                                                th:if="${#lists.contains(permisos.![nombre], 'editar_carpeta')}"
+                                                th:attr="onclick='cargarModFormularioList(\'' + ${carp.id_carpeta} + '\')'">
+                                                <i class="fas fa-pencil-alt"></i>
+                                                <small>Editar Carpeta</small></a>
+                                            <a class="dropdown-item" type="button"
+                                                th:if="${#lists.contains(permisos.![nombre], 'eliminar_carpeta')}"
+                                                th:attr="onclick='eliminarRegistroSeleccionado(\'' + ${carp.id_carpeta} + '\')'">
+                                                <i class="fas fa-trash"></i><small> Eliminar Carpeta</small></a>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
