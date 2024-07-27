@@ -79,6 +79,15 @@
     </div>
     <!-- /.modal -->
 
+    <div class="modal fade" id="FormExcelArchivo" aria-labelledby="FormExcelArchivo" tabindex="-1" aria-hidden="true"
+      data-mdb-backdrop="static">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="contenidoFormExcelArchivo">
+
+        </div>
+      </div>
+    </div>
+
     <!-------------- CARPETA MODAL FORMULARIO TRANSFERENCIA---------------->
     <div class="modal fade" id="ventanaModalTransferencia" aria-labelledby="ventanaModalTransferencia" tabindex="-1"
       aria-hidden="true" data-mdb-backdrop="static">
@@ -375,6 +384,21 @@
           method: "POST",
           success: function (data) {
             $("#VentanaVist").html(data);
+          }
+        });
+      }
+
+      function abrirModalExcel(id) {
+        $.ajax({
+          url: '/abrirFormularioSubirExcel/' + id, // Reemplaza '/ruta_del_servidor' por la URL de tu servidor
+          method: 'GET', // Utiliza el método HTTP que corresponda (GET, POST, etc.)
+          // Envía el parámetro "id" al servidor
+          success: function (response) {
+            $("#contenidoFormExcelArchivo").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+          },
+          error: function (xhr, status, error) {
+            // Maneja los errores de la solicitud AJAX
+            console.log(error);
           }
         });
       }

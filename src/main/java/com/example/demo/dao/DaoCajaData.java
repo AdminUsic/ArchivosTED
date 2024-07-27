@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import com.example.demo.entity.Caja;
 
 public interface DaoCajaData extends JpaRepository<Caja, Long>{
-    @Query(value = "select * from caja as c where c.id_archivo = ?1 and c.estado != 'X';", nativeQuery = true)
+    @Query(value = "select * from caja as c where c.id_archivo = ?1 and c.estado != 'X'", nativeQuery = true)
     public Caja archivoCaja(Long id_archivo);
 }

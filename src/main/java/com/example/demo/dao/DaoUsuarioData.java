@@ -28,7 +28,7 @@ public interface DaoUsuarioData extends JpaRepository<Usuario, Long> {
             select * from usuario u
             inner join persona p on p.id_persona = u.id_persona
             inner join unidad uni on uni.id_unidad = p.id_unidad
-            where uni.nombre = 'ARCHIVO Y BIBLIOTECA' and u.id_usuario != ?1 and u.estado != 'X';
+            where uni.nombre = 'ARCHIVO Y BIBLIOTECA' and u.id_usuario != ?1 and u.estado != 'X'
                 """, nativeQuery = true)
     public List<Usuario> listaUsuarioChatRestoPersonal(Long id);
 
@@ -36,7 +36,7 @@ public interface DaoUsuarioData extends JpaRepository<Usuario, Long> {
                     select * from usuario u
             inner join persona p on p.id_persona = u.id_persona
             inner join unidad uni on uni.id_unidad = p.id_unidad
-            where uni.nombre != 'ARCHIVO Y BIBLIOTECA' and u.id_usuario != ?1 and u.estado != 'X';
+            where uni.nombre != 'ARCHIVO Y BIBLIOTECA' and u.id_usuario != ?1 and u.estado != 'X'
                         """, nativeQuery = true)
     public List<Usuario> listaUsuarioChatPersonalArchivo(Long id);
 
@@ -45,7 +45,7 @@ public interface DaoUsuarioData extends JpaRepository<Usuario, Long> {
             inner join persona p ON p.id_persona = u.id_persona
             inner join rol_persona rp ON rp.id_persona = u.id_persona
             inner join rol r on r.id_rol = rp.id_rol
-            where r.nombre = ?1 AND u.estado != 'X';
+            where r.nombre = ?1 AND u.estado != 'X'
             """, nativeQuery = true)
     public List<Usuario> listaUsuarioPorNombreRol(@Param("nombreRol") String nombreRol);
 

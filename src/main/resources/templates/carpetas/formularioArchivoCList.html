@@ -67,8 +67,8 @@
                         </th:block>
                         <div class="form-group">
                             <label for="tipoArchivo">Cubierta</label>
-                            <select class="select-fieldArchivoCarpetaModalList" style="width: 100%;" th:field="${archivo.cubierta}"
-                                id="selectSeccionDACList">
+                            <select class="select-fieldArchivoCarpetaModalList" style="width: 100%;"
+                                th:field="${archivo.cubierta}" id="selectSeccionDACList">
                                 <option th:value="${edit} ? ${archivo.cubierta.id_cubierta} : ''"
                                     th:text="${edit} ? ${archivo.cubierta.nombre} : 'Seleccionar'" selected></option>
                                 <option th:each="cubierta: ${cubiertas}" th:text="${cubierta.nombre}"
@@ -109,13 +109,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer" style="background-color: white;">
-                    <div id="botonesFormulario">
-                        <input type="submit" class="btn btn-success"
-                            th:value="${edit} ? 'Guardar Cambios' : 'Registrar'">
-                    </div>
-                    <a type="button" onclick="cancelarModArchivo()" class="btn btn-default float-right">Cancelar</a>
+            </div>
+            <div class="card-footer" style="background-color: white;">
+                <div id="botonesFormulario">
+                    <input type="submit" class="btn btn-success float-left" th:value="${edit} ? 'Guardar Cambios' : 'Registrar'">
                 </div>
+                <a type="button" onclick="cancelarModArchivo()" class="btn btn-default float-right">Cancelar</a>
+            </div>
         </form>
     </div>
     <!-- /.card -->
@@ -143,46 +143,46 @@
 
                 if (selectUnidadCModal != "" && selectSeccionDAC != "") {
                     $.ajax({
-                    type: 'POST',
-                    url: $(this).attr('action'),
-                    data: formData,
-                    contentType: false,  // No establecer el tipo de contenido aquí
-                    processData: false,  // No procesar los datos
-                    //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
-                    success: function (response) {
-                        var mensaje = response;
-                        cargarTabla();
-                        if (response == "Se ha Registrado el Archivo correctamente") {
-                            AbrirCarpetaList(id_carpeta);
-                            $('#botonesFormulario').html(botonRegistrar);
-                            //toastr.success(mensaje);
-                            Swal.fire(
-                                'Realizado!',
-                                mensaje,
-                                'success'
-                            );
-                        } else if (mensaje == "Se ha Modificado el Archivo correctamente") {
-                            AbrirCarpetaList(id_carpeta);
-                            $('#botonesFormulario').html(botonModificar);
-                            //toastr.success(mensaje);
-                            Swal.fire(
-                                'Realizado!',
-                                mensaje,
-                                'success'
-                            );
-                        } else if (mensaje = "ERROR AL REGISTRAR ARCHIVO") {
-                            toastr.error(mensaje);
+                        type: 'POST',
+                        url: $(this).attr('action'),
+                        data: formData,
+                        contentType: false,  // No establecer el tipo de contenido aquí
+                        processData: false,  // No procesar los datos
+                        //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+                        success: function (response) {
+                            var mensaje = response;
+                            cargarTabla();
+                            if (response == "Se ha Registrado el Archivo correctamente") {
+                                AbrirCarpetaList(id_carpeta);
+                                $('#botonesFormulario').html(botonRegistrar);
+                                //toastr.success(mensaje);
+                                Swal.fire(
+                                    'Realizado!',
+                                    mensaje,
+                                    'success'
+                                );
+                            } else if (mensaje == "Se ha Modificado el Archivo correctamente") {
+                                AbrirCarpetaList(id_carpeta);
+                                $('#botonesFormulario').html(botonModificar);
+                                //toastr.success(mensaje);
+                                Swal.fire(
+                                    'Realizado!',
+                                    mensaje,
+                                    'success'
+                                );
+                            } else if (mensaje = "ERROR AL REGISTRAR ARCHIVO") {
+                                toastr.error(mensaje);
 
-                        } else if (mensaje = "ERROR MODIFICAR EL ARCHIVO") {
-                            toastr.error(mensaje);
+                            } else if (mensaje = "ERROR MODIFICAR EL ARCHIVO") {
+                                toastr.error(mensaje);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+                            console.error(error);
+                            // Manejo de errores
                         }
-                    },
-                    error: function (xhr, status, error) {
-                        toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
-                        console.error(error);
-                        // Manejo de errores
-                    }
-                });
+                    });
                 } else if (selectUnidadCModal == "") {
                     toastr.info('Tiene que seleccionar una Unidad/Seccion para este Registro');
                 } else if (selectSeccionDAC == "") {

@@ -415,9 +415,9 @@ WHERE
 				<textFieldExpression><![CDATA[$F{gestion}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="115">
+		<band height="89">
 			<componentElement>
-				<reportElement x="10" y="10" width="555" height="100" uuid="2068ec7f-ef4e-4138-8786-76396fe39cae">
+				<reportElement x="10" y="10" width="555" height="70" uuid="2068ec7f-ef4e-4138-8786-76396fe39cae">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
@@ -440,9 +440,9 @@ WHERE
 								<text><![CDATA[NRO.]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="60">
+						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="30" height="60" uuid="aa0d4461-2468-45b2-83c7-b4114bd6344b"/>
+								<reportElement x="0" y="0" width="30" height="30" uuid="aa0d4461-2468-45b2-83c7-b4114bd6344b"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Calibri" size="10"/>
 								</textElement>
@@ -461,9 +461,9 @@ WHERE
 								<text><![CDATA[N° DE CAJA]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="60">
+						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="50" height="60" uuid="f4d6bc78-1ecc-4274-9008-d97c7e9df166"/>
+								<reportElement x="0" y="0" width="50" height="30" uuid="f4d6bc78-1ecc-4274-9008-d97c7e9df166"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Calibri" size="10"/>
 								</textElement>
@@ -482,11 +482,11 @@ WHERE
 								<text><![CDATA[TITULO DOCUMENTAL]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="60">
+						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="140" height="60" uuid="c83e0632-aeed-48eb-b2cb-5ff011c2870e"/>
+								<reportElement x="0" y="0" width="140" height="30" uuid="c83e0632-aeed-48eb-b2cb-5ff011c2870e"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
-									<font fontName="Calibri" size="8"/>
+									<font fontName="Calibri" size="10"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{titulo_doc}]]></textFieldExpression>
 							</textField>
@@ -503,9 +503,9 @@ WHERE
 								<text><![CDATA[AÑO]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="60">
+						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="40" height="60" uuid="086a6af5-9076-4c31-8022-28b6be3256cc"/>
+								<reportElement x="0" y="0" width="40" height="30" uuid="086a6af5-9076-4c31-8022-28b6be3256cc"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Calibri" size="10" isBold="false"/>
 								</textElement>
@@ -524,9 +524,9 @@ WHERE
 								<text><![CDATA[VOLUMEN]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="60">
+						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="60" height="60" uuid="ac79b5be-6b11-431d-9841-50e90089998d"/>
+								<reportElement x="0" y="0" width="60" height="30" uuid="ac79b5be-6b11-431d-9841-50e90089998d"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Calibri" size="10"/>
 								</textElement>
@@ -545,11 +545,11 @@ WHERE
 								<text><![CDATA[CUBIERTA]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="60">
+						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="70" height="60" uuid="4082e88d-d471-46fb-ac2e-990ce7e99cf7"/>
+								<reportElement x="0" y="0" width="70" height="30" uuid="4082e88d-d471-46fb-ac2e-990ce7e99cf7"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Calibri" size="8"/>
+									<font fontName="Calibri" size="10"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{COLUMN_6}]]></textFieldExpression>
 							</textField>
@@ -566,9 +566,9 @@ WHERE
 								<text><![CDATA[N° DE FOJAS]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="60">
+						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="60" height="60" uuid="764768d5-804d-4ef4-8b80-285c4e53ae17"/>
+								<reportElement x="0" y="0" width="60" height="30" uuid="764768d5-804d-4ef4-8b80-285c4e53ae17"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Calibri" size="10"/>
 								</textElement>
@@ -587,9 +587,9 @@ WHERE
 								<text><![CDATA[NOTAS]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="60">
+						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="105" height="60" uuid="563dd345-3e89-4dc9-ab1a-c6bc096c12e5"/>
+								<reportElement x="0" y="0" width="105" height="30" uuid="563dd345-3e89-4dc9-ab1a-c6bc096c12e5"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
 									<font fontName="Calibri" size="10"/>
 								</textElement>

@@ -2,16 +2,26 @@ package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -32,9 +42,12 @@ import com.example.demo.entity.Archivo;
 import com.example.demo.entity.Caja;
 import com.example.demo.entity.Carpeta;
 import com.example.demo.entity.Control;
+import com.example.demo.entity.Cubierta;
 import com.example.demo.entity.FormularioTransferencia;
+import com.example.demo.entity.SerieDocumental;
 import com.example.demo.entity.TipoArchivo;
 import com.example.demo.entity.Usuario;
+import com.example.demo.entity.Volumen;
 import com.example.demo.service.ArchivoService;
 import com.example.demo.service.CajaService;
 import com.example.demo.service.CarpetaService;
@@ -49,6 +62,7 @@ import com.example.demo.service.UnidadService;
 import com.example.demo.service.UsuarioService;
 import com.example.demo.service.UtilidadServiceProject;
 import com.example.demo.service.VolumenService;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class ArchivoController {
@@ -90,9 +104,9 @@ public class ArchivoController {
 
     @Autowired
     private CajaService cajaService;
-    
-   @Autowired
-   private CubiertaService cubiertaService;
+
+    @Autowired
+    private CubiertaService cubiertaService;
 
     @GetMapping("/DOCUMENTOS")
     public String ventanaDocumentos(HttpServletRequest request, Model model) {
@@ -163,7 +177,7 @@ public class ArchivoController {
                     byte[] encryptedBytes = utilidadService.encrypt(contenido);
                     archivo.setContenido(encryptedBytes);
                     PDDocument document = PDDocument.load(contenido);
-                    //archivo.setCantidadHojas(document.getNumberOfPages());
+                    // archivo.setCantidadHojas(document.getNumberOfPages());
                     String nombFile = archivoPdf.getOriginalFilename();
                     String extension = getFileExtension(nombFile);
 
@@ -298,7 +312,7 @@ public class ArchivoController {
 
             if (archivoPdf.isEmpty()) {
                 archivo.setContenido(archivoAntes.getContenido());
-                //archivo.setCantidadHojas(archivoAntes.getCantidadHojas());
+                // archivo.setCantidadHojas(archivoAntes.getCantidadHojas());
                 archivo.setIcono(archivoAntes.getIcono());
             } else if (archivoPdf != null && !archivoPdf.isEmpty()) {
                 byte[] contenido = archivoPdf.getBytes();
@@ -308,7 +322,7 @@ public class ArchivoController {
                     byte[] encryptedBytes = utilidadService.encrypt(contenido);
                     archivo.setContenido(encryptedBytes);
                     PDDocument document = PDDocument.load(contenido);
-                    //archivo.setCantidadHojas(document.getNumberOfPages());
+                    // archivo.setCantidadHojas(document.getNumberOfPages());
                     String nombFile = archivoPdf.getOriginalFilename();
                     String extension = getFileExtension(nombFile);
 
@@ -319,11 +333,9 @@ public class ArchivoController {
                         tipoArchivo.setEstado("A");
                         tipoArchivoService.save(tipoArchivo);
                         archivo.setTipoArchivo(tipoArchivo);
-                    }
-                    else{
+                    } else {
                         archivo.setTipoArchivo(archivoAntes.getTipoArchivo());
                     }
-                    
 
                     try {
                         archivo.setIcono(utilidadService.extraerIconPdf(archivoPdf));
@@ -528,6 +540,197 @@ public class ArchivoController {
             sumarCant = sumarCant + carpeta.getArchivos().get(j).getCantidadHojas();
         }
         return sumarCant;
+    }
+
+    // =================== SUBIR ARCHIVOS EXCEL
+
+    @GetMapping(value = "/abrirFormularioSubirExcel/{id_carpeta}")
+    public String abrirFormularioSubirExcel(HttpServletRequest request, Model model,
+            @PathVariable("id_carpeta") Long id_carpeta) {
+        model.addAttribute("carpeta", id_carpeta);
+        Carpeta carpeta = carpetaService.findOne(id_carpeta);
+        model.addAttribute("seriesDocumental", carpeta.getSerieDocumental().getSubSeries());
+        model.addAttribute("cubiertas", cubiertaService.findAll());
+        return "/carpetas/formularioArchivoListExcel";
+    }
+
+    @PostMapping("/subirExcelListaArchivo")
+    public ResponseEntity<String> postMethodName(HttpServletRequest request,
+            @RequestParam("fileExcel") MultipartFile fileExcel,
+            @RequestParam("id_carpeta") Long idCarpeta,
+            @RequestParam("serieDocumental") Long serieDocumental,
+            @RequestParam("cubierta") Long idCubierta) {
+
+        System.out.println("CARGANDO...");
+
+        if (request.getSession().getAttribute("userLog") != null) {
+            Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+            Usuario userLog = usuarioService.findOne(us.getId_usuario());
+
+            try {
+                Carpeta carpeta = carpetaService.findOne(idCarpeta);
+                SerieDocumental serieDoc = documentalService.findOne(serieDocumental);
+                Cubierta cubierta = cubiertaService.findOne(idCubierta);
+
+                if (fileExcel != null && !fileExcel.isEmpty()) {
+                    try (InputStream inputStream = fileExcel.getInputStream();
+                            Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+                        Sheet sheet = workbook.getSheetAt(0); // Suponemos que los datos están en la primera hoja
+
+                        // Ajustamos el bucle para procesar desde la fila 12 hasta la fila 30
+                        // (inclusive)
+                        for (int index = 12; index <= sheet.getLastRowNum(); index++) {
+                            Row row = sheet.getRow(index);
+
+                            if (row == null) {
+                                // Si la fila es null, no procesamos nada para esa fila.
+                                System.out.println("la fila en null");
+                                continue;
+                            }
+
+                            // Obtener celdas
+                            Cell cellNro = row.getCell(0); // Columna 1 (índice 0)
+                            Cell cellNroCaja = row.getCell(1); // Columna 2 (índice 1)
+                            Cell cellTitulo = row.getCell(2); // Columna 3 (índice 2)
+                            Cell cellGestion = row.getCell(3); // Columna 4 (índice 3)
+                            Cell cellVolumen = row.getCell(4); // Columna 5 (índice 4)
+                            Cell cellNroFolio = row.getCell(6); // Columna 6 (índice 5)
+                            Cell cellNotas = row.getCell(7); // Columna 6 (índice 5)
+
+                            // Obtener valores como Strings
+                            String nroCaja = getCellValueAsString(cellNroCaja);
+                            String titulo = getCellValueAsString(cellTitulo);
+                            String gestion = getCellValueAsString(cellGestion);
+                            String volumen = getCellValueAsString(cellVolumen);
+                            String nroFolio = getCellValueAsString(cellNroFolio);
+                            String notas = getCellValueAsString(cellNotas);
+
+                            String nro = getCellValueAsString(cellNro);
+
+                            // Verificar si la celda está vacía o cumple con el criterio de terminación
+                            if (nro == null || nro.trim().isEmpty()) {
+                                // Salir del bucle si la celda está vacía o contiene un valor que indica el
+                                // final
+                                System.out.println("No hay más datos para procesar.");
+                                break;
+                            }
+
+                            int cantidadHojas;
+                            try {
+                                cantidadHojas = evaluateExpression(nroFolio);
+                            } catch (Exception e) {
+                                cantidadHojas = 0; // Valor predeterminado en caso de error
+                                System.out.println("Error al evaluar la expresión: " + e.getMessage());
+                            }
+
+                            Archivo archivo = new Archivo();
+
+                            archivo.setCarpeta(carpeta);
+                            archivo.setNombre(titulo);
+                            archivo.setGestion(Integer.parseInt(gestion));
+                            archivo.setCantidadHojas(cantidadHojas);
+                            archivo.setNota(notas);
+                            archivo.setCubierta(cubierta);
+                            archivo.setSerieDocumental(serieDoc);
+                            archivo.setFechaRegistro(new Date());
+                            archivo.setHoraRegistro(new Date());
+                            archivo.setEstado("A");
+                            archivo.setPersona(userLog.getPersona());
+                            archivo.setUnidad(userLog.getPersona().getUnidad());
+                            archivoService.save(archivo);
+
+                            carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+                            FormularioTransferencia formularioTransferencia = formularioTransferenciaService
+                                    .formularioTransferenciaCarpeta(carpeta.getId_carpeta());
+                            formularioTransferencia.setCantDocumentos(carpeta.getTotalArchivo());
+                            formularioTransferenciaService.save(formularioTransferencia);
+
+                            Caja caja = new Caja();
+                            caja.setArchivo(archivo);
+                            caja.setGestion(archivo.getGestion());
+                            caja.setTituloDoc(archivo.getNombre());
+                            caja.setEstado("A");
+                            caja.setNotas(archivo.getNota());
+                            caja.setFojas(archivo.getCantidadHojas());
+                            caja.setVolumen(carpeta.getVolumen());
+                            caja.setCubierta(archivo.getCubierta());
+                            caja.setFormularioTransferencia(formularioTransferencia);
+                            cajaService.save(caja);
+
+                            Control control = new Control();
+                            control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+                            control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+                                    + " de una nueva documental " + archivo.getNombre());
+                            control.setUsuario(userLog);
+                            control.setFecha(new Date());
+                            control.setHora(new Date());
+                            controService.save(control);
+
+                        }
+
+                        return ResponseEntity.ok("Se ha registrado el archivo correctamente");
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return ResponseEntity.ok("Error al procesar el archivo: " + e.getMessage());
+                    }
+                } else {
+                    return ResponseEntity.ok("El archivo está vacío o no se ha proporcionado.");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.ok("Error en la encriptación: " + e.getMessage());
+            }
+
+        } else {
+            return ResponseEntity.ok("La sesión ha sido cerrada por inactividad.");
+        }
+    }
+
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    double numericValue = cell.getNumericCellValue();
+                    if (numericValue == Math.floor(numericValue)) {
+                        return String.valueOf((long) numericValue);
+                    } else {
+                        return String.valueOf(numericValue);
+                    }
+                }
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                return cell.getCellFormula();
+            case BLANK:
+                return "";
+            default:
+                return null;
+        }
+    }
+
+    private int evaluateExpression(String expression) throws Exception {
+        // Validar la expresión (aquí solo manejamos sumas simples)
+        if (!expression.matches("\\d+(\\+\\d+)*")) {
+            throw new Exception("Expresión no válida");
+        }
+
+        String[] tokens = expression.split("\\+");
+        int sum = 0;
+        for (String token : tokens) {
+            sum += Integer.parseInt(token.trim());
+        }
+        return sum;
     }
 
 }

@@ -17,4 +17,6 @@ public interface ArchivoService {
 
 	public List<Archivo> archivosCarpeta(Long id_carpeta);
 
+	public Archivo buscarArchivoCarpeta(String nombre, int gestion, Long idPersona, Long idUnidad, Long idCubierta, Long idCarpeta, Long idSerieDoc);
+
 }

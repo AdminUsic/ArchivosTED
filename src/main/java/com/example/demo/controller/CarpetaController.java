@@ -317,7 +317,7 @@ public class CarpetaController {
       Carpeta carpetaRegistrada = carpetaService.findOne(carpeta.getId_carpeta());
       carpetaRegistrada.setGestion(carpeta.getGestion());
       carpetaRegistrada.setVolumen(carpeta.getVolumen());
-      carpetaRegistrada.setSerieDocumental(carpetaRegistrada.getSerieDocumental());
+      carpetaRegistrada.setSerieDocumental(carpeta.getSerieDocumental());
       carpetaService.save(carpetaRegistrada);
 
       FormularioTransferencia formularioTransferencia = formularioTransferenciaService.formularioTransferenciaCarpeta(carpeta.getId_carpeta());

@@ -1,0 +1,188 @@
+<div class="modal-header">
+    <h2 class="m-0 font-weight-bold modal-title">Cargar Archivo Excel</h2>
+    <a type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></a>
+</div>
+<!-- /.card-header -->
+<!-- form start -->
+
+<form class="form-horizontal" id="FormularioCargarExcelArchiList" method="POST" th:action="@{/subirExcelListaArchivo}"
+    enctype="multipart/form-data">
+    <div class="modal-body">
+        <input type="hidden" th:value="${carpeta}" id="id_carpetaForm2" name="id_carpeta" />
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Serie Documental</label>
+                    <select class="select-fieldArchivoCarpetaModalList" style="width: 100%;" id="selectSerieDocList"
+                        name="serieDocumental">
+                        <option value='' selected>Seleccionar</option>
+                        <option th:each="serieDoc: ${seriesDocumental}" th:text="${serieDoc.nombre}"
+                            th:value="${serieDoc.id_serie}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="tipoArchivo">Cubierta</label>
+                    <select class="select-fieldArchivoCarpetaModalList" style="width: 100%;" id="selectCubiertaList" 
+                    name="cubierta">
+                        <option value='' selected>Seleccionar</option>
+                        <option th:each="cubierta: ${cubiertas}" th:text="${cubierta.nombre}"
+                            th:value="${cubierta.id_cubierta}"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <label class="form-label">Adjuntar Excel</label>
+                <input type="file" name="fileExcel" id="ExcelListArchivo" accept=".xls,.xlsx">
+                <div id="alertasFormArchivoExcelList"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="background-color: white;">
+        <div id="botonesFormularioExcel">
+            <input type="submit" class="btn btn-success float-left" value="Cargar Excel">
+        </div>
+        <a type="button" class="btn btn-default float-right" data-mdb-dismiss="modal">Cancelar</a>
+    </div>
+</form>
+<!-- /.card -->
+<script>
+    $(document).ready(function () {
+        $('#FormularioCargarExcelArchiList').submit(function (event) {
+            event.preventDefault();
+            var botonCargando = `<button id="submitButton" class="btn btn-success" disabled>
+                                                <span class="spinner-border spinner-border-sm" role="status"
+                                                    aria-hidden="true"></span>
+                                                <span class="visually-hidden">Loading...</span>
+                                                Cargando...
+                                            </button>`;
+            var botonRegistrar = `<input class="btn btn-success" type="submit" value="Registrar">`;
+            var botonModificar = `<input class="btn btn-success" type="submit" value="Modificar">`;
+            $('#botonesFormularioExcel').html(botonCargando);
+            var form = document.getElementById("FormularioCargarExcelArchiList");
+            var action = form.action;
+            var formData = new FormData(form);
+
+            var selectSeccionDAC = document.getElementById("selectSerieDocList").value;
+            var selectCubiertaList = document.getElementById("selectCubiertaList").value;
+
+            if (selectSeccionDAC != "" && selectCubiertaList != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    contentType: false,  // No establecer el tipo de contenido aquí
+                    processData: false,  // No procesar los datos
+                    //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
+                    success: function (response) {
+                        var mensaje = response;
+                        cargarTabla();
+                        if (response == "Se ha registrado el archivo correctamente") {
+                            $('#botonesFormularioExcel').html(botonRegistrar);
+                            Swal.fire(
+                                'Realizado!',
+                                mensaje,
+                                'success'
+                            );
+                        } else {
+                            toastr.error(mensaje);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error('Ha ocurrido un error. Por favor, intenta nuevamente.');
+                        console.error(error);
+                        // Manejo de errores
+                    }
+                });
+            } else if (selectSeccionDAC == "") {
+                //toastr.info('Tiene que seleccionar una Unidad/Seccion Documental para este Registro');
+                $('#botonesFormularioExcel').html(botonRegistrar);
+                Swal.fire(
+                    'Imposible Registrar!',
+                    'Tiene que seleccionar una Serie Documental para los registros',
+                    'error'
+                );
+            } else if (selectCubiertaList == "") {
+                //toastr.info('Tiene que seleccionar una Unidad/Seccion Documental para este Registro');
+                $('#botonesFormularioExcel').html(botonRegistrar);
+                Swal.fire(
+                    'Imposible Registrar!',
+                    'Tiene que seleccionar una cubierta para los registros',
+                    'error'
+                );
+            }
+        });
+
+    });
+</script>
+
+<script>
+    var fileInputExcel
+    var nombreArchivoExcel;
+    // Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
+    document.getElementById("ExcelListArchivo").addEventListener("change", function () {
+        // Obtenemos el elemento seleccionado
+        fileInputExcel = document.getElementById("ExcelListArchivo");
+        nombreArchivoExcel = fileInputExcel.files[0].name;
+        // Verificamos si se seleccionó un archivo
+        if (fileInputExcel.files.length > 0) {
+            // Obtenemos el nombre del archivo
+            var fileName = fileInputExcel.files[0].name;
+            // Verificamos si la extensión del archivo es PDF
+            if (!isValidExcel(fileName)) {
+                // Reseteamos el valor del input file para borrar la selección inválida
+                fileInputExcel.value = "";
+                $('#alertasFormArchivoExcelList').html('<div class="alert alert-danger alert-dismissible">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                    '<h6><i class="icon fas fa-ban"></i> El archivo no es Valido!</h6>' +
+                    'Solo se Admite Archivos tipo Excel' +
+                    '</div>');
+            } else {
+
+                $('#alertasFormArchivoExcelList').html('<div class="alert alert-success alert-dismissible">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                    '<h6><i class="icon fas fa-check"></i> El archivo ' + nombreArchivoExcel + ' es Valido!</h6>' +
+                    '</div>');
+            }
+        }
+    });
+
+    // Función para validar si el nombre del archivo tiene extensión PDF
+    function isValidExcel(fileName) {
+        var validExtensions = [".xlsx", ".xls"];
+        var fileExtension = "." + fileName.split(".").pop().toLowerCase();
+        return validExtensions.indexOf(fileExtension) !== -1;
+    }
+
+    $(function () {
+
+        $('#ExcelListArchivo').bs_dropzone({
+            maxFiles: 1,
+            acceptedFiles: '.xlsx,.xls',
+            boxClass: 'alert p-5 text-center font-weight-bold',
+            noneColorClass: 'alert alert-success alert-dismissible',
+            dragColorClass: 'alert alert-warning alert-dismissible',
+            doneColorClass: 'alert alert-success alert-dismissible',
+            failColorClass: 'alert alert-danger alert-dismissible',
+            language: {
+                emptyText: 'Introdusca o arrastre un archivo Excel',
+                dragText: '[Soltar aquí]',
+                dropText: 'El archivo se subió correctamente'
+            }
+        });
+
+    });
+</script>
+<script>
+    document.querySelectorAll('.form-outline').forEach((formOutline) => {
+        new mdb.Input(formOutline).init();
+    });
+</script>
+<script>
+    $('.select-fieldArchivoCarpetaModalList').select2({
+        theme: 'bootstrap-5'
+    });
+</script>

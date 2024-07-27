@@ -48,5 +48,11 @@ public class ArchivoServiceImpl implements ArchivoService{
     public List<Archivo> archivosCarpeta(Long id_carpeta) {
         return archivosData.archivosCarpeta(id_carpeta);
     }
+
+    @Override
+    public Archivo buscarArchivoCarpeta(String nombre, int gestion, Long idPersona, Long idUnidad, Long idCubierta,
+            Long idCarpeta, Long idSerieDoc) {
+        return archivosData.buscarArchivoCarpeta(nombre, gestion, idPersona, idUnidad, idCubierta, idCarpeta, idSerieDoc);
+    }
     
 }

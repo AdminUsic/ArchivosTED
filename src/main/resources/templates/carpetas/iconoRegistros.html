@@ -19,6 +19,11 @@
                                     <i class="fa-solid fa-file-invoice"></i>
                                     <small>Ver Formulario de Transferencia</small></a>
                                 <a class="dropdown-item" type="button" data-mdb-toggle="modal"
+                                    data-mdb-target="#FormExcelArchivo"
+                                    th:attr="onclick='abrirModalExcel(\'' + ${carp.id_carpeta} + '\')'">
+                                    <i class="fa-solid fa-file-arrow-up"></i>
+                                    <small>Subir Excel</small></a>
+                                <a class="dropdown-item" type="button" data-mdb-toggle="modal"
                                     data-mdb-target="#FormModCarpModal"
                                     th:if="${#lists.contains(permisos.![nombre], 'editar_carpeta')}"
                                     th:attr="onclick='cargarModFormularioModal(\'' + ${carp.id_carpeta} + '\')'">

@@ -38,5 +38,10 @@ public class VolumenServiceImlp implements VolumenService{
     public List<Volumen> listaDeVolumenes() {
         return daoVolumenData.listaDeVolumenes();
     }
+
+    @Override
+    public Volumen volumenPorNombre(String nombre) {
+        return daoVolumenData.volumenPorNombre(nombre);
+    }
     
 }

@@ -14,4 +14,6 @@ public interface VolumenService{
     public void delete(Long id);
 
     public List<Volumen> listaDeVolumenes();
+
+    public Volumen volumenPorNombre(String nombre);
 }
