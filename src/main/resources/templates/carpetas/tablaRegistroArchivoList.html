@@ -44,7 +44,7 @@
                                             <li class="fas fa-pencil-alt"></li>
                                         </a>
                                         <a class="btn btn-danger" type="button" style="color: white;"
-                                            th:attr="onclick='EliminarArchivoList(\'' + ${ar.id_archivo} + '\')'">
+                                            th:onclick="eliminarArchivoSeleccionadoList([[${ar.id_archivo}]], [[${carpeta.id_carpeta}]])">
                                             <li class="fa-solid fa-trash"></li>
                                         </a>
                                         <a class="btn btn-default" type="button" data-mdb-toggle="modal"

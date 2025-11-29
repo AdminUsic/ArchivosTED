@@ -8,8 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -555,137 +557,221 @@ public class ArchivoController {
     }
 
     @PostMapping("/subirExcelListaArchivo")
-    public ResponseEntity<String> postMethodName(HttpServletRequest request,
+    public ResponseEntity<Map<String, Object>> postMethodName(HttpServletRequest request,
             @RequestParam("fileExcel") MultipartFile fileExcel,
             @RequestParam("id_carpeta") Long idCarpeta,
             @RequestParam("serieDocumental") Long serieDocumental,
             @RequestParam("cubierta") Long idCubierta) {
 
+        Map<String, Object> response = new HashMap<>();
+        List<String> errores = new ArrayList<>();
+        List<String> exitosos = new ArrayList<>();
+        int totalProcesados = 0;
+
         System.out.println("CARGANDO...");
 
-        if (request.getSession().getAttribute("userLog") != null) {
-            Usuario us = (Usuario) request.getSession().getAttribute("userLog");
-            Usuario userLog = usuarioService.findOne(us.getId_usuario());
+        if (request.getSession().getAttribute("userLog") == null) {
+            response.put("success", false);
+            response.put("mensaje", "La sesión ha sido cerrada por inactividad.");
+            return ResponseEntity.ok(response);
+        }
 
-            try {
-                Carpeta carpeta = carpetaService.findOne(idCarpeta);
-                SerieDocumental serieDoc = documentalService.findOne(serieDocumental);
-                Cubierta cubierta = cubiertaService.findOne(idCubierta);
+        Usuario us = (Usuario) request.getSession().getAttribute("userLog");
+        Usuario userLog = usuarioService.findOne(us.getId_usuario());
 
-                if (fileExcel != null && !fileExcel.isEmpty()) {
-                    try (InputStream inputStream = fileExcel.getInputStream();
-                            Workbook workbook = new XSSFWorkbook(inputStream)) {
-
-                        Sheet sheet = workbook.getSheetAt(0); // Suponemos que los datos están en la primera hoja
-
-                        // Ajustamos el bucle para procesar desde la fila 12 hasta la fila 30
-                        // (inclusive)
-                        for (int index = 12; index <= sheet.getLastRowNum(); index++) {
-                            Row row = sheet.getRow(index);
-
-                            if (row == null) {
-                                // Si la fila es null, no procesamos nada para esa fila.
-                                System.out.println("la fila en null");
-                                continue;
-                            }
-
-                            // Obtener celdas
-                            Cell cellNro = row.getCell(0); // Columna 1 (índice 0)
-                            Cell cellNroCaja = row.getCell(1); // Columna 2 (índice 1)
-                            Cell cellTitulo = row.getCell(2); // Columna 3 (índice 2)
-                            Cell cellGestion = row.getCell(3); // Columna 4 (índice 3)
-                            Cell cellVolumen = row.getCell(4); // Columna 5 (índice 4)
-                            Cell cellNroFolio = row.getCell(6); // Columna 6 (índice 5)
-                            Cell cellNotas = row.getCell(7); // Columna 6 (índice 5)
-
-                            // Obtener valores como Strings
-                            String nroCaja = getCellValueAsString(cellNroCaja);
-                            String titulo = getCellValueAsString(cellTitulo);
-                            String gestion = getCellValueAsString(cellGestion);
-                            String volumen = getCellValueAsString(cellVolumen);
-                            String nroFolio = getCellValueAsString(cellNroFolio);
-                            String notas = getCellValueAsString(cellNotas);
-
-                            String nro = getCellValueAsString(cellNro);
-
-                            // Verificar si la celda está vacía o cumple con el criterio de terminación
-                            if (nro == null || nro.trim().isEmpty()) {
-                                // Salir del bucle si la celda está vacía o contiene un valor que indica el
-                                // final
-                                System.out.println("No hay más datos para procesar.");
-                                break;
-                            }
-
-                            int cantidadHojas;
-                            try {
-                                cantidadHojas = evaluateExpression(nroFolio);
-                            } catch (Exception e) {
-                                cantidadHojas = 0; // Valor predeterminado en caso de error
-                                System.out.println("Error al evaluar la expresión: " + e.getMessage());
-                            }
-
-                            Archivo archivo = new Archivo();
-
-                            archivo.setCarpeta(carpeta);
-                            archivo.setNombre(titulo);
-                            archivo.setGestion(Integer.parseInt(gestion));
-                            archivo.setCantidadHojas(cantidadHojas);
-                            archivo.setNota(notas);
-                            archivo.setCubierta(cubierta);
-                            archivo.setSerieDocumental(serieDoc);
-                            archivo.setFechaRegistro(new Date());
-                            archivo.setHoraRegistro(new Date());
-                            archivo.setEstado("A");
-                            archivo.setPersona(userLog.getPersona());
-                            archivo.setUnidad(userLog.getPersona().getUnidad());
-                            archivoService.save(archivo);
-
-                            carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
-                            FormularioTransferencia formularioTransferencia = formularioTransferenciaService
-                                    .formularioTransferenciaCarpeta(carpeta.getId_carpeta());
-                            formularioTransferencia.setCantDocumentos(carpeta.getTotalArchivo());
-                            formularioTransferenciaService.save(formularioTransferencia);
-
-                            Caja caja = new Caja();
-                            caja.setArchivo(archivo);
-                            caja.setGestion(archivo.getGestion());
-                            caja.setTituloDoc(archivo.getNombre());
-                            caja.setEstado("A");
-                            caja.setNotas(archivo.getNota());
-                            caja.setFojas(archivo.getCantidadHojas());
-                            caja.setVolumen(carpeta.getVolumen());
-                            caja.setCubierta(archivo.getCubierta());
-                            caja.setFormularioTransferencia(formularioTransferencia);
-                            cajaService.save(caja);
-
-                            Control control = new Control();
-                            control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
-                            control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
-                                    + " de una nueva documental " + archivo.getNombre());
-                            control.setUsuario(userLog);
-                            control.setFecha(new Date());
-                            control.setHora(new Date());
-                            controService.save(control);
-
-                        }
-
-                        return ResponseEntity.ok("Se ha registrado el archivo correctamente");
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return ResponseEntity.ok("Error al procesar el archivo: " + e.getMessage());
-                    }
-                } else {
-                    return ResponseEntity.ok("El archivo está vacío o no se ha proporcionado.");
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.ok("Error en la encriptación: " + e.getMessage());
+        try {
+            // Validar entidades principales
+            Carpeta carpeta = carpetaService.findOne(idCarpeta);
+            if (carpeta == null) {
+                response.put("success", false);
+                response.put("mensaje", "Carpeta no encontrada.");
+                return ResponseEntity.ok(response);
             }
 
-        } else {
-            return ResponseEntity.ok("La sesión ha sido cerrada por inactividad.");
+            SerieDocumental serieDoc = documentalService.findOne(serieDocumental);
+            if (serieDoc == null) {
+                response.put("success", false);
+                response.put("mensaje", "Serie Documental no encontrada.");
+                return ResponseEntity.ok(response);
+            }
+
+            Cubierta cubierta = cubiertaService.findOne(idCubierta);
+            if (cubierta == null) {
+                response.put("success", false);
+                response.put("mensaje", "Cubierta no encontrada.");
+                return ResponseEntity.ok(response);
+            }
+
+            if (fileExcel == null || fileExcel.isEmpty()) {
+                response.put("success", false);
+                response.put("mensaje", "El archivo está vacío o no se ha proporcionado.");
+                return ResponseEntity.ok(response);
+            }
+
+            try (InputStream inputStream = fileExcel.getInputStream();
+                    Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+                Sheet sheet = workbook.getSheetAt(0);
+                int filaInicio = 12;
+                int totalFilas = sheet.getLastRowNum();
+
+                // Procesar cada fila
+                for (int index = filaInicio; index <= totalFilas; index++) {
+                    int numeroFila = index + 1; // Para mostrar el número real de fila en Excel
+
+                    try {
+                        Row row = sheet.getRow(index);
+
+                        if (row == null) {
+                            System.out.println("Fila " + numeroFila + " es null, omitiendo...");
+                            continue;
+                        }
+
+                        // Obtener celdas
+                        Cell cellNro = row.getCell(0); // Columna 1 (índice 0)
+                        Cell cellNroCaja = row.getCell(1); // Columna 2 (índice 1)
+                        Cell cellTitulo = row.getCell(2); // Columna 3 (índice 2)
+                        Cell cellGestion = row.getCell(3); // Columna 4 (índice 3)
+                        Cell cellVolumen = row.getCell(4); // Columna 5 (índice 4)
+                        Cell cellNroFolio = row.getCell(6); // Columna 6 (índice 5)
+                        Cell cellNotas = row.getCell(7); // Columna 6 (índice 5)
+
+                        // Obtener valores como Strings
+                        String nro = getCellValueAsString(cellNro);
+
+                        // Verificar si hay datos para procesar
+                        if (nro == null || nro.trim().isEmpty()) {
+                            System.out.println("No hay más datos para procesar en fila " + numeroFila);
+                            break;
+                        }
+
+                        String nroCaja = getCellValueAsString(cellNroCaja);
+                        String titulo = getCellValueAsString(cellTitulo);
+                        String gestion = getCellValueAsString(cellGestion);
+                        String volumen = getCellValueAsString(cellVolumen);
+                        String nroFolio = getCellValueAsString(cellNroFolio);
+                        String notas = getCellValueAsString(cellNotas);
+
+                        // Validaciones de campos obligatorios
+                        List<String> erroresFila = new ArrayList<>();
+
+                        if (titulo == null || titulo.trim().isEmpty()) {
+                            erroresFila.add("Título vacío");
+                        }
+
+                        if (gestion == null || gestion.trim().isEmpty()) {
+                            erroresFila.add("Gestión vacía");
+                        }
+
+                        if (!erroresFila.isEmpty()) {
+                            errores.add("Fila " + numeroFila + ": " + String.join(", ", erroresFila));
+                            continue;
+                        }
+
+                        // Validar y parsear gestión
+                        int gestionInt;
+                        try {
+                            gestionInt = Integer.parseInt(gestion);
+                        } catch (NumberFormatException e) {
+                            errores.add(
+                                    "Fila " + numeroFila + ": Gestión inválida ('" + gestion + "' no es un número)");
+                            continue;
+                        }
+
+                        // Evaluar expresión de folios
+                        int cantidadHojas;
+                        try {
+                            cantidadHojas = evaluateExpression(nroFolio);
+                        } catch (Exception e) {
+                            cantidadHojas = 0;
+                            errores.add("Fila " + numeroFila + ": Advertencia - Error al evaluar folios ('" + nroFolio
+                                    + "'). Se asignó 0.");
+                        }
+
+                        // Crear y guardar Archivo
+                        Archivo archivo = new Archivo();
+                        archivo.setCarpeta(carpeta);
+                        archivo.setNombre(titulo);
+                        archivo.setGestion(gestionInt);
+                        archivo.setCantidadHojas(cantidadHojas);
+                        archivo.setNota(notas);
+                        archivo.setCubierta(cubierta);
+                        archivo.setSerieDocumental(serieDoc);
+                        archivo.setFechaRegistro(new Date());
+                        archivo.setHoraRegistro(new Date());
+                        archivo.setEstado("A");
+                        archivo.setPersona(userLog.getPersona());
+                        archivo.setUnidad(userLog.getPersona().getUnidad());
+
+                        archivoService.save(archivo);
+
+                        // Actualizar carpeta
+                        carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
+                        FormularioTransferencia formularioTransferencia = formularioTransferenciaService
+                                .formularioTransferenciaCarpeta(carpeta.getId_carpeta());
+                        formularioTransferencia.setCantDocumentos(carpeta.getTotalArchivo());
+                        formularioTransferenciaService.save(formularioTransferencia);
+
+                        // Crear y guardar Caja
+                        Caja caja = new Caja();
+                        caja.setArchivo(archivo);
+                        caja.setGestion(archivo.getGestion());
+                        caja.setTituloDoc(archivo.getNombre());
+                        caja.setEstado("A");
+                        caja.setNotas(archivo.getNota());
+                        caja.setFojas(archivo.getCantidadHojas());
+                        caja.setVolumen(carpeta.getVolumen());
+                        caja.setCubierta(archivo.getCubierta());
+                        caja.setFormularioTransferencia(formularioTransferencia);
+                        cajaService.save(caja);
+
+                        // Crear control
+                        Control control = new Control();
+                        control.setTipoControl(tipoControService.findAllByTipoControl("Registro"));
+                        control.setDescripcion("Realizó un nuevo " + control.getTipoControl().getNombre()
+                                + " de una nueva documental " + archivo.getNombre());
+                        control.setUsuario(userLog);
+                        control.setFecha(new Date());
+                        control.setHora(new Date());
+                        controService.save(control);
+
+                        exitosos.add("Fila " + numeroFila + ": " + titulo);
+                        totalProcesados++;
+
+                    } catch (Exception e) {
+                        errores.add("Fila " + numeroFila + ": Error inesperado - " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                // Preparar respuesta
+                response.put("success", true);
+                response.put("totalProcesados", totalProcesados);
+                response.put("totalErrores", errores.size());
+                response.put("registrosExitosos", exitosos);
+                response.put("registrosFallidos", errores);
+
+                if (errores.isEmpty()) {
+                    response.put("mensaje", "Se han registrado " + totalProcesados + " archivos correctamente");
+                } else {
+                    response.put("mensaje",
+                            "Proceso completado: " + totalProcesados + " exitosos, " + errores.size() + " con errores");
+                }
+
+                return ResponseEntity.ok(response);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                response.put("success", false);
+                response.put("mensaje", "Error al procesar el archivo Excel: " + e.getMessage());
+                return ResponseEntity.ok(response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("mensaje", "Error en el proceso: " + e.getMessage());
+            return ResponseEntity.ok(response);
         }
     }
 
@@ -720,17 +806,184 @@ public class ArchivoController {
     }
 
     private int evaluateExpression(String expression) throws Exception {
-        // Validar la expresión (aquí solo manejamos sumas simples)
-        if (!expression.matches("\\d+(\\+\\d+)*")) {
-            throw new Exception("Expresión no válida");
-        }
-
-        String[] tokens = expression.split("\\+");
-        int sum = 0;
-        for (String token : tokens) {
-            sum += Integer.parseInt(token.trim());
-        }
-        return sum;
+    // Si es null o vacío, retornar 0
+    if (expression == null || expression.trim().isEmpty()) {
+        return 0;
     }
+    
+    // Limpiar espacios
+    expression = expression.trim().replaceAll("\\s+", "");
+    
+    // Validar caracteres permitidos
+    if (!expression.matches("[0-9+\\-*/().]+")) {
+        throw new Exception("Expresión contiene caracteres no válidos. Solo se permiten: 0-9, +, -, *, /, (, )");
+    }
+    
+    // Validar paréntesis balanceados
+    if (!areParenthesesBalanced(expression)) {
+        throw new Exception("Los paréntesis no están balanceados");
+    }
+    
+    try {
+        // Evaluar la expresión
+        double result = evaluate(expression);
+        
+        // Convertir a entero (redondear)
+        return (int) Math.round(result);
+        
+    } catch (NumberFormatException e) {
+        throw new Exception("Error al parsear números en la expresión");
+    } catch (ArithmeticException e) {
+        throw new Exception("Error aritmético: " + e.getMessage());
+    } catch (Exception e) {
+        throw new Exception("Error al evaluar la expresión: " + e.getMessage());
+    }
+}
+
+/**
+ * Verifica si los paréntesis están balanceados
+ */
+private boolean areParenthesesBalanced(String expression) {
+    int count = 0;
+    for (char c : expression.toCharArray()) {
+        if (c == '(') count++;
+        if (c == ')') count--;
+        if (count < 0) return false; // Paréntesis de cierre antes de apertura
+    }
+    return count == 0;
+}
+
+/**
+ * Método principal de evaluación que maneja el orden de operaciones
+ */
+private double evaluate(String expression) throws Exception {
+    return parseAddSubtract(expression);
+}
+
+/**
+ * Parsea suma y resta (menor precedencia)
+ */
+private double parseAddSubtract(String expression) throws Exception {
+    List<Double> terms = new ArrayList<>();
+    List<Character> operators = new ArrayList<>();
+    
+    StringBuilder currentTerm = new StringBuilder();
+    
+    for (int i = 0; i < expression.length(); i++) {
+        char c = expression.charAt(i);
+        
+        if (c == '+' || (c == '-' && i > 0 && expression.charAt(i-1) != '(' && expression.charAt(i-1) != '+' && expression.charAt(i-1) != '-' && expression.charAt(i-1) != '*' && expression.charAt(i-1) != '/')) {
+            // Guardar el término actual
+            if (currentTerm.length() > 0) {
+                terms.add(parseMultiplyDivide(currentTerm.toString()));
+                currentTerm = new StringBuilder();
+            }
+            operators.add(c);
+        } else {
+            currentTerm.append(c);
+        }
+    }
+    
+    // Agregar el último término
+    if (currentTerm.length() > 0) {
+        terms.add(parseMultiplyDivide(currentTerm.toString()));
+    }
+    
+    // Calcular el resultado
+    if (terms.isEmpty()) {
+        throw new Exception("Expresión vacía");
+    }
+    
+    double result = terms.get(0);
+    for (int i = 0; i < operators.size(); i++) {
+        char op = operators.get(i);
+        double nextTerm = terms.get(i + 1);
+        
+        if (op == '+') {
+            result += nextTerm;
+        } else if (op == '-') {
+            result -= nextTerm;
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * Parsea multiplicación y división (mayor precedencia)
+ */
+private double parseMultiplyDivide(String expression) throws Exception {
+    List<Double> factors = new ArrayList<>();
+    List<Character> operators = new ArrayList<>();
+    
+    StringBuilder currentFactor = new StringBuilder();
+    
+    for (int i = 0; i < expression.length(); i++) {
+        char c = expression.charAt(i);
+        
+        if (c == '*' || c == '/') {
+            // Guardar el factor actual
+            if (currentFactor.length() > 0) {
+                factors.add(parseParenthesesAndNumbers(currentFactor.toString()));
+                currentFactor = new StringBuilder();
+            }
+            operators.add(c);
+        } else {
+            currentFactor.append(c);
+        }
+    }
+    
+    // Agregar el último factor
+    if (currentFactor.length() > 0) {
+        factors.add(parseParenthesesAndNumbers(currentFactor.toString()));
+    }
+    
+    // Calcular el resultado
+    if (factors.isEmpty()) {
+        throw new Exception("Expresión vacía en multiplicación/división");
+    }
+    
+    double result = factors.get(0);
+    for (int i = 0; i < operators.size(); i++) {
+        char op = operators.get(i);
+        double nextFactor = factors.get(i + 1);
+        
+        if (op == '*') {
+            result *= nextFactor;
+        } else if (op == '/') {
+            if (nextFactor == 0) {
+                throw new ArithmeticException("División por cero");
+            }
+            result /= nextFactor;
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * Parsea paréntesis y números
+ */
+private double parseParenthesesAndNumbers(String expression) throws Exception {
+    expression = expression.trim();
+    
+    // Si está entre paréntesis, evaluar el contenido
+    if (expression.startsWith("(") && expression.endsWith(")")) {
+        return evaluate(expression.substring(1, expression.length() - 1));
+    }
+    
+    // Manejar números negativos al inicio
+    if (expression.startsWith("-")) {
+        return -parseParenthesesAndNumbers(expression.substring(1));
+    }
+    
+    // Si es un número simple
+    try {
+        return Double.parseDouble(expression);
+    } catch (NumberFormatException e) {
+        // Si no es un número simple, evaluar como expresión compleja
+        return evaluate(expression);
+    }
+}
 
 }

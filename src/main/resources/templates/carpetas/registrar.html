@@ -10,7 +10,7 @@
 </head>
 
 <body>
-
+  <input type="hidden" id="tipoVistaSeleccionado" value="icono">
   <!-- Content Header (Page header) -->
   <div class="container">
     <div class="content-header">
@@ -352,6 +352,7 @@
 
       $("#PorIcono").click(function (e) {
         e.preventDefault();
+        $('#tipoVistaSeleccionado').val('icono');
         TipoVista("/VistaIcoCar");
 
         const aPorIco = document.getElementById("PorIcono");
@@ -366,6 +367,7 @@
 
       $("#PorLista").click(function (e) {
         e.preventDefault();
+        $('#tipoVistaSeleccionado').val('lista');
         TipoVista("/VistaListCar");
 
         const aPorList = document.getElementById("PorLista");

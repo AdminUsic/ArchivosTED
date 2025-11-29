@@ -108,8 +108,10 @@
                     <input type="hidden" id="ciUser" name="ciUser">
                     <div class="modal-body">
                         <div class="row">
-                            <label for="">Roles</label>
-                            <select class="select2-form" style="width: 100%;" id="selectRol" name="rol"></select>
+                            <div class="form-group">
+                                <label for="">Roles</label>
+                                <select class="select2-form" style="width: 100%;" id="selectRol" name="rol"></select>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -251,7 +253,8 @@
                                     });
                                     $('.select2-form').select2({
                                         theme: 'bootstrap-5',
-                                        placeholder: 'Seleccione un Rol'
+                                        placeholder: 'Seleccione un Rol',
+                                        dropdownParent: $('#formRoles')
                                     });
                                     $('#ciUser').val($('#user').val());
                                     //console.log('CARGO EL SELECT');
@@ -269,6 +272,8 @@
                     }
                 });
             });
+
+
 
             $('#formRoles').submit(function (event) {
                 event.preventDefault();

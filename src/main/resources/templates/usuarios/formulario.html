@@ -42,7 +42,7 @@
                 selected></option>
               <option th:each="persona: ${personas}"
                 th:text="${persona.nombre}+' '+${persona.apellido}+' - '+${persona.ci}" th:value="${persona.id_persona}"
-                th:if="${#lists.contains(persona.usuarios.![estado], 'X') and persona.cargo != null and persona.unidad != null and persona.roles != null and persona.estado != 'X'}">
+                th:if="${persona.cargo != null and persona.unidad != null and persona.roles != null}">
               </option>
             </select>
           </div>
@@ -66,12 +66,17 @@
   <script>
     $(document).ready(function () {
       $('.select-field').select2({
-        theme: 'bootstrap-5'
+        theme: 'bootstrap-5',
+        dropdownParent: $('#FormularioRegistrarUser')
       });
+
+
       $('.select-field-Multiple').select2({
         theme: 'bootstrap-5',
         placeholder: 'Seleccione un o mas opciones',
-        tags: true
+        tags: true,
+        allowClear: true,
+        dropdownParent: $('#FormularioRegistrarUser')
       });
 
       // METODO AJAX PARA PROCESAR EL ENVIO
@@ -129,10 +134,10 @@
                 }
               } else {
                 Swal.fire(
-                    'Imposible continuar!',
-                    response,
-                    'success'
-                  );
+                  'Imposible continuar!',
+                  response,
+                  'success'
+                );
               }
             },
             error: function (xhr, status, error) {

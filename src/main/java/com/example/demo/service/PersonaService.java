@@ -18,4 +18,6 @@ public interface PersonaService {
 	public Persona personaModCi(String ciActual, String ic);
 
 	public void eliminar(Long id);
+
+	List<Persona> listarPersonasSinUsuario();
 }

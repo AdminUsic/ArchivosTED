@@ -76,14 +76,16 @@
                             </select>
                         </div>
                     </div>
-                    <div th:class="${edit}? 'col-sm-6' : ''">
+                </div>
+                <div class="row">
+                    <div th:class="${edit}? 'col-sm-12 col-md-6' : ''">
                         <div class="form-group">
                             <label class="form-label">Adjuntar Documento</label>
                             <input type="file" name="PDF" id="PDFformularioModalCList" accept=".pdf">
                             <div id="alertasFormArchivoModalCList"></div>
                         </div>
                     </div>
-                    <div th:class="${edit}? 'col-sm-6' : ''" th:if="${edit == 'true'}">
+                    <div th:class="${edit}? 'col-sm-12 col-md-6' : ''" th:if="${edit == 'true'}">
                         <div class="form-group" th:if="${edit == 'true'}">
                             <div class="filtr-item col-sm-6">
                                 <div class="row">
@@ -101,7 +103,7 @@
                                         <i class="fa-solid fa-triangle-exclamation me-2" width="24" height="24"></i>
 
                                         <div>
-                                            Este registro no tiene el contenido del documento.
+                                            Este registro no tiene el documento escaneado.
                                         </div>
                                     </div>
                                 </div>
@@ -112,7 +114,8 @@
             </div>
             <div class="card-footer" style="background-color: white;">
                 <div id="botonesFormulario">
-                    <input type="submit" class="btn btn-success float-left" th:value="${edit} ? 'Guardar Cambios' : 'Registrar'">
+                    <input type="submit" class="btn btn-success float-left"
+                        th:value="${edit} ? 'Guardar Cambios' : 'Registrar'">
                 </div>
                 <a type="button" onclick="cancelarModArchivo()" class="btn btn-default float-right">Cancelar</a>
             </div>
@@ -151,9 +154,10 @@
                         //contentType: 'application/x-www-form-urlencoded', // Agregar esta línea
                         success: function (response) {
                             var mensaje = response;
-                            cargarTabla();
+                            
                             if (response == "Se ha Registrado el Archivo correctamente") {
                                 AbrirCarpetaList(id_carpeta);
+                                cargarTablaArchivoList(id_carpeta);
                                 $('#botonesFormulario').html(botonRegistrar);
                                 //toastr.success(mensaje);
                                 Swal.fire(

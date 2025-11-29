@@ -48,5 +48,10 @@ public class personaServiceImpl implements PersonaService{
     public Persona personaModCi(String ciActual, String ic) {
         return daoPersonaData.personaModCi(ciActual, ic);
     }
+
+    @Override
+    public List<Persona> listarPersonasSinUsuario() {
+        return daoPersonaData.listarPersonasSinUsuario();
+    }
     
 }

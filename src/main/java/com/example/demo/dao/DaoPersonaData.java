@@ -1,5 +1,7 @@
 package com.example.demo.dao;
 
+import java.util.List;
+
 //import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -17,4 +19,17 @@ public interface DaoPersonaData extends JpaRepository<Persona, Long>{
 
     @Query(value = "select p from Persona p where p.ci != ?1 and p.ci = ?2 and p.estado != 'X'")
     public Persona personaModCi(String ciActual, String ic);
+
+    @Query("""
+            SELECT p
+            FROM Persona p
+            WHERE p.estado <> 'X'
+              AND NOT EXISTS (
+                  SELECT u
+                  FROM Usuario u
+                  WHERE u.persona = p
+                    AND u.estado <> 'X'
+              )
+            """)
+    List<Persona> listarPersonasSinUsuario();
 }

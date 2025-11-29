@@ -96,7 +96,7 @@ public class UsuarioController {
 
         if (request.getSession().getAttribute("userLog") != null) {
             model.addAttribute("usuario", new Usuario());
-            model.addAttribute("personas", personaService.findAll());
+            model.addAttribute("personas", personaService.listarPersonasSinUsuario());
             model.addAttribute("permisos", permisoService.findAll());
             return "/usuarios/formulario";
         } else {
@@ -192,7 +192,7 @@ public class UsuarioController {
             // TODO: handle exception
         }
         model.addAttribute("usuario", usuario);
-        model.addAttribute("personas", personaService.findAll());
+        model.addAttribute("personas", personaService.listarPersonasSinUsuario());
         model.addAttribute("permisos", permisoService.findAll());
         model.addAttribute("edit", "true");
         return "/usuarios/formulario";
