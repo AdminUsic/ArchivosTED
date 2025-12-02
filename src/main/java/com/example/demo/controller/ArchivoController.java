@@ -612,7 +612,7 @@ public class ArchivoController {
                     Workbook workbook = new XSSFWorkbook(inputStream)) {
 
                 Sheet sheet = workbook.getSheetAt(0);
-                int filaInicio = 12;
+                int filaInicio = 1;
                 int totalFilas = sheet.getLastRowNum();
 
                 // Procesar cada fila
