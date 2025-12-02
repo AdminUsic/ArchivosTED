@@ -394,7 +394,7 @@ public class CarpetaController {
       Carpeta carpeta = carpetaService.findOne(id_carpeta);
       carpeta.setTotalArchivo(cantidadTotalHojasCarpeta(carpeta));
       model.addAttribute("carpeta", carpeta);
-      model.addAttribute("listaArchivos", carpeta.getArchivos());
+      model.addAttribute("listaArchivos", carpeta.getArchivosOrdenados());
       Usuario user = (Usuario) request.getSession().getAttribute("userLog");
       Usuario userLog = usuarioService.findOne(user.getId_usuario());
       model.addAttribute("permisos", userLog.getPermisos());

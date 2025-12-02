@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.example.demo.entity.Archivo;
 
 public interface DaoArchivosData extends JpaRepository<Archivo, Long> {
-    @Query(value = "select * from Archivo as ar where ar.id_carpeta=?1", nativeQuery = true)
+    @Query(value = "select * from Archivo as ar where ar.id_carpeta=?1 ORDER BY ar.fecha_registro DESC", nativeQuery = true)
     public List<Archivo> archivosCarpeta(Long id_carpeta);
 
     @Query(value = """
